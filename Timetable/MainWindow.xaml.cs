@@ -13,7 +13,7 @@ namespace Timetable
 
 		public MainWindow()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 		}
 
 		#endregion
@@ -32,15 +32,24 @@ namespace Timetable
 
 		#region Private methods
 
-		private void InitializeEpander()
+		private void InitializeExpander()
 		{
 			var stackPanel = new System.Windows.Controls.StackPanel();
 
-			stackPanel.Children.Add(new ExpanderControl(Utilities.Enums.ExpanderControlType.ADD_BTN));
-			stackPanel.Children.Add(new ExpanderControl(Utilities.Enums.ExpanderControlType.CHANGE_BTN));
-			stackPanel.Children.Add(new ExpanderControl(Utilities.Enums.ExpanderControlType.REMOVE_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Add", Utilities.Enums.ExpanderControlImgType.ADD_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Change", Utilities.Enums.ExpanderControlImgType.CHANGE_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Remove", Utilities.Enums.ExpanderControlImgType.REMOVE_BTN));
 
 			this.expander.Content = stackPanel;
+		}
+
+		private void AddPersonToGrid(string pesel, string firstName, string lastName)
+		{
+			var personControl = new PersonControl(pesel, firstName, lastName);
+
+			this.gridTabManage.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new GridLength(16) });
+			System.Windows.Controls.Grid.SetRow(personControl, this.gridTabManage.RowDefinitions.Count - 1);
+			this.gridTabManage.Children.Add(personControl);
 		}
 
 		#endregion
@@ -49,7 +58,12 @@ namespace Timetable
 
 		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			this.InitializeExpander();
 
+			this.AddPersonToGrid("62342987320", "Arkadiusz", "Robak");
+			this.AddPersonToGrid("98419823477", "Jan", "Kowalski");
+			this.AddPersonToGrid("53252132523", "Alicja", "Wróbel");
+			this.AddPersonToGrid("94071514236", "Tomasz", "Mikuczewski");
 		}
 
 		#endregion

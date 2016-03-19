@@ -81,9 +81,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\PersonControl.xaml.cs">
+      <DependentUpon>PersonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Page Include="Controls\ExpanderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PersonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,6 +1,6 @@
 ﻿namespace Timetable.Utilities.Enums
 {
-	public enum ExpanderControlType
+	public enum ExpanderControlImgType
 	{
 		ADD_BTN,
 		CHANGE_BTN,

@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Media.Imaging;
-
-namespace Timetable.Utilities
+﻿namespace Timetable.Utilities
 {
 	public static class Utilities
 	{
@@ -15,13 +12,13 @@ namespace Timetable.Utilities
 
 		#region Public methods
 
-		public static BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
+		public static System.Windows.Media.Imaging.BitmapImage ConvertBitmapToBitmapImage(System.Drawing.Bitmap bitmap)
 		{
 			System.IO.MemoryStream ms = new System.IO.MemoryStream();
 			bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 			ms.Position = 0;
 
-			BitmapImage bitmapImg = new BitmapImage();
+			System.Windows.Media.Imaging.BitmapImage bitmapImg = new System.Windows.Media.Imaging.BitmapImage();
 			bitmapImg.BeginInit();
 			bitmapImg.StreamSource = ms;
 			bitmapImg.EndInit();
