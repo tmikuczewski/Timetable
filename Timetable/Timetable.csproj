@@ -84,6 +84,14 @@
     <Compile Include="Controls\PersonControl.xaml.cs">
       <DependentUpon>PersonControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TimetableDataSet.cs">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="TimetableDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Page Include="Controls\ExpanderControl.xaml">
@@ -134,6 +142,17 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="TimetableDataSet.xsc">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="TimetableDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="TimetableDataSet.xss">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
