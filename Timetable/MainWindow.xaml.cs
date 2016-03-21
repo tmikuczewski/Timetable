@@ -66,6 +66,8 @@ namespace Timetable
 			this.AddPersonToGrid("94972948331", "Tomasz", "Mikuczewski");
 			this.AddPersonToGrid("62342987320", "Roman", "Gula");
 			this.AddPersonToGrid("98419823477", "Wojtek", "Marianek");
+
+			// TimetableDataSet.
 		}
 
 		#endregion
