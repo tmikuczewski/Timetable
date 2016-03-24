@@ -1,4 +1,8 @@
-﻿namespace Timetable.Controls
+﻿using System.Linq;
+
+using Timetable.Models;
+
+namespace Timetable.Controls
 {
 	/// <summary>
 	/// Interaction logic for PersonControl.xaml
@@ -7,13 +11,23 @@
 	{
 		#region Constructors
 
-		public PersonControl(string pesel, string firstName, string lastName)
+		public PersonControl(Models.Base.Person person)
 		{
 			InitializeComponent();
 
-			this.textBlockPesel.Text = pesel;
-			this.textBlockFirstName.Text = firstName;
-			this.textBlockLastName.Text = lastName;
+			this.textBlockPesel.Text = person.PESEL;
+			this.textBlockFirstName.Text = person.FirstName;
+			this.textBlockLastName.Text = person.LastName;
+
+			if (person is Teacher)
+			{
+				//TODO: Dodać wewnątrz obiektu 'Teacher' informację o klasach jakie uczy.
+				this.textBlockClassName.Text = 0.ToString(); // (person as Teacher).Classes.Count;
+			}
+			else if (person is Student)
+			{
+				this.textBlockClassName.Text = Utilities.Database.ClassesTable.FirstOrDefault(c => c.id == (person as Student).Class).code_name;
+			}
 		}
 
 		#endregion
@@ -35,6 +49,11 @@
 		#endregion
 
 		#region Events
+
+		private void UserControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			this.checkBox.IsChecked = !this.checkBox.IsChecked;
+		}
 
 		#endregion
 

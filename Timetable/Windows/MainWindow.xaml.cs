@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 
 using Timetable.Controls;
+using Timetable.Models;
 
 namespace Timetable
 {
@@ -43,9 +44,9 @@ namespace Timetable
 			this.expander.Content = stackPanel;
 		}
 
-		private void AddPersonToGrid(string pesel, string firstName, string lastName)
+		private void AddPersonToGrid(Models.Base.Person person)
 		{
-			var personControl = new PersonControl(pesel, firstName, lastName);
+			var personControl = new PersonControl(person);
 
 			this.gridTabManage.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new GridLength(16) });
 			System.Windows.Controls.Grid.SetRow(personControl, this.gridTabManage.RowDefinitions.Count - 1);
@@ -60,14 +61,10 @@ namespace Timetable
 		{
 			this.InitializeExpander();
 
-			this.AddPersonToGrid("62342987320", "Arkadiusz", "Robak");
-			this.AddPersonToGrid("98419823477", "Jan", "Kowalski");
-			this.AddPersonToGrid("53252132523", "Alicja", "Wróbel");
-			this.AddPersonToGrid("94972948331", "Tomasz", "Mikuczewski");
-			this.AddPersonToGrid("62342987320", "Roman", "Gula");
-			this.AddPersonToGrid("98419823477", "Wojtek", "Marianek");
-
-			// TimetableDataSet.
+			foreach (Teacher teacher in Utilities.Database.GetTeachers())
+			{
+				this.AddPersonToGrid(teacher);
+			}
 		}
 
 		#endregion

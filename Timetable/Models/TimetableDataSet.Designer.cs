@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Timetable {
+namespace Timetable.Models {
     
     
     /// <summary>
@@ -4287,7 +4287,7 @@ namespace Timetable {
         }
     }
 }
-namespace Timetable.TimetableDataSetTableAdapters {
+namespace Timetable.Models.TimetableDataSetTableAdapters {
     
     
     /// <summary>

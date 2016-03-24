@@ -2,7 +2,7 @@
 {
 }
 
-namespace Timetable
+namespace Timetable.Models
 {
 
 
