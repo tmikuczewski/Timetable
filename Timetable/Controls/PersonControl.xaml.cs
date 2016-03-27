@@ -11,6 +11,9 @@ namespace Timetable.Controls
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+		/// <param name="person">Obiekt typu <c>Models.Base.Person</c> wypełniający danymi pola tekstowe kontrol.</param>
 		public PersonControl(Models.Base.Person person)
 		{
 			InitializeComponent();
@@ -21,12 +24,11 @@ namespace Timetable.Controls
 
 			if (person is Teacher)
 			{
-				//TODO: Dodać wewnątrz obiektu 'Teacher' informację o klasach jakie uczy.
-				this.textBlockClassName.Text = 0.ToString(); // (person as Teacher).Classes.Count;
+				this.textBlockClassName.Text = 0.ToString(); // Utilities.Database.GetClasses().Where(c => c.TeacherPesel == person.Pesel).Count;
 			}
 			else if (person is Student)
 			{
-				this.textBlockClassName.Text = Utilities.Database.ClassesTable.FirstOrDefault(c => c.id == (person as Student).Class).code_name;
+				this.textBlockClassName.Text = 0.ToString(); // Utilities.Database.GetClasses().FirstOrDefault(c => c.Id == (person as Student).ClassId).CodeName;
 			}
 		}
 

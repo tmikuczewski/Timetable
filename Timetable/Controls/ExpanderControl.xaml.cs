@@ -11,7 +11,11 @@ namespace Timetable.Controls
 	{
 		#region Constructors
 
-		public ExpanderControl(string text, ExpanderControlImgType ect)
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>Controls.ExpanderControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+		/// <param name="text">Tekst przycisku <c>button</c>.</param>
+		/// <param name="ect"></param>
+		public ExpanderControl(string text, ExpanderControlType ect)
 		{
 			InitializeComponent();
 
@@ -19,13 +23,13 @@ namespace Timetable.Controls
 
 			switch (ect)
 			{
-				case ExpanderControlImgType.ADD_BTN:
+				case ExpanderControlType.ADD_BTN:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
 					break;
-				case ExpanderControlImgType.CHANGE_BTN:
+				case ExpanderControlType.CHANGE_BTN:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
 					break;
-				case ExpanderControlImgType.REMOVE_BTN:
+				case ExpanderControlType.REMOVE_BTN:
 				default:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
 					break;

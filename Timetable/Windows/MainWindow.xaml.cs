@@ -12,6 +12,7 @@ namespace Timetable
 	{
 		#region Constructors
 
+		/// <summary>Konstruktor tworzący obiekt typu <c>MainWindow</c>.</summary>
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -37,9 +38,9 @@ namespace Timetable
 		{
 			var stackPanel = new System.Windows.Controls.StackPanel();
 
-			stackPanel.Children.Add(new ExpanderControl("Add", Utilities.Enums.ExpanderControlImgType.ADD_BTN));
-			stackPanel.Children.Add(new ExpanderControl("Change", Utilities.Enums.ExpanderControlImgType.CHANGE_BTN));
-			stackPanel.Children.Add(new ExpanderControl("Remove", Utilities.Enums.ExpanderControlImgType.REMOVE_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Add", Utilities.Enums.ExpanderControlType.ADD_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Change", Utilities.Enums.ExpanderControlType.CHANGE_BTN));
+			stackPanel.Children.Add(new ExpanderControl("Remove", Utilities.Enums.ExpanderControlType.REMOVE_BTN));
 
 			this.expander.Content = stackPanel;
 		}

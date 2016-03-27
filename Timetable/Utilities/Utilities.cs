@@ -1,5 +1,7 @@
 ﻿namespace Timetable.Utilities
 {
+	/// <summary>
+	/// Statyczna klasa przechowująca metody/klasy pomocniczne.</summary>
 	public static class Utilities
 	{
 		#region Constructors
@@ -12,6 +14,12 @@
 
 		#region Public methods
 
+		/// <summary>
+		/// Statyczna metoda konwertująca obiekt typu <c>System.Drawing.Bitmap</c> na obiekt 
+		/// typu <c>System.Windows.Media.Imaging.BitmapImage.</c>
+		/// </summary>
+		/// <param name="bitmap">Obiekt typu <c>System.Drawing.Bitmap</c> mający ulec konwersji.</param>
+		/// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Imaging.BitmapImage</c>.</returns>
 		public static System.Windows.Media.Imaging.BitmapImage ConvertBitmapToBitmapImage(System.Drawing.Bitmap bitmap)
 		{
 			System.IO.MemoryStream ms = new System.IO.MemoryStream();

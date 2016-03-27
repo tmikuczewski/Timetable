@@ -2,34 +2,37 @@
 using System.Linq;
 
 using Timetable.Models;
+using Timetable.Models.TimetableDataSetTableAdapters;
 
 namespace Timetable.Utilities
 {
+	/// <summary>
+	/// Statyczna klasa odpowiadająca za wszystkie operacje odczytu/zapisu na danych zapisanych w bazie danych.</summary>
 	public static class Database
 	{
 		#region Constructors
 
 		static Database()
 		{
-			ClassesTable = new Models.TimetableDataSet.classesDataTable();
-			ClassroomsTable = new Models.TimetableDataSet.classroomsDataTable();
-			DaysTable = new Models.TimetableDataSet.daysDataTable();
-			HoursTable = new Models.TimetableDataSet.hoursDataTable();
-			LessonsTable = new Models.TimetableDataSet.lessonsDataTable();
-			LessonsPlacesTable = new Models.TimetableDataSet.lessons_placesDataTable();
-			StudentsTable = new Models.TimetableDataSet.studentsDataTable();
-			SubjectsTable = new Models.TimetableDataSet.subjectsDataTable();
-			TeachersTable = new Models.TimetableDataSet.teachersDataTable();
+			ClassesTable = new TimetableDataSet.ClassesDataTable();
+			ClassroomsTable = new TimetableDataSet.ClassroomsDataTable();
+			DaysTable = new TimetableDataSet.DaysDataTable();
+			HoursTable = new TimetableDataSet.HoursDataTable();
+			LessonsTable = new TimetableDataSet.LessonsDataTable();
+			LessonsPlacesTable = new TimetableDataSet.LessonsPlacesDataTable();
+			StudentsTable = new TimetableDataSet.StudentsDataTable();
+			SubjectsTable = new TimetableDataSet.SubjectsDataTable();
+			TeachersTable = new TimetableDataSet.TeachersDataTable();
 
-			ClassesTableAdapter = new Models.TimetableDataSetTableAdapters.classesTableAdapter();
-			ClassroomsTableAdapter = new Models.TimetableDataSetTableAdapters.classroomsTableAdapter();
-			DaysTableAdapter = new Models.TimetableDataSetTableAdapters.daysTableAdapter();
-			HoursTableAdapter = new Models.TimetableDataSetTableAdapters.hoursTableAdapter();
-			LessonsTableAdapter = new Models.TimetableDataSetTableAdapters.lessonsTableAdapter();
-			LessonsPlacesTableAdapter = new Models.TimetableDataSetTableAdapters.lessons_placesTableAdapter();
-			StudentsTableAdapter = new Models.TimetableDataSetTableAdapters.studentsTableAdapter();
-			SubjectsTableAdapter = new Models.TimetableDataSetTableAdapters.subjectsTableAdapter();
-			TeachersTableAdapter = new Models.TimetableDataSetTableAdapters.teachersTableAdapter();
+			ClassesTableAdapter = new ClassesTableAdapter();
+			ClassroomsTableAdapter = new ClassroomsTableAdapter();
+			DaysTableAdapter = new DaysTableAdapter();
+			HoursTableAdapter = new HoursTableAdapter();
+			LessonsTableAdapter = new LessonsTableAdapter();
+			LessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			StudentsTableAdapter = new StudentsTableAdapter();
+			SubjectsTableAdapter = new SubjectsTableAdapter();
+			TeachersTableAdapter = new TeachersTableAdapter();
 
 			ClassesTableAdapter.Fill(ClassesTable);
 			ClassroomsTableAdapter.Fill(ClassroomsTable);
@@ -51,14 +54,13 @@ namespace Timetable.Utilities
 		#region Public methods
 
 		/// <summary>
-		/// Przykładowa implementacja metody wykonującej jedno z zapytań.
-		/// </summary>
-		/// <returns>Lista wszystkich nauczycieli (<code>Models.Teacher</code>)</returns>
+		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
+		/// <returns>Lista wszystkich nauczycieli (<c>IEnumerable&lt;Models.Teacher&gt;</c>)</returns>
 		public static IEnumerable<Teacher> GetTeachers()
 		{
 			foreach (var row in TeachersTable)
 			{
-				yield return new Teacher(row.pesel, row.first_name, row.last_name);
+				yield return new Teacher(row.Pesel, row.FirstName, row.LastName);
 			}
 			yield break;
 		}
@@ -67,25 +69,7 @@ namespace Timetable.Utilities
 
 		#region Properties
 
-		public static Models.TimetableDataSet.classesDataTable ClassesTable { get; }
-		public static Models.TimetableDataSet.classroomsDataTable ClassroomsTable { get; }
-		public static Models.TimetableDataSet.daysDataTable DaysTable { get; }
-		public static Models.TimetableDataSet.hoursDataTable HoursTable { get; }
-		public static Models.TimetableDataSet.lessonsDataTable LessonsTable { get; }
-		public static Models.TimetableDataSet.lessons_placesDataTable LessonsPlacesTable { get; }
-		public static Models.TimetableDataSet.studentsDataTable StudentsTable { get; }
-		public static Models.TimetableDataSet.subjectsDataTable SubjectsTable { get; }
-		public static Models.TimetableDataSet.teachersDataTable TeachersTable { get; }
 
-		public static Models.TimetableDataSetTableAdapters.classesTableAdapter ClassesTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.classroomsTableAdapter ClassroomsTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.daysTableAdapter DaysTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.hoursTableAdapter HoursTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.lessonsTableAdapter LessonsTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.lessons_placesTableAdapter LessonsPlacesTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.studentsTableAdapter StudentsTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.subjectsTableAdapter SubjectsTableAdapter { get; }
-		public static Models.TimetableDataSetTableAdapters.teachersTableAdapter TeachersTableAdapter { get; }
 
 		#endregion
 
@@ -98,6 +82,26 @@ namespace Timetable.Utilities
 		#endregion
 
 		#region Fields
+
+		private static TimetableDataSet.ClassesDataTable ClassesTable;
+		private static TimetableDataSet.ClassroomsDataTable ClassroomsTable;
+		private static TimetableDataSet.DaysDataTable DaysTable;
+		private static TimetableDataSet.HoursDataTable HoursTable;
+		private static TimetableDataSet.LessonsDataTable LessonsTable;
+		private static TimetableDataSet.LessonsPlacesDataTable LessonsPlacesTable;
+		private static TimetableDataSet.StudentsDataTable StudentsTable;
+		private static TimetableDataSet.SubjectsDataTable SubjectsTable;
+		private static TimetableDataSet.TeachersDataTable TeachersTable;
+
+		private static ClassesTableAdapter ClassesTableAdapter;
+		private static ClassroomsTableAdapter ClassroomsTableAdapter;
+		private static DaysTableAdapter DaysTableAdapter;
+		private static HoursTableAdapter HoursTableAdapter;
+		private static LessonsTableAdapter LessonsTableAdapter;
+		private static LessonsPlacesTableAdapter LessonsPlacesTableAdapter;
+		private static StudentsTableAdapter StudentsTableAdapter;
+		private static SubjectsTableAdapter SubjectsTableAdapter;
+		private static TeachersTableAdapter TeachersTableAdapter;
 
 		#endregion
 	}

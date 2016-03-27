@@ -87,10 +87,7 @@
     <Compile Include="Models\Base\Person.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Teacher.cs" />
-    <Compile Include="Models\TimetableDataSet.cs">
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TimetableDataSet.Designer.cs">
+    <Compile Include="Models\DataSet\TimetableDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
@@ -146,15 +143,15 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Models\TimetableDataSet.xsc">
+    <None Include="Models\DataSet\TimetableDataSet.xsc">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Models\TimetableDataSet.xsd">
+    <None Include="Models\DataSet\TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Models\TimetableDataSet.xss">
+    <None Include="Models\DataSet\TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
   </ItemGroup>
