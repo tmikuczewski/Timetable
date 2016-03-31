@@ -5,27 +5,134 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:Timetable"
 		mc:Ignorable="d"
-		Title="Timetable" Height="350" Width="525" WindowStartupLocation="CenterScreen" Loaded="mainWindow_Loaded">
+		Title="Timetable" Height="600" Width="800" WindowStartupLocation="CenterScreen" Loaded="mainWindow_Loaded" MinWidth="800" MinHeight="600">
 	<Grid x:Name="gridMain">
 		<Grid.RowDefinitions>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 		<TabControl x:Name="tabControl" Margin="10">
-			<TabItem x:Name="tabItemManage" Header="TabItem" HorizontalAlignment="Left" Height="20" Margin="20,0,-20,0" VerticalAlignment="Top" Width="54">
-				<Grid x:Name="gridTabManage"/>
+			<TabItem x:Name="tabItemManagement" Header="Management" HorizontalAlignment="Left" Margin="20,0,-20,0" VerticalAlignment="Top" FontSize="14.667">
+				<Grid x:Name="gridTabManage">
+					<ScrollViewer x:Name="scrollViewer" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1">
+						<Grid x:Name="scrollViewersGrid"/>
+					</ScrollViewer>
+				</Grid>
 			</TabItem>
-			<TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54" Margin="20,0,-20,0">
+			<TabItem x:Name="tabItemMapping" Header="Mapping" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="19,0,-19,0" FontSize="14.667">
 				<Grid/>
 			</TabItem>
-			<TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54" Margin="20,0,-20,0">
-				<Grid Margin="0"/>
+			<TabItem x:Name="tabItemPlanning" Header="Planning" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="18,0,-18,0" FontSize="14.667">
+				<Grid Margin="0">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition Height="11*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="4*"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Border BorderBrush="Black" BorderThickness="1" Margin="10,0,0,10" Grid.Row="1" RenderTransformOrigin="0.5,0.5">
+						<Border.RenderTransform>
+							<TransformGroup>
+								<ScaleTransform ScaleY="-1"/>
+								<SkewTransform/>
+								<RotateTransform/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</Border.RenderTransform>
+					</Border>
+					<Grid HorizontalAlignment="Right" Height="37" Margin="0,10,10,0" VerticalAlignment="Top" Width="370">
+						<ComboBox x:Name="comboBox1" Margin="250,0,0,0" Height="28" Width="120" HorizontalAlignment="Left"/>
+						<ComboBox x:Name="comboBox2" Margin="125,0,0,0" Width="120" Height="28" HorizontalAlignment="Left"/>
+						<ComboBox x:Name="comboBox3" Width="120" Height="28" HorizontalAlignment="Left"/>
+					</Grid>
+					<Grid Margin="10" Grid.Row="1">
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+							<RowDefinition Height="2*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="3*"/>
+						</Grid.ColumnDefinitions>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="1">
+							<TextBlock TextWrapping="Wrap" Text="0" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="2">
+							<TextBlock TextWrapping="Wrap" Text="1" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="3">
+							<TextBlock TextWrapping="Wrap" Text="2" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="4">
+							<TextBlock TextWrapping="Wrap" Text="3" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="5">
+							<TextBlock TextWrapping="Wrap" Text="4" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="6">
+							<TextBlock TextWrapping="Wrap" Text="5" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="7">
+							<TextBlock TextWrapping="Wrap" Text="6" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="8">
+							<TextBlock TextWrapping="Wrap" Text="7" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="1">
+							<TextBlock TextWrapping="Wrap" Text="MO" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="2">
+							<TextBlock TextWrapping="Wrap" Text="TU" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="3">
+							<TextBlock TextWrapping="Wrap" Text="WE" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="4">
+							<TextBlock TextWrapping="Wrap" Text="TH" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="5">
+							<TextBlock TextWrapping="Wrap" Text="FR" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="1" Grid.Row="1">
+							<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" Margin="0,-2.76,0,-3.24"><Run Text="J"/><Run Text="ę"/><Run Text="zyk polski"/><LineBreak/><Run Text="mgr A.Król"/><LineBreak/><Run Text="s.310"/></TextBlock>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="2" Grid.Row="2">
+							<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" Margin="0,-2.76,0,-3.24"><Run Text="J"/><Run Text="ę"/><Run Text="zyk polski"/><LineBreak/><Run Text="mgr A.Król"/><LineBreak/><Run Text="s.310"/></TextBlock>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="4" Grid.Row="1">
+							<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" Margin="0,-2.76,0,-3.24"><Run Text="J"/><Run Text="ę"/><Run Text="zyk polski"/><LineBreak/><Run Text="mgr A.Król"/><LineBreak/><Run Text="s.310"/></TextBlock>
+						</Border>
+					</Grid>
+				</Grid>
 			</TabItem>
-			<TabItem Header="TabItem" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54" Margin="20,0,-20,0">
+			<TabItem x:Name="tabItemSummary" Header="Summary" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="17,0,-17,0" FontSize="14.667">
 				<Grid/>
 			</TabItem>
 		</TabControl>
-		<ComboBox x:Name="comboBox" Margin="0,10,120,0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Width="95"/>
-		<Expander x:Name="expander" Header="Expander" Margin="0,10,20,0" VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Right" Width="95"/>
+		<Expander x:Name="expander" Header="Operation" Margin="0,14,20,0" VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Right" Width="95" FontSize="14.667"/>
+		<Grid HorizontalAlignment="Right" Height="24" VerticalAlignment="Top" Width="203" Margin="0,13,120,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="10*"/>
+				<ColumnDefinition Width="11*"/>
+			</Grid.ColumnDefinitions>
+			<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" Width="97">
+				<TextBlock TextWrapping="Wrap" Text="Data: " VerticalAlignment="Center" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,4,5,4" Width="92"/>
+			</Border>
+
+			<ComboBox x:Name="comboBox" FontSize="14.667" Grid.Column="1" SelectionChanged="comboBox_SelectionChanged"/>
+		</Grid>
 
 	</Grid>
 </Window>

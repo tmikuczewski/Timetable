@@ -23,13 +23,13 @@ namespace Timetable.Controls
 
 			switch (ect)
 			{
-				case ExpanderControlType.ADD_BTN:
+				case ExpanderControlType.Add:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
 					break;
-				case ExpanderControlType.CHANGE_BTN:
+				case ExpanderControlType.Change:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
 					break;
-				case ExpanderControlType.REMOVE_BTN:
+				case ExpanderControlType.Remove:
 				default:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
 					break;

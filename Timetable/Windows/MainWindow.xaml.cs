@@ -2,6 +2,7 @@
 
 using Timetable.Controls;
 using Timetable.Models;
+using Timetable.Utilities.Enums;
 
 namespace Timetable
 {
@@ -12,7 +13,8 @@ namespace Timetable
 	{
 		#region Constructors
 
-		/// <summary>Konstruktor tworzący obiekt typu <c>MainWindow</c>.</summary>
+		/// <summary>Konstruktor tworzący obiekt typu <c>MainWindow</c>.
+		/// </summary>
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -34,24 +36,68 @@ namespace Timetable
 
 		#region Private methods
 
-		private void InitializeExpander()
+		private void FillScrollViewer(ComboBoxContent content = ComboBoxContent.Entities)
 		{
-			var stackPanel = new System.Windows.Controls.StackPanel();
+			if (this.scrollViewersGrid.Children.Count > 0)
+			{
+				this.scrollViewersGrid.Children.Clear();
+				this.scrollViewersGrid.RowDefinitions.Clear();
+			}
 
-			stackPanel.Children.Add(new ExpanderControl("Add", Utilities.Enums.ExpanderControlType.ADD_BTN));
-			stackPanel.Children.Add(new ExpanderControl("Change", Utilities.Enums.ExpanderControlType.CHANGE_BTN));
-			stackPanel.Children.Add(new ExpanderControl("Remove", Utilities.Enums.ExpanderControlType.REMOVE_BTN));
+			switch (content)
+			{
+				case ComboBoxContent.Teachers:
+					foreach (Teacher teacher in Utilities.Database.GetTeachers())
+					{
+						this.AddPersonToGrid(teacher);
+					}
+					break;
+				default:
+					foreach (Student student in Utilities.Database.GetStudents())
+					{
+						this.AddPersonToGrid(student);
+					}
+					break;
+			}
+		}
 
-			this.expander.Content = stackPanel;
+		private void FillExpander(ComboBoxContent content = ComboBoxContent.Entities)
+		{
+			switch (content)
+			{
+				default:
+					{
+						var stackPanel = new System.Windows.Controls.StackPanel();
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove));
+						this.expander.Content = stackPanel;
+					}
+					break;
+			}
+		}
+
+		private void FillComboBox(ComboBoxContent content = ComboBoxContent.Entities)
+		{
+			switch (content)
+			{
+				default:
+					this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
+					this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
+					this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
+					this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
+					this.comboBox.SelectedIndex = 0;
+					break;
+			}
 		}
 
 		private void AddPersonToGrid(Models.Base.Person person)
 		{
 			var personControl = new PersonControl(person);
 
-			this.gridTabManage.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new GridLength(16) });
-			System.Windows.Controls.Grid.SetRow(personControl, this.gridTabManage.RowDefinitions.Count - 1);
-			this.gridTabManage.Children.Add(personControl);
+			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
+			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.Children.Add(personControl);
 		}
 
 		#endregion
@@ -60,11 +106,33 @@ namespace Timetable
 
 		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.InitializeExpander();
+			this.FillComboBox();
 
-			foreach (Teacher teacher in Utilities.Database.GetTeachers())
+			this.FillExpander();
+		}
+
+		private void comboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 1);
+
+			switch (this.comboBoxContent)
 			{
-				this.AddPersonToGrid(teacher);
+				case ComboBoxContent.Teachers:
+					this.FillScrollViewer(ComboBoxContent.Teachers);
+					this.FillExpander(ComboBoxContent.Teachers);
+					break;
+				case ComboBoxContent.Classes:
+					this.FillScrollViewer(ComboBoxContent.Classes);
+					this.FillExpander(ComboBoxContent.Classes);
+					break;
+				case ComboBoxContent.Subjects:
+					this.FillScrollViewer(ComboBoxContent.Subjects);
+					this.FillExpander(ComboBoxContent.Subjects);
+					break;
+				default:
+					this.FillScrollViewer(ComboBoxContent.Students);
+					this.FillExpander(ComboBoxContent.Students);
+					break;
 			}
 		}
 
@@ -75,6 +143,8 @@ namespace Timetable
 		#endregion
 
 		#region Fields
+
+		private ComboBoxContent comboBoxContent = ComboBoxContent.Entities;
 
 		#endregion
 	}

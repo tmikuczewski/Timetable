@@ -55,6 +55,18 @@ namespace Timetable.Utilities
 
 		/// <summary>
 		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
+		/// <returns>Lista wszystkich uczniów (<c>IEnumerable&lt;Models.Student&gt;</c>)</returns>
+		public static IEnumerable<Student> GetStudents()
+		{
+			foreach (var row in StudentsTable)
+			{
+				yield return new Student(row.Pesel, row.FirstName, row.LastName);
+			}
+			yield break;
+		}
+
+		/// <summary>
+		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
 		/// <returns>Lista wszystkich nauczycieli (<c>IEnumerable&lt;Models.Teacher&gt;</c>)</returns>
 		public static IEnumerable<Teacher> GetTeachers()
 		{

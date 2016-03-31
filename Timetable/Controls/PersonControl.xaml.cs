@@ -24,11 +24,11 @@ namespace Timetable.Controls
 
 			if (person is Teacher)
 			{
-				this.textBlockClassName.Text = 0.ToString(); // Utilities.Database.GetClasses().Where(c => c.TeacherPesel == person.Pesel).Count;
+				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().Where(c => c.TeacherPesel == person.Pesel).Count;
 			}
 			else if (person is Student)
 			{
-				this.textBlockClassName.Text = 0.ToString(); // Utilities.Database.GetClasses().FirstOrDefault(c => c.Id == (person as Student).ClassId).CodeName;
+				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().FirstOrDefault(c => c.Id == (person as Student).ClassId).CodeName;
 			}
 		}
 
@@ -60,6 +60,10 @@ namespace Timetable.Controls
 		#endregion
 
 		#region Constants and Statics
+
+		/// <summary>
+		/// Wysokość kontrolki.</summary>
+		public const int HEIGHT = 30;
 
 		#endregion
 
