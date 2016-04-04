@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -81,6 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\CellControl.xaml.cs">
+      <DependentUpon>CellControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PersonControl.xaml.cs">
       <DependentUpon>PersonControl.xaml</DependentUpon>
     </Compile>
@@ -98,6 +104,10 @@
     <Compile Include="Windows\ManageWindow.xaml.cs">
       <DependentUpon>ManageWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\CellControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ExpanderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,7 +175,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\plus.png" />
   </ItemGroup>
@@ -174,6 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\recycleBin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
