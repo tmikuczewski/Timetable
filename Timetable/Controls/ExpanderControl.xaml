@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:Timetable.Controls"
 			 mc:Ignorable="d" Height="22.22" Width="95" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	<Grid x:Name="gridMain" Height="20">
-		<Button x:Name="button" Content="Button" Margin="22,0,3,0" VerticalAlignment="Top" Width="70" Background="{x:Null}" BorderThickness="0" Height="20"/>
+		<Button x:Name="button" Content="Button" Margin="22,0,3,0" VerticalAlignment="Top" Width="70" Background="{x:Null}" BorderThickness="0" Height="20" Click="button_Click"/>
 		<Image x:Name="image" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Margin="2,0,0,0"/>
 	</Grid>
 </UserControl>
