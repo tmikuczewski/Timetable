@@ -1,4 +1,4 @@
-﻿namespace Timetable.Utilities.Enums
+﻿namespace Timetable.Code
 {
 	/// <summary>
 	/// Rodzaj wyświetlanych danych w kontrolce <c>ExpanderControl</c>.</summary>
@@ -52,5 +52,17 @@
 		/// <summary>
 		/// Lista przedmiotów.</summary>
 		Subjects
+	}
+
+	/// <summary>
+	/// Płeć.</summary>
+	public enum Sex
+	{
+		/// <summary>
+		/// Kobieta.</summary>
+		Female,
+		/// <summary>
+		/// Mężczyzna.</summary>
+		Male
 	}
 }

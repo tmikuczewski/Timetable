@@ -1,15 +1,13 @@
-﻿using System.Windows;
-
-using Timetable.Controls;
+﻿using Timetable.Controls;
 using Timetable.Models;
-using Timetable.Utilities.Enums;
+using Timetable.Code;
 
 namespace Timetable
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow : System.Windows.Window
 	{
 		#region Constructors
 
@@ -95,7 +93,7 @@ namespace Timetable
 		{
 			var personControl = new PersonControl(person);
 
-			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
+			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(PersonControl.HEIGHT) });
 			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
@@ -104,7 +102,7 @@ namespace Timetable
 
 		#region Events
 
-		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
+		private void mainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			this.FillComboBox();
 

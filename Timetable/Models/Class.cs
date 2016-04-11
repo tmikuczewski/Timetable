@@ -1,8 +1,6 @@
-﻿namespace Timetable.Windows
+﻿namespace Timetable.Models
 {
-	/// <summary>
-	/// Interaction logic for ManageWindow.xaml</summary>
-	public partial class ManageWindow : System.Windows.Window
+	public class Class
 	{
 		#region Constructors
 
@@ -17,6 +15,11 @@
 		#endregion
 
 		#region Properties
+
+		public int Id { get; set; }
+		public int Year { get; set; }
+		public string CodeName { get; set; }
+		public string Pesel { get; set; }
 
 		#endregion
 

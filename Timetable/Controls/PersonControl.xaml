@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Timetable.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="16.525" Height="30" MinWidth="550" MinHeight="16" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+			 d:DesignHeight="16.525" Height="30" MinWidth="550" MinHeight="30" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
 	<Grid x:Name="gridMain">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>

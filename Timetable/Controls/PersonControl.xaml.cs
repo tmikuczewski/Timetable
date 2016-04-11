@@ -5,8 +5,7 @@ using Timetable.Models;
 namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for PersonControl.xaml
-	/// </summary>
+	/// Interaction logic for PersonControl.xaml</summary>
 	public partial class PersonControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors

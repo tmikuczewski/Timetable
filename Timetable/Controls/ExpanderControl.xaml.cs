@@ -1,13 +1,9 @@
-﻿using System.Windows.Controls;
-
-using Timetable.Utilities.Enums;
-
-namespace Timetable.Controls
+﻿namespace Timetable.Controls
 {
 	/// <summary>
 	/// Interaction logic for ExpanderControl.xaml
 	/// </summary>
-	public partial class ExpanderControl : UserControl
+	public partial class ExpanderControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors
 
@@ -15,7 +11,7 @@ namespace Timetable.Controls
 		/// Konstruktor tworzący obiekt typu <c>Controls.ExpanderControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
 		/// <param name="text">Tekst przycisku <c>button</c>.</param>
 		/// <param name="ect"></param>
-		public ExpanderControl(string text, ExpanderControlType ect)
+		public ExpanderControl(string text, Code.ExpanderControlType ect)
 		{
 			InitializeComponent();
 
@@ -23,13 +19,13 @@ namespace Timetable.Controls
 
 			switch (ect)
 			{
-				case ExpanderControlType.Add:
+				case Code.ExpanderControlType.Add:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
 					break;
-				case ExpanderControlType.Change:
+				case Code.ExpanderControlType.Change:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
 					break;
-				case ExpanderControlType.Remove:
+				case Code.ExpanderControlType.Remove:
 				default:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
 					break;
