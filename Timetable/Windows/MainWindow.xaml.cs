@@ -1,6 +1,7 @@
 ﻿using Timetable.Controls;
 using Timetable.Models;
 using Timetable.Code;
+using System;
 
 namespace Timetable
 {
@@ -50,6 +51,12 @@ namespace Timetable
 						this.AddPersonToGrid(teacher);
 					}
 					break;
+				case ComboBoxContent.Classes:
+					foreach (Class oClass in Utilities.Database.GetClasses())
+					{
+						this.AddClassToGrid(oClass);
+					}
+					break;
 				default:
 					foreach (Student student in Utilities.Database.GetStudents())
 					{
@@ -82,8 +89,8 @@ namespace Timetable
 				default:
 					this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
 					this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
-					this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
-					this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
+					// this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
+					// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
 					this.comboBox.SelectedIndex = 0;
 					break;
 			}
@@ -97,6 +104,14 @@ namespace Timetable
 			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
+		private void AddClassToGrid(Class oClass)
+		{
+			var classControl = new ClassControl(oClass);
+
+			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
+			System.Windows.Controls.Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.Children.Add(classControl);
+		}
 
 		#endregion
 
@@ -109,27 +124,42 @@ namespace Timetable
 			this.FillExpander();
 		}
 
+		private void tabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			switch (this.tabControl.SelectedIndex)
+			{
+				case 0:
+					this.gridTabManagementFilter.Visibility = System.Windows.Visibility.Visible;
+					this.expander.Visibility = System.Windows.Visibility.Visible;
+					break;
+				case 1:
+				case 2:
+				case 3:
+				default:
+					this.gridTabManagementFilter.Visibility = System.Windows.Visibility.Hidden;
+					this.expander.Visibility = System.Windows.Visibility.Hidden;
+					break;
+			}
+		}
+
 		private void comboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
 			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 1);
-
+			this.FillExpander(ComboBoxContent.Students);
+			
 			switch (this.comboBoxContent)
 			{
+				case ComboBoxContent.Students:
+					this.FillScrollViewer(ComboBoxContent.Students);
+					break;
 				case ComboBoxContent.Teachers:
 					this.FillScrollViewer(ComboBoxContent.Teachers);
-					this.FillExpander(ComboBoxContent.Teachers);
 					break;
 				case ComboBoxContent.Classes:
 					this.FillScrollViewer(ComboBoxContent.Classes);
-					this.FillExpander(ComboBoxContent.Classes);
 					break;
 				case ComboBoxContent.Subjects:
 					this.FillScrollViewer(ComboBoxContent.Subjects);
-					this.FillExpander(ComboBoxContent.Subjects);
-					break;
-				default:
-					this.FillScrollViewer(ComboBoxContent.Students);
-					this.FillExpander(ComboBoxContent.Students);
 					break;
 			}
 		}

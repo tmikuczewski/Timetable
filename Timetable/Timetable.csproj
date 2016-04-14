@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Models\Base\Person.cs" />
     <Compile Include="Models\Class.cs" />
+    <Compile Include="Models\Lesson.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Teacher.cs" />
     <Compile Include="Models\DataSet\TimetableDataSet.Designer.cs">

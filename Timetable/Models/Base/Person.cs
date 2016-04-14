@@ -11,9 +11,9 @@
 		/// <param name="pesel">Numer identyfikujący PESEL.</param>
 		/// <param name="firstName">Imię osoby.</param>
 		/// <param name="lastName">Nazwisko osoby.</param>
-		public Person(string pesel, string firstName, string lastName)
+		public Person(Code.Pesel pesel, string firstName, string lastName)
 		{
-			this.PESEL = pesel;
+			this.Pesel = pesel;
 			this.FirstName = firstName;
 			this.LastName = lastName;
 		}
@@ -25,7 +25,7 @@
 		/// <summary>
 		/// Metoda reprezentująca obiekt w postaci przyjaznego w odczycie string'a.</summary>
 		/// <returns>Reprezentacja obiektu w postaci obiektu typu <c>string</c>.</returns>
-		public override string ToString() => $"{this.PESEL} {this.FirstName} {this.LastName}";
+		public override string ToString() => $"{this.Pesel} {this.FirstName} {this.LastName}";
 		/// <summary>
 		/// Metoda zwracająca Hash obiektu.</summary>
 		/// <returns>Reprezentacja obiektu w postaci liczby całkowitej typu <c>int</c>.</returns>
@@ -37,7 +37,7 @@
 		public override bool Equals(object obj)
 		{
 			return (obj is Person
-				&& ((obj as Person).PESEL == this.PESEL
+				&& ((obj as Person).Pesel == this.Pesel
 					&& (obj as Person).FirstName.ToLower() == this.FirstName.ToLower()
 					&& (obj as Person).LastName.ToLower() == this.LastName.ToLower()));
 		}
@@ -51,8 +51,8 @@
 		#region Properties
 
 		/// <summary>
-		/// Unikalny numer identyfikujący obywatela polskiego.</summary>
-		public string PESEL { get; set; }
+		/// Unikalny numer identyfikacyjny PESEL.</summary>
+		public Code.Pesel Pesel { get; set; }
 		/// <summary>
 		/// Imię osoby.</summary>
 		public string FirstName { get; set; }

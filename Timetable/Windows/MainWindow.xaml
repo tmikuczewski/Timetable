@@ -10,9 +10,9 @@
 		<Grid.RowDefinitions>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<TabControl x:Name="tabControl" Margin="10">
+		<TabControl x:Name="tabControl" Margin="10" SelectionChanged="tabControl_SelectionChanged">
 			<TabItem x:Name="tabItemManagement" Header="Management" HorizontalAlignment="Left" Margin="20,0,-20,0" VerticalAlignment="Top" FontSize="14.667">
-				<Grid x:Name="gridTabManage">
+				<Grid x:Name="gridTabManagement">
 					<ScrollViewer x:Name="scrollViewer" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1">
 						<Grid x:Name="scrollViewersGrid"/>
 					</ScrollViewer>
@@ -116,7 +116,7 @@
 			</TabItem>
 		</TabControl>
 		<Expander x:Name="expander" Header="Operation" Margin="0,10,30,0" VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Right" Width="95" FontSize="14.667"/>
-		<Grid HorizontalAlignment="Right" Height="24" VerticalAlignment="Top" Width="203" Margin="0,10,130,0">
+		<Grid x:Name="gridTabManagementFilter" HorizontalAlignment="Right" Height="24" VerticalAlignment="Top" Width="203" Margin="0,10,130,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="10*"/>
 				<ColumnDefinition Width="11*"/>

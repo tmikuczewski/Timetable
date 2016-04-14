@@ -60,7 +60,7 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in StudentsTable)
 			{
-				yield return new Student(row.Pesel, row.FirstName, row.LastName);
+				yield return new Student(new Code.Pesel(row.Pesel), row.FirstName, row.LastName);
 			}
 			yield break;
 		}
@@ -72,7 +72,19 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in TeachersTable)
 			{
-				yield return new Teacher(row.Pesel, row.FirstName, row.LastName);
+				yield return new Teacher(new Code.Pesel(row.Pesel), row.FirstName, row.LastName);
+			}
+			yield break;
+		}
+
+		/// <summary>
+		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
+		/// <returns>Lista wszystkich klas (<c>IEnumerable&lt;Models.Class&gt;</c>)</returns>
+		public static IEnumerable<Class> GetClasses()
+		{
+			foreach (var row in ClassesTable)
+			{
+				yield return new Class(row.Id, row.Year, row.CodeName, new Code.Pesel(row.TutorPesel));
 			}
 			yield break;
 		}

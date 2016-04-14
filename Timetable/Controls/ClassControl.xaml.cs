@@ -12,6 +12,11 @@
 		public ClassControl(Models.Class oClass)
 		{
 			InitializeComponent();
+
+			this.textBlockId.Text = oClass.Id.ToString();
+			this.textBlockYear.Text = oClass.Year.ToString();
+			this.textBlockCodeName.Text = oClass?.CodeName ?? string.Empty;
+			this.textBlockTutorPesel.Text = oClass.TutorPesel.StringRepresentation;
 		}
 
 		#endregion

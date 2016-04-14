@@ -177,10 +177,10 @@
 
 		/// <summary>
 		/// Stała odpowiadająca odpowiedniej ilości znaków w numerze PESEL.</summary>
-		public const int PESEL_VALID_LENGTH = 11;
+		private const int PESEL_VALID_LENGTH = 11;
 		/// <summary>
 		/// Stała odpowiadająca odpowiedniej masce wyrażenia regularnego dla numeru PESEL.</summary>
-		public const string PESEL_REGEX = @"^\d{11}$";
+		private const string PESEL_REGEX = @"^\d{11}$";
 
 		#endregion
 

@@ -14,7 +14,7 @@ namespace Timetable.Models
 		/// <param name="firstName">Imię osoby.</param>
 		/// <param name="lastName">Nazwisko osoby.</param>
 		/// <param name="classId">Klasa, do której należy.</param>
-		public Student(string pesel, string firstName, string lastName, long? classId = null)
+		public Student(Code.Pesel pesel, string firstName, string lastName, long? classId = null)
 			: base(pesel, firstName, lastName)
 		{
 			this.ClassId = classId;

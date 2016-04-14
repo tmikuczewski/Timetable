@@ -17,17 +17,19 @@ namespace Timetable.Controls
 		{
 			InitializeComponent();
 
-			this.textBlockPesel.Text = person.PESEL;
+			this.textBlockPesel.Text = person.Pesel.StringRepresentation;
 			this.textBlockFirstName.Text = person.FirstName;
 			this.textBlockLastName.Text = person.LastName;
 
 			if (person is Teacher)
 			{
-				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().Where(c => c.TeacherPesel == person.Pesel).Count;
+				//TODO: 'CodeName' klasy, której jest wychowawcą.
+				this.textBlockInfo.Text = string.Empty;
 			}
 			else if (person is Student)
 			{
-				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().FirstOrDefault(c => c.Id == (person as Student).ClassId).CodeName;
+				//TODO: 'ClassId' klasy, do której uczęszcza student.
+				this.textBlockInfo.Text = string.Empty;
 			}
 		}
 
