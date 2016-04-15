@@ -68,9 +68,9 @@ namespace Timetable
 				default:
 					{
 						var stackPanel = new System.Windows.Controls.StackPanel();
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add, comboBoxContent));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change, comboBoxContent));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove, comboBoxContent));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove));
 						this.expander.Content = stackPanel;
 					}
 					break;
@@ -144,7 +144,7 @@ namespace Timetable
 
 		#region Fields
 
-		public ComboBoxContent comboBoxContent = ComboBoxContent.Entities;
+		private ComboBoxContent comboBoxContent = ComboBoxContent.Entities;
 
 		#endregion
 	}

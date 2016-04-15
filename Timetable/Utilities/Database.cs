@@ -2,9 +2,7 @@
 using System.Linq;
 
 using Timetable.Models;
-using Timetable.Models.DataSet;
-using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
-
+using Timetable.Models.TimetableDataSetTableAdapters;
 
 namespace Timetable.Utilities
 {
