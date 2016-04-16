@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Timetable.Models {
+namespace Timetable.Models.DataSet {
     
     
     /// <summary>
@@ -2599,7 +2599,6 @@ namespace Timetable.Models {
                 this.columnFirstName.MaxLength = 4095;
                 this.columnLastName.AllowDBNull = false;
                 this.columnLastName.MaxLength = 4095;
-                this.columnClassId.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3826,7 +3825,12 @@ namespace Timetable.Models {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public int ClassId {
                 get {
-                    return ((int)(this[this.tableStudents.ClassIdColumn]));
+                    if (this.IsClassIdNull()) {
+                        return -1;
+                    }
+                    else {
+                        return ((int)(this[this.tableStudents.ClassIdColumn]));
+                    }
                 }
                 set {
                     this[this.tableStudents.ClassIdColumn] = value;
@@ -3842,6 +3846,18 @@ namespace Timetable.Models {
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["Classes_Students"]);
                 }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsClassIdNull() {
+                return this.IsNull(this.tableStudents.ClassIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetClassIdNull() {
+                this[this.tableStudents.ClassIdColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -4281,7 +4297,7 @@ namespace Timetable.Models {
         }
     }
 }
-namespace Timetable.Models.TimetableDataSetTableAdapters {
+namespace Timetable.Models.DataSet.TimetableDataSetTableAdapters {
     
     
     /// <summary>
@@ -6404,7 +6420,7 @@ namespace Timetable.Models.TimetableDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string pesel, string first_name, string last_name, int _class) {
+        public virtual int Insert(string pesel, string first_name, string last_name, global::System.Nullable<int> _class) {
             if ((pesel == null)) {
                 throw new global::System.ArgumentNullException("pesel");
             }
@@ -6423,7 +6439,12 @@ namespace Timetable.Models.TimetableDataSetTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[2].Value = ((string)(last_name));
             }
-            this.Adapter.InsertCommand.Parameters[3].Value = ((int)(_class));
+            if ((_class.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[3].Value = ((int)(_class.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -6444,7 +6465,7 @@ namespace Timetable.Models.TimetableDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string pesel, string first_name, string last_name, int _class, string Original_pesel, int Original_class) {
+        public virtual int Update(string pesel, string first_name, string last_name, global::System.Nullable<int> _class, string Original_pesel, global::System.Nullable<int> Original_class) {
             if ((pesel == null)) {
                 throw new global::System.ArgumentNullException("pesel");
             }
@@ -6463,14 +6484,24 @@ namespace Timetable.Models.TimetableDataSetTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(last_name));
             }
-            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(_class));
+            if ((_class.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(_class.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+            }
             if ((Original_pesel == null)) {
                 throw new global::System.ArgumentNullException("Original_pesel");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_pesel));
             }
-            this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(Original_class));
+            if ((Original_class.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(Original_class.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {

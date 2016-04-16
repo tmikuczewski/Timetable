@@ -27,6 +27,14 @@ namespace Timetable
 
 		#region Public methods
 
+		/// <summary>
+		/// Metoda odświeżająca listę uczniów.
+		/// </summary>
+		public void RefreshStudents()
+		{
+			this.FillScrollViewer(ComboBoxContent.Students);
+		}
+
 		#endregion
 
 		#region Properties
@@ -73,9 +81,9 @@ namespace Timetable
 				default:
 					{
 						var stackPanel = new System.Windows.Controls.StackPanel();
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add, this));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change, this));
+						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove, this));
 						this.expander.Content = stackPanel;
 					}
 					break;

@@ -100,8 +100,8 @@
 			string tempPesel = pesel.Trim();
 
 			if ((tempPesel.Length == PESEL_VALID_LENGTH)
-				|| System.Text.RegularExpressions.Regex.Match(pesel, PESEL_REGEX).Success
-				|| IsCheckDigitValid(tempPesel))
+				&& System.Text.RegularExpressions.Regex.Match(pesel, PESEL_REGEX).Success
+				&& IsCheckDigitValid(tempPesel))
 			{
 				return true;
 			}

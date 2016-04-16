@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-
 using Timetable.Models;
-using Timetable.Models.TimetableDataSetTableAdapters;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable.Utilities
 {
@@ -87,6 +89,22 @@ namespace Timetable.Utilities
 				yield return new Class(row.Id, row.Year, row.CodeName, new Code.Pesel(row.TutorPesel));
 			}
 			yield break;
+		}
+
+		/// <summary>
+		/// Dodanie nowego ucznia do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddStudent(string pesel, string firstName, string lastName)
+		{
+			TimetableDataSet.StudentsRow newStudentRow = StudentsTable.NewStudentsRow();
+			newStudentRow.Pesel = pesel;
+			newStudentRow.FirstName = firstName;
+			newStudentRow.LastName = lastName;
+			newStudentRow.SetClassIdNull();
+
+			StudentsTable.Rows.Add(newStudentRow);
+
+			return StudentsTableAdapter.Update(StudentsTable);
 		}
 
 		#endregion
