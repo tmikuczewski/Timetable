@@ -41,6 +41,24 @@ namespace Timetable.Controls
 
 		#region Public methods
 
+		/// <summary>
+		/// Sprawdza, czy wybrana osoba jest zaznaczona.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsChecked()
+		{
+			return this.checkBox.IsChecked ?? false;
+		}
+
+		/// <summary>
+		/// Zwraca numer PESEL osoby w kontrolce.
+		/// </summary>
+		/// <returns></returns>
+		public string GetPesel()
+		{
+			return this.textBlockPesel.Text;
+		}
+
 		#endregion
 
 		#region Properties

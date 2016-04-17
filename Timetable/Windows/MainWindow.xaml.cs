@@ -2,6 +2,7 @@
 using Timetable.Models;
 using Timetable.Code;
 using System;
+using System.Collections.Generic;
 
 namespace Timetable
 {
@@ -33,6 +34,26 @@ namespace Timetable
 		public void RefreshStudents()
 		{
 			this.FillScrollViewer(ComboBoxContent.Students);
+		}
+
+
+		/// <summary>
+		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
+		/// </summary>
+		/// <returns></returns>
+		public ICollection<string> MarkedPeople()
+		{
+			var markedPesels = new List<string>();
+
+			foreach (PersonControl person in this.scrollViewersGrid.Children)
+			{
+				if (person.IsChecked())
+				{
+					markedPesels.Add(person.GetPesel());
+				}
+			}
+
+			return markedPesels;
 		}
 
 		#endregion

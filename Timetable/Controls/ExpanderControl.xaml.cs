@@ -1,4 +1,5 @@
-﻿using Timetable.Windows;
+﻿using Timetable.Code;
+using Timetable.Windows;
 
 namespace Timetable.Controls
 {
@@ -29,6 +30,7 @@ namespace Timetable.Controls
 					break;
 				case Code.ExpanderControlType.Change:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
+					this.button.Click += ChangeButton_Click;
 					break;
 				case Code.ExpanderControlType.Remove:
 				default:
@@ -59,7 +61,13 @@ namespace Timetable.Controls
 
 		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ManageWindow manageWindow = new ManageWindow(callingWindow);
+			ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Add);
+			manageWindow.Show();
+		}
+
+		private void ChangeButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Change);
 			manageWindow.Show();
 		}
 
