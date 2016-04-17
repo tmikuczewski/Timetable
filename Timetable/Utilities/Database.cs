@@ -146,8 +146,25 @@ namespace Timetable.Utilities
 			existingStudentRow.LastName = lastName;
 			StudentsTable.AcceptChanges();
 
-			int rows = StudentsTableAdapter.Update(StudentsTable);
-			return rows;
+			return StudentsTableAdapter.Update(StudentsTable);
+		}
+
+		/// <summary>
+		/// Usunięcie ucznia z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteStudent(string pesel)
+		{
+			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+
+			if (existingStudentRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingStudentRow.Delete();
+			StudentsTable.AcceptChanges();
+
+			return StudentsTableAdapter.Update(StudentsTable);
 		}
 
 		#endregion

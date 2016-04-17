@@ -41,7 +41,7 @@ namespace Timetable
 		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
 		/// </summary>
 		/// <returns></returns>
-		public ICollection<string> MarkedPeople()
+		public ICollection<string> GetPeselNumbersOfMarkedPeople()
 		{
 			var markedPesels = new List<string>();
 

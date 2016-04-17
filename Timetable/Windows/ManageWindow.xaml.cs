@@ -44,7 +44,7 @@ namespace Timetable.Windows
 		{
 			if (this.controlType == ExpanderControlType.Change)
 			{
-				this.currentPesel = this.callingWindow.MarkedPeople().FirstOrDefault();
+				this.currentPesel = this.callingWindow.GetPeselNumbersOfMarkedPeople().FirstOrDefault();
 
 				try
 				{

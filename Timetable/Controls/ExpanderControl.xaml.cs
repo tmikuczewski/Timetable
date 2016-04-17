@@ -1,4 +1,6 @@
-﻿using Timetable.Code;
+﻿using System;
+using System.Windows;
+using Timetable.Code;
 using Timetable.Windows;
 
 namespace Timetable.Controls
@@ -35,6 +37,7 @@ namespace Timetable.Controls
 				case Code.ExpanderControlType.Remove:
 				default:
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
+					this.button.Click += RemoveButton_Click;
 					break;
 			}
 		}
@@ -69,6 +72,26 @@ namespace Timetable.Controls
 		{
 			ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Change);
 			manageWindow.Show();
+		}
+
+		private void RemoveButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
+			{
+				try
+				{
+					Utilities.Database.DeleteStudent(pesel);
+					this.callingWindow.RefreshStudents();
+				}
+				catch (Utilities.EntityDoesNotExistException)
+				{
+					MessageBox.Show("Student with given PESEL number does not existed.", "Error");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.ToString(), "Error");
+				}
+			}
 		}
 
 		#endregion
