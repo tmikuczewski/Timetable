@@ -167,15 +167,19 @@ namespace Timetable
 			switch (this.tabControl.SelectedIndex)
 			{
 				case 0:
-					this.gridTabManagementFilter.Visibility = System.Windows.Visibility.Visible;
+					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
+					this.buttonExport.Visibility = System.Windows.Visibility.Hidden;
 					this.expander.Visibility = System.Windows.Visibility.Visible;
+					break;
+				case 3:
+					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
+					this.expander.Visibility = System.Windows.Visibility.Hidden;
+					this.buttonExport.Visibility = System.Windows.Visibility.Visible;
 					break;
 				case 1:
 				case 2:
-				case 3:
 				default:
-					this.gridTabManagementFilter.Visibility = System.Windows.Visibility.Hidden;
-					this.expander.Visibility = System.Windows.Visibility.Hidden;
+					this.gridOperations.Visibility = System.Windows.Visibility.Hidden;
 					break;
 			}
 		}

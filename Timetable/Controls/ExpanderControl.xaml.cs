@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+
 using Timetable.Code;
 using Timetable.Windows;
 
@@ -17,7 +18,7 @@ namespace Timetable.Controls
 		/// <param name="text">Tekst przycisku <c>button</c>.</param>
 		/// <param name="ect"></param>
 		/// <param name="window"></param>
-		public ExpanderControl(string text, Code.ExpanderControlType ect, MainWindow window)
+		public ExpanderControl(string text, ExpanderControlType ect, MainWindow window)
 		{
 			InitializeComponent();
 
@@ -26,17 +27,20 @@ namespace Timetable.Controls
 
 			switch (ect)
 			{
-				case Code.ExpanderControlType.Add:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
+				case ExpanderControlType.Add:
+					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
+					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.add);
 					this.button.Click += AddButton_Click;
 					break;
-				case Code.ExpanderControlType.Change:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
+				case ExpanderControlType.Change:
+					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
+					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.manage);
 					this.button.Click += ChangeButton_Click;
 					break;
-				case Code.ExpanderControlType.Remove:
+				case ExpanderControlType.Remove:
 				default:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
+					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
+					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.delete);
 					this.button.Click += RemoveButton_Click;
 					break;
 			}
