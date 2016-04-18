@@ -84,6 +84,25 @@ namespace Timetable
 			return markedIds;
 		}
 
+		/// <summary>
+		/// Metoda zwracająca listę numerów ID zaznaczonych przedmiotów.
+		/// </summary>
+		/// <returns></returns>
+		public ICollection<string> GetIdNumbersOfMarkedSubjects()
+		{
+			var markedIds = new List<string>();
+
+			foreach (SubjectControl subject in this.scrollViewersGrid.Children)
+			{
+				if (subject.IsChecked())
+				{
+					markedIds.Add(subject.GetId());
+				}
+			}
+
+			return markedIds;
+		}
+
 		#endregion
 
 		#region Properties
@@ -112,6 +131,12 @@ namespace Timetable
 					foreach (Class oClass in Utilities.Database.GetClasses())
 					{
 						this.AddClassToGrid(oClass);
+					}
+					break;
+				case ComboBoxContent.Subjects:
+					foreach (Subject subject in Utilities.Database.GetSubjects())
+					{
+						this.AddSubjectToGrid(subject);
 					}
 					break;
 				default:
@@ -147,7 +172,7 @@ namespace Timetable
 					this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
 					this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
 					this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
-					// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
+					this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
 					this.comboBox.SelectedIndex = 0;
 					break;
 			}
@@ -169,6 +194,15 @@ namespace Timetable
 			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
 			System.Windows.Controls.Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(classControl);
+		}
+
+		private void AddSubjectToGrid(Subject subject)
+		{
+			var subjectControl = new SubjectControl(subject);
+
+			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
+			System.Windows.Controls.Grid.SetRow(subjectControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.Children.Add(subjectControl);
 		}
 
 		#endregion

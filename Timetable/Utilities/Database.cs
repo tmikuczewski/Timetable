@@ -94,70 +94,15 @@ namespace Timetable.Utilities
 		}
 
 		/// <summary>
-		/// Pobranie danych klasy z bazy danych.</summary>
-		/// <returns>Obiekt typu <c>Class</c>.</returns>
-		public static Class GetClassById(int id)
+		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
+		/// <returns>Lista wszystkich klas (<c>IEnumerable&lt;Models.Subject&gt;</c>)</returns>
+		public static IEnumerable<Subject> GetSubjects()
 		{
-			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
-
-			if (existingClassRow == null)
+			foreach (var row in SubjectsTable)
 			{
-				throw new EntityDoesNotExistException();
+				yield return new Subject(row.Id, row.Name);
 			}
-
-			return new Class(existingClassRow.Id, existingClassRow.Year, existingClassRow.CodeName, null);
-		}
-
-		/// <summary>
-		/// Dodanie nowej klasy do bazy danych.</summary>
-		/// <returns>Ilość zmienionych wierszy.</returns>
-		public static int AddClass(int year, string codeName)
-		{
-			TimetableDataSet.ClassesRow newClassRow = ClassesTable.NewClassesRow();
-			newClassRow.Year = year;
-			newClassRow.CodeName = codeName;
-			newClassRow.SetTutorPeselNull();
-
-			ClassesTable.Rows.Add(newClassRow);
-
-			return ClassesTableAdapter.Update(ClassesTable);
-		}
-
-		/// <summary>
-		/// Edycja danych klasy w bazie danych.</summary>
-		/// <returns>Ilość zmienionych wierszy.</returns>
-		public static int EditClass(int id, int year, string codeName)
-		{
-			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
-
-			if (existingClassRow == null)
-			{
-				throw new EntityDoesNotExistException();
-			}
-
-			existingClassRow.Year = year;
-			existingClassRow.CodeName = codeName;
-			ClassesTable.AcceptChanges();
-
-			return ClassesTableAdapter.Update(ClassesTable);
-		}
-
-		/// <summary>
-		/// Usunięcie klasy z bazy danych.</summary>
-		/// <returns>Ilość zmienionych wierszy.</returns>
-		public static int DeleteClass(int id)
-		{
-			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
-
-			if (existingClassRow == null)
-			{
-				throw new EntityDoesNotExistException();
-			}
-
-			existingClassRow.Delete();
-			ClassesTable.AcceptChanges();
-
-			return ClassesTableAdapter.Update(ClassesTable);
+			yield break;
 		}
 
 		/// <summary>
@@ -307,6 +252,137 @@ namespace Timetable.Utilities
 			TeachersTable.AcceptChanges();
 
 			return TeachersTableAdapter.Update(TeachersTable);
+		}
+
+		/// <summary>
+		/// Pobranie danych klasy z bazy danych.</summary>
+		/// <returns>Obiekt typu <c>Class</c>.</returns>
+		public static Class GetClassById(int id)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return new Class(existingClassRow.Id, existingClassRow.Year, existingClassRow.CodeName, null);
+		}
+
+		/// <summary>
+		/// Dodanie nowej klasy do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddClass(int year, string codeName)
+		{
+			TimetableDataSet.ClassesRow newClassRow = ClassesTable.NewClassesRow();
+			newClassRow.Year = year;
+			newClassRow.CodeName = codeName;
+			newClassRow.SetTutorPeselNull();
+
+			ClassesTable.Rows.Add(newClassRow);
+
+			return ClassesTableAdapter.Update(ClassesTable);
+		}
+
+		/// <summary>
+		/// Edycja danych klasy w bazie danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int EditClass(int id, int year, string codeName)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingClassRow.Year = year;
+			existingClassRow.CodeName = codeName;
+			ClassesTable.AcceptChanges();
+
+			return ClassesTableAdapter.Update(ClassesTable);
+		}
+
+		/// <summary>
+		/// Usunięcie klasy z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteClass(int id)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingClassRow.Delete();
+			ClassesTable.AcceptChanges();
+
+			return ClassesTableAdapter.Update(ClassesTable);
+		}
+
+		/// <summary>
+		/// Pobranie danych przedmiotu z bazy danych.</summary>
+		/// <returns>Obiekt typu <c>Subject</c>.</returns>
+		public static Subject GetSubjectById(int id)
+		{
+			TimetableDataSet.SubjectsRow existingSubjectRow = SubjectsTable.FindById(id);
+
+			if (existingSubjectRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return new Subject(existingSubjectRow.Id, existingSubjectRow.Name);
+		}
+
+		/// <summary>
+		/// Dodanie nowego przedmiotu do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddSubject(string name)
+		{
+			TimetableDataSet.SubjectsRow newSubjectRow = SubjectsTable.NewSubjectsRow();
+			newSubjectRow.Name = name;
+
+			SubjectsTable.Rows.Add(newSubjectRow);
+
+			return SubjectsTableAdapter.Update(SubjectsTable);
+		}
+
+		/// <summary>
+		/// Edycja danych przedmiotu w bazie danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int EditSubject(int id, string name)
+		{
+			TimetableDataSet.SubjectsRow existingSubjectRow = SubjectsTable.FindById(id);
+
+			if (existingSubjectRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingSubjectRow.Name = name;
+			SubjectsTable.AcceptChanges();
+
+			return SubjectsTableAdapter.Update(SubjectsTable);
+		}
+
+		/// <summary>
+		/// Usunięcie przedmiotu z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteSubject(int id)
+		{
+			TimetableDataSet.SubjectsRow existingSubjectRow = SubjectsTable.FindById(id);
+
+			if (existingSubjectRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingSubjectRow.Delete();
+			SubjectsTable.AcceptChanges();
+
+			return SubjectsTableAdapter.Update(SubjectsTable);
 		}
 
 		#endregion
