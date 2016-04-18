@@ -235,6 +235,12 @@
   <ItemGroup>
     <None Include="Resources\pdf.png" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Models\DbSchema\2016_04_18_Migration_NullableColumns.sql" />
+    <Content Include="Models\DbSchema\timetable-schema.sql" />
+    <Content Include="Models\DbSchema\timetable-seed.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
