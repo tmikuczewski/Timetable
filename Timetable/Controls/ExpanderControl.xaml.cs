@@ -38,9 +38,16 @@ namespace Timetable.Controls
 					this.button.Click += ChangeButton_Click;
 					break;
 				case ExpanderControlType.Remove:
-				default:
 					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.delete);
+					this.button.Click += RemoveButton_Click;
+					break;
+				case ExpanderControlType.XLSX:
+					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.excel);
+					this.button.Click += RemoveButton_Click;
+					break;
+				case ExpanderControlType.PDF:
+					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pdf);
 					this.button.Click += RemoveButton_Click;
 					break;
 			}

@@ -21,7 +21,7 @@
 			<TabItem x:Name="tabItemMapping" Header="Mapping" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="19,0,-19,0" FontSize="14.667">
 				<Grid/>
 			</TabItem>
-			<TabItem x:Name="tabItemPlanning" Header="Planning" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="18,0,-18,0" FontSize="14.667">
+			<TabItem x:Name="tabItemPlanning" Header="Planning" HorizontalAlignment="Left" Margin="18,0,-18,0" FontSize="14.667">
 				<Grid Margin="0">
 					<Grid.RowDefinitions>
 						<RowDefinition/>
@@ -41,13 +41,12 @@
 							</TransformGroup>
 						</Border.RenderTransform>
 					</Border>
-					<Grid HorizontalAlignment="Right" Height="37" Margin="0,8,10,0" VerticalAlignment="Top" Width="486" Grid.RowSpan="2">
+					<Grid HorizontalAlignment="Right" Height="37" Margin="0,6,10,0" VerticalAlignment="Top" Width="366">
 						<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,8,0,9" Width="111">
 							<TextBlock TextWrapping="Wrap" Text="Display:" VerticalAlignment="Center" TextAlignment="Right"/>
 						</Border>
-						<ComboBox x:Name="comboBox1" Margin="366,4,0,5" Height="28" Width="120" HorizontalAlignment="Left"/>
-						<ComboBox x:Name="comboBox2" Margin="241,4,0,5" Width="120" Height="28" HorizontalAlignment="Left"/>
-						<ComboBox x:Name="comboBox3" Width="120" Height="28" HorizontalAlignment="Left" Margin="116,4,0,5"/>
+						<ComboBox x:Name="comboBoxPlanning1" Width="120" Height="28" HorizontalAlignment="Left" Margin="116,4,0,5" SelectionChanged="comboBoxPlanning1_SelectionChanged"/>
+						<ComboBox x:Name="comboBoxPlanning2" Margin="241,4,0,5" Width="120" Height="28" HorizontalAlignment="Left" SelectionChanged="comboBoxPlanning2_SelectionChanged"/>
 					</Grid>
 					<Grid x:Name="gridPlanning" Margin="10" Grid.Row="1">
 						<Grid.RowDefinitions>
@@ -112,11 +111,70 @@
 				</Grid>
 			</TabItem>
 			<TabItem x:Name="tabItemSummary" Header="Summary" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="17,0,-17,0" FontSize="14.667">
-				<Grid/>
+				<Grid x:Name="gridSummary">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="2*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="3*"/>
+						<ColumnDefinition Width="3*"/>
+					</Grid.ColumnDefinitions>
+					<Border BorderBrush="{x:Null}" Grid.Row="1">
+						<TextBlock TextWrapping="Wrap" Text="0" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="2">
+						<TextBlock TextWrapping="Wrap" Text="1" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="3">
+						<TextBlock TextWrapping="Wrap" Text="2" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="4">
+						<TextBlock TextWrapping="Wrap" Text="3" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="5">
+						<TextBlock TextWrapping="Wrap" Text="4" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="6">
+						<TextBlock TextWrapping="Wrap" Text="5" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="7">
+						<TextBlock TextWrapping="Wrap" Text="6" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Row="8">
+						<TextBlock TextWrapping="Wrap" Text="7" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Column="1">
+						<TextBlock TextWrapping="Wrap" Text="MO" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Column="2">
+						<TextBlock TextWrapping="Wrap" Text="TU" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Column="3">
+						<TextBlock TextWrapping="Wrap" Text="WE" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Column="4">
+						<TextBlock TextWrapping="Wrap" Text="TH" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+					<Border BorderBrush="{x:Null}" Grid.Column="5">
+						<TextBlock TextWrapping="Wrap" Text="FR" VerticalAlignment="Center" TextAlignment="Center"/>
+					</Border>
+				</Grid>
 			</TabItem>
 		</TabControl>
-		<Grid x:Name="gridOperations" HorizontalAlignment="Right" Height="549" VerticalAlignment="Top" Width="302" Margin="0,10,30,0">
-			<Grid Height="24" VerticalAlignment="Top" Margin="0,0,-103,0" HorizontalAlignment="Left" Width="203">
+		<Grid x:Name="gridOperations" HorizontalAlignment="Right" Height="300" VerticalAlignment="Top" Width="302" Margin="0,10,30,0">
+			<Grid x:Name="gridOperationsComboBox" Height="24" VerticalAlignment="Top" Margin="0,0,-103,0" HorizontalAlignment="Left" Width="203">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="10*"/>
 					<ColumnDefinition Width="11*"/>
@@ -127,8 +185,7 @@
 
 				<ComboBox x:Name="comboBox" FontSize="14.667" Grid.Column="1" SelectionChanged="comboBox_SelectionChanged"/>
 			</Grid>
-			<Expander x:Name="expander" Header="Operation" Margin="208,0,-1,0" VerticalAlignment="Top" Background="Transparent" FontSize="14.667" HorizontalAlignment="Left" Width="95" d:IsHidden="True" d:IsLocked="True"/>
-			<Button x:Name="buttonExport" Content="Export" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="217,0,0,0" Background="{x:Null}" Height="24"/>
+			<Expander x:Name="expander" Header="Operation" Margin="208,0,-1,0" VerticalAlignment="Top" Background="Transparent" FontSize="14.667" HorizontalAlignment="Left" Width="95"/>
 		</Grid>
 
 	</Grid>

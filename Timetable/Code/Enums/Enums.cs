@@ -12,7 +12,13 @@
 		Change,
 		/// <summary>
 		/// Rodzaj 'usuń' kontrolki <c>ExpanderControl</c>.</summary>
-		Remove
+		Remove,
+		/// <summary>
+		/// Rodzaj 'XLSX' kontrolki <c>ExpanderControl</c>.</summary>
+		XLSX,
+		/// <summary>
+		/// Rodzaj 'PDF' kontrolki <c>ExpanderControl</c>.</summary>
+		PDF
 	}
 
 	/// <summary>
@@ -52,6 +58,18 @@
 		/// <summary>
 		/// Lista przedmiotów.</summary>
 		Subjects
+	}
+
+	/// <summary>
+	/// Zawartość kontrolki <c>Expander</c>.</summary>
+	public enum ExpanderContent
+	{
+		/// <summary>
+		/// Zawartość dla zakładki 'Zarządzanie'.</summary>
+		Management,
+		/// <summary>
+		/// Zawartość dla zakładki 'Podsumowanie'.</summary>
+		Summary
 	}
 
 	/// <summary>

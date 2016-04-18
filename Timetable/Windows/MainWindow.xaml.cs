@@ -1,8 +1,9 @@
-﻿using Timetable.Controls;
+﻿using System.Linq;
+using System.Collections.Generic;
+
+using Timetable.Controls;
 using Timetable.Models;
 using Timetable.Code;
-using System;
-using System.Collections.Generic;
 
 namespace Timetable
 {
@@ -123,34 +124,38 @@ namespace Timetable
 			}
 		}
 
-		private void FillExpander(ComboBoxContent content = ComboBoxContent.Entities)
+		private void FillExpander(ExpanderContent content)
 		{
+			var stackPanel = new System.Windows.Controls.StackPanel();
 			switch (content)
 			{
-				default:
-					{
-						var stackPanel = new System.Windows.Controls.StackPanel();
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add, this));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change, this));
-						stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove, this));
-						this.expander.Content = stackPanel;
-					}
+				case ExpanderContent.Management:
+					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add, this));
+					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change, this));
+					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove, this));
+					this.expander.Content = stackPanel;
+					this.expander.Header = "Operation";
+					break;
+				case ExpanderContent.Summary:
+					stackPanel.Children.Add(new ExpanderControl("Excel", ExpanderControlType.XLSX, this));
+					stackPanel.Children.Add(new ExpanderControl("PDF", ExpanderControlType.PDF, this));
+					this.expander.Content = stackPanel;
+					this.expander.Header = "Export";
 					break;
 			}
 		}
 
-		private void FillComboBox(ComboBoxContent content = ComboBoxContent.Entities)
+		private void FillComboBoxes()
 		{
-			switch (content)
-			{
-				default:
-					this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
-					this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
-					this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
-					// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
-					this.comboBox.SelectedIndex = 0;
-					break;
-			}
+			this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
+			this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
+			this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
+			// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
+			this.comboBox.SelectedIndex = 0;
+
+			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Teachers.ToString());
+			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Classes.ToString());
+			this.comboBoxPlanning1.SelectedIndex = 0;
 		}
 
 		private void AddPersonToGrid(Models.Base.Person person)
@@ -177,9 +182,9 @@ namespace Timetable
 
 		private void mainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			this.FillComboBox();
+			this.FillComboBoxes();
 
-			this.FillExpander();
+			this.FillExpander(ExpanderContent.Management);
 		}
 
 		private void tabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -188,18 +193,19 @@ namespace Timetable
 			{
 				case 0:
 					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
-					this.buttonExport.Visibility = System.Windows.Visibility.Hidden;
+					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Visible;
 					this.expander.Visibility = System.Windows.Visibility.Visible;
-					break;
-				case 3:
-					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
-					this.expander.Visibility = System.Windows.Visibility.Hidden;
-					this.buttonExport.Visibility = System.Windows.Visibility.Visible;
+					this.FillExpander(ExpanderContent.Management);
 					break;
 				case 1:
 				case 2:
-				default:
 					this.gridOperations.Visibility = System.Windows.Visibility.Hidden;
+					break;
+				case 3:
+					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
+					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Hidden;
+					this.expander.Visibility = System.Windows.Visibility.Visible;
+					this.FillExpander(ExpanderContent.Summary);
 					break;
 			}
 		}
@@ -207,7 +213,7 @@ namespace Timetable
 		private void comboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
 			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 1);
-			this.FillExpander(ComboBoxContent.Students);
+			this.FillExpander(ExpanderContent.Management);
 			
 			switch (this.comboBoxContent)
 			{
@@ -225,6 +231,34 @@ namespace Timetable
 					break;
 			}
 		}
+
+		#region TabPlanning
+
+		private void comboBoxPlanning1_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 2);
+			switch (comboBoxContent)
+			{
+				case ComboBoxContent.Classes:
+					this.comboBoxPlanning2.ItemsSource = Utilities.Database.GetClasses().
+						OrderBy(c => c.Year).
+						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
+					break;
+				case ComboBoxContent.Teachers:
+					this.comboBoxPlanning2.ItemsSource = Utilities.Database.GetTeachers().
+						OrderBy(t => t.Pesel.BirthDate).
+						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
+					break;
+			}
+		}
+		private void comboBoxPlanning2_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			// TODO: Wyświetlić plan danej klasy / danego nauczyciela.
+		}
+
+		#endregion
 
 		#endregion
 
