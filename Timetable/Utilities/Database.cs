@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-
+using Timetable.Code;
 using Timetable.Models;
-using Timetable.Models.TimetableDataSetTableAdapters;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable.Utilities
 {
@@ -60,7 +63,7 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in StudentsTable)
 			{
-				yield return new Student(row.Pesel, row.FirstName, row.LastName);
+				yield return new Student(new Code.Pesel(row.Pesel), row.FirstName, row.LastName);
 			}
 			yield break;
 		}
@@ -72,9 +75,96 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in TeachersTable)
 			{
-				yield return new Teacher(row.Pesel, row.FirstName, row.LastName);
+				yield return new Teacher(new Code.Pesel(row.Pesel), row.FirstName, row.LastName);
 			}
 			yield break;
+		}
+
+		/// <summary>
+		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
+		/// <returns>Lista wszystkich klas (<c>IEnumerable&lt;Models.Class&gt;</c>)</returns>
+		public static IEnumerable<Class> GetClasses()
+		{
+			foreach (var row in ClassesTable)
+			{
+				yield return new Class(row.Id, row.Year, row.CodeName, new Code.Pesel(row.TutorPesel));
+			}
+			yield break;
+		}
+
+		/// <summary>
+		/// Pobranie danych ucznia z bazy danych.</summary>
+		/// <returns>Obiekt typu <c>Student</c>.</returns>
+		public static Student GetStudentByPesel(string pesel)
+		{
+			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+
+			if (existingStudentRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return new Student(new Pesel(existingStudentRow.Pesel), existingStudentRow.FirstName, existingStudentRow.LastName);
+		}
+
+		/// <summary>
+		/// Dodanie nowego ucznia do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddStudent(string pesel, string firstName, string lastName)
+		{
+			TimetableDataSet.StudentsRow newStudentRow = StudentsTable.NewStudentsRow();
+			newStudentRow.Pesel = pesel;
+			newStudentRow.FirstName = firstName;
+			newStudentRow.LastName = lastName;
+			newStudentRow.SetClassIdNull();
+
+			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+
+			if (existingStudentRow != null)
+			{
+				throw new DuplicateEntityException();
+			}
+
+			StudentsTable.Rows.Add(newStudentRow);
+
+			return StudentsTableAdapter.Update(StudentsTable);
+		}
+
+		/// <summary>
+		/// Edycja danych ucznia w bazie danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int EditStudent(string pesel, string firstName, string lastName)
+		{
+			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+
+			if (existingStudentRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingStudentRow.FirstName = firstName;
+			existingStudentRow.LastName = lastName;
+			StudentsTable.AcceptChanges();
+
+			return StudentsTableAdapter.Update(StudentsTable);
+		}
+
+		/// <summary>
+		/// Usunięcie ucznia z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteStudent(string pesel)
+		{
+			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+
+			if (existingStudentRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingStudentRow.Delete();
+			StudentsTable.AcceptChanges();
+
+			return StudentsTableAdapter.Update(StudentsTable);
 		}
 
 		#endregion

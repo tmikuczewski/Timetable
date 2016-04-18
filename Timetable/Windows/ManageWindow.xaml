@@ -7,7 +7,7 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d"
-		Title="Management - Timetable" Height="400" Width="500" MinWidth="500" MinHeight="400">
+		Title="Management - Timetable" Height="400" Width="500" MinWidth="500" MinHeight="400" Loaded="managementWindow_Loaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
@@ -48,7 +48,7 @@
 				</Border>
 			</Grid>
 		</GroupBox>
-		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom"/>
-		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom"/>
+		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOk_Click"/>
+		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancel_Click"/>
 	</Grid>
 </Window>

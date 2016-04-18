@@ -5,8 +5,7 @@ using Timetable.Models;
 namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for PersonControl.xaml
-	/// </summary>
+	/// Interaction logic for PersonControl.xaml</summary>
 	public partial class PersonControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors
@@ -18,17 +17,19 @@ namespace Timetable.Controls
 		{
 			InitializeComponent();
 
-			this.textBlockPesel.Text = person.PESEL;
+			this.textBlockPesel.Text = person.Pesel.StringRepresentation;
 			this.textBlockFirstName.Text = person.FirstName;
 			this.textBlockLastName.Text = person.LastName;
 
 			if (person is Teacher)
 			{
-				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().Where(c => c.TeacherPesel == person.Pesel).Count;
+				//TODO: 'CodeName' klasy, której jest wychowawcą.
+				this.textBlockInfo.Text = string.Empty;
 			}
 			else if (person is Student)
 			{
-				this.textBlockInfo.Text = 0.ToString(); // Utilities.Database.GetClasses().FirstOrDefault(c => c.Id == (person as Student).ClassId).CodeName;
+				//TODO: 'ClassId' klasy, do której uczęszcza student.
+				this.textBlockInfo.Text = string.Empty;
 			}
 		}
 
@@ -39,6 +40,24 @@ namespace Timetable.Controls
 		#endregion
 
 		#region Public methods
+
+		/// <summary>
+		/// Sprawdza, czy wybrana osoba jest zaznaczona.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsChecked()
+		{
+			return this.checkBox.IsChecked ?? false;
+		}
+
+		/// <summary>
+		/// Zwraca numer PESEL osoby w kontrolce.
+		/// </summary>
+		/// <returns></returns>
+		public string GetPesel()
+		{
+			return this.textBlockPesel.Text;
+		}
 
 		#endregion
 

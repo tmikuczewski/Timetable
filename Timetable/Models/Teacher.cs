@@ -13,7 +13,7 @@ namespace Timetable.Models
 		/// <param name="pesel">Numer identyfikujący PESEL.</param>
 		/// <param name="firstName">Imię osoby.</param>
 		/// <param name="lastName">Nazwisko osoby.</param>
-		public Teacher(string pesel, string firstName, string lastName)
+		public Teacher(Code.Pesel pesel, string firstName, string lastName)
 			: base(pesel, firstName, lastName)
 		{
 
@@ -33,10 +33,10 @@ namespace Timetable.Models
 
 		/// <summary>
 		/// Kolekcja numerów lekcji, na których uczy nauczyciel.</summary>
-		public System.Collections.Generic.IEnumerable<long> Lessons { get; set; }
+		public System.Collections.Generic.ICollection<long> Lessons { get; set; }
 		/// <summary>
 		/// Kolekcja numerów sal, którymi opiekuje się nauczyciel.</summary>
-		public System.Collections.Generic.IEnumerable<long> Classrooms { get; set; }
+		public System.Collections.Generic.ICollection<long> Classrooms { get; set; }
 
 		#endregion
 
