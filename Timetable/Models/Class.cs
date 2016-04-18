@@ -1,7 +1,8 @@
 ﻿namespace Timetable.Models
 {
 	/// <summary>
-	/// Klasa reprezentująca klasę.</summary>
+	/// Klasa reprezentująca klasę.
+	/// </summary>
 	public class Class
 	{
 		#region Constructors
@@ -24,8 +25,19 @@
 
 		#region Overridden methods
 
+		/// <summary>
+		/// Przesłonięcie metody ToString().
+		/// </summary>
 		public override string ToString() => $"{this.Id} {this.Year} {this.CodeName ?? string.Empty} {this.TutorPesel}";
+
+		/// <summary>
+		/// Przesłonięcie metody GetHashCode().
+		/// </summary>
 		public override int GetHashCode() => (this.ToString().GetHashCode());
+
+		/// <summary>
+		/// Przesłonięcie metody Equals().
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			return ((obj is Class) && ((obj as Class).ToString() == this.ToString()));

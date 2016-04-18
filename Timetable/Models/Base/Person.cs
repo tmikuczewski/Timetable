@@ -1,7 +1,8 @@
 ﻿namespace Timetable.Models.Base
 {
 	/// <summary>
-	/// Abstrakcyjna klasa bazowa osoby posiadająca podstawowe informacje.</summary>
+	/// Abstrakcyjna klasa bazowa osoby posiadająca podstawowe informacje.
+	/// </summary>
 	public abstract class Person
 	{
 		#region Constructors

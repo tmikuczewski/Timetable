@@ -3,7 +3,8 @@
 namespace Timetable.Models
 {
 	/// <summary>
-	/// Klasa reprezentująca ucznia.</summary>
+	/// Klasa reprezentująca ucznia.
+	/// </summary>
 	public class Student : Person
 	{
 		#region Constructors

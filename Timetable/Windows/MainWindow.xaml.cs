@@ -175,12 +175,14 @@ namespace Timetable
 			this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
 			this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
-			// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
+			this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
 			this.comboBox.SelectedIndex = 0;
 
 			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Classes.ToString());
 			this.comboBoxPlanning1.SelectedIndex = 0;
+
+			this.comboBoxContent = ComboBoxContent.Students;
 		}
 
 		private void AddPersonToGrid(Models.Base.Person person)

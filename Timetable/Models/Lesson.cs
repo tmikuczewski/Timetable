@@ -1,5 +1,8 @@
 ﻿namespace Timetable.Models
 {
+	/// <summary>
+	/// Klasa reprezentująca lekcję.
+	/// </summary>
 	public class Lesson
 	{
 		#region Constructors
