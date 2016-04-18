@@ -29,11 +29,20 @@ namespace Timetable
 		#region Public methods
 
 		/// <summary>
-		/// Metoda odświeżająca listę uczniów.
+		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji.
 		/// </summary>
-		public void RefreshStudents()
+		/// <returns></returns>
+		public ComboBoxContent GetCurrentCoboBoxContent()
 		{
-			this.FillScrollViewer(ComboBoxContent.Students);
+			return comboBoxContent;
+		}
+
+		/// <summary>
+		/// Metoda odświeżająca listę aktualnie wyświetlanych encji.
+		/// </summary>
+		public void RefreshCurrentView()
+		{
+			this.FillScrollViewer(comboBoxContent);
 		}
 
 

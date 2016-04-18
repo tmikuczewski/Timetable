@@ -167,6 +167,80 @@ namespace Timetable.Utilities
 			return StudentsTableAdapter.Update(StudentsTable);
 		}
 
+		/// <summary>
+		/// Pobranie danych nauczyciela z bazy danych.</summary>
+		/// <returns>Obiekt typu <c>Teacher</c>.</returns>
+		public static Teacher GetTeacherByPesel(string pesel)
+		{
+			TimetableDataSet.TeachersRow existingTeacherRow = TeachersTable.FindByPesel(pesel);
+
+			if (existingTeacherRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return new Teacher(new Pesel(existingTeacherRow.Pesel), existingTeacherRow.FirstName, existingTeacherRow.LastName);
+		}
+
+		/// <summary>
+		/// Dodanie nowego nauczyciela do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddTeacher(string pesel, string firstName, string lastName)
+		{
+			TimetableDataSet.TeachersRow newTeacherRow = TeachersTable.NewTeachersRow();
+			newTeacherRow.Pesel = pesel;
+			newTeacherRow.FirstName = firstName;
+			newTeacherRow.LastName = lastName;
+
+			TimetableDataSet.TeachersRow existingTeacherRow = TeachersTable.FindByPesel(pesel);
+
+			if (existingTeacherRow != null)
+			{
+				throw new DuplicateEntityException();
+			}
+
+			TeachersTable.Rows.Add(newTeacherRow);
+
+			return TeachersTableAdapter.Update(TeachersTable);
+		}
+
+		/// <summary>
+		/// Edycja danych nauczyciela w bazie danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int EditTeacher(string pesel, string firstName, string lastName)
+		{
+			TimetableDataSet.TeachersRow existingTeacherRow = TeachersTable.FindByPesel(pesel);
+
+			if (existingTeacherRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingTeacherRow.FirstName = firstName;
+			existingTeacherRow.LastName = lastName;
+			TeachersTable.AcceptChanges();
+
+			return TeachersTableAdapter.Update(TeachersTable);
+		}
+
+		/// <summary>
+		/// Usunięcie nauczyciela z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteTeacher(string pesel)
+		{
+			TimetableDataSet.TeachersRow existingTeacherRow = TeachersTable.FindByPesel(pesel);
+
+			if (existingTeacherRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingTeacherRow.Delete();
+			TeachersTable.AcceptChanges();
+
+			return TeachersTableAdapter.Update(TeachersTable);
+		}
+
 		#endregion
 
 		#region Properties

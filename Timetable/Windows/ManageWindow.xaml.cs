@@ -18,6 +18,7 @@ namespace Timetable.Windows
 			this.InitializeComponent();
 			this.callingWindow = window;
 			this.controlType = type;
+			this.contentType = window.GetCurrentCoboBoxContent();
 		}
 
 		#endregion
@@ -48,15 +49,26 @@ namespace Timetable.Windows
 
 				try
 				{
-					Models.Student student = Utilities.Database.GetStudentByPesel(this.currentPesel);
+					if (contentType == ComboBoxContent.Students)
+					{
+						Models.Student student = Utilities.Database.GetStudentByPesel(this.currentPesel);
 
-					this.maskedTextBoxPesel.Text = student.Pesel.StringRepresentation;
-					this.textBoxFirstName.Text = student.FirstName;
-					this.textBoxLastName.Text = student.LastName;
+						this.maskedTextBoxPesel.Text = student.Pesel.StringRepresentation;
+						this.textBoxFirstName.Text = student.FirstName;
+						this.textBoxLastName.Text = student.LastName;
+					}
+					if (contentType == ComboBoxContent.Teachers)
+					{
+						Models.Teacher teacher = Utilities.Database.GetTeacherByPesel(this.currentPesel);
+
+						this.maskedTextBoxPesel.Text = teacher.Pesel.StringRepresentation;
+						this.textBoxFirstName.Text = teacher.FirstName;
+						this.textBoxLastName.Text = teacher.LastName;
+					}
 				}
 				catch (Utilities.EntityDoesNotExistException)
 				{
-					MessageBox.Show("Student with given PESEL number does not existed.", "Error");
+					MessageBox.Show("Person with given PESEL number does not existed.", "Error");
 					this.Close();
 				}
 			}
@@ -78,16 +90,31 @@ namespace Timetable.Windows
 				{
 					if (controlType == ExpanderControlType.Add)
 					{
-						Pesel pesel = new Pesel(peselString);
-						Utilities.Database.AddStudent(pesel.ToString(), firstName, lastName);
+						if (contentType == ComboBoxContent.Students)
+						{
+							Pesel pesel = new Pesel(peselString);
+							Utilities.Database.AddStudent(pesel.ToString(), firstName, lastName);
+						}
+						if (contentType == ComboBoxContent.Teachers)
+						{
+							Pesel pesel = new Pesel(peselString);
+							Utilities.Database.AddTeacher(pesel.ToString(), firstName, lastName);
+						}
 					}
 
 					if (controlType == ExpanderControlType.Change)
 					{
-						Utilities.Database.EditStudent(currentPesel, firstName, lastName);
+						if (contentType == ComboBoxContent.Students)
+						{
+							Utilities.Database.EditStudent(currentPesel, firstName, lastName);
+						}
+						if (contentType == ComboBoxContent.Teachers)
+						{
+							Utilities.Database.EditTeacher(currentPesel, firstName, lastName);
+						}
 					}
 
-					this.callingWindow.RefreshStudents();
+					this.callingWindow.RefreshCurrentView();
 					this.Close();
 				}
 			}
@@ -97,7 +124,7 @@ namespace Timetable.Windows
 			}
 			catch (Utilities.DuplicateEntityException)
 			{
-				MessageBox.Show("Student with given PESEL number has already existed.", "Error");
+				MessageBox.Show("Person with given PESEL number has already existed.", "Error");
 			}
 			catch (Exception ex)
 			{
@@ -121,6 +148,8 @@ namespace Timetable.Windows
 		private readonly MainWindow callingWindow;
 
 		private readonly ExpanderControlType controlType;
+
+		private readonly ComboBoxContent contentType;
 
 		private string currentPesel;
 

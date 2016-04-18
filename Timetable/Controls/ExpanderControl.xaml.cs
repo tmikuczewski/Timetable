@@ -80,12 +80,20 @@ namespace Timetable.Controls
 			{
 				try
 				{
-					Utilities.Database.DeleteStudent(pesel);
-					this.callingWindow.RefreshStudents();
+					if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
+					{
+						Utilities.Database.DeleteStudent(pesel);
+						this.callingWindow.RefreshCurrentView();
+					}
+					if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+					{
+						Utilities.Database.DeleteTeacher(pesel);
+						this.callingWindow.RefreshCurrentView();
+					}
 				}
 				catch (Utilities.EntityDoesNotExistException)
 				{
-					MessageBox.Show("Student with given PESEL number does not existed.", "Error");
+					MessageBox.Show("Person with given PESEL number does not existed.", "Error");
 				}
 				catch (Exception ex)
 				{
