@@ -64,42 +64,71 @@ namespace Timetable.Controls
 
 		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Add);
-			manageWindow.Show();
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
+				|| callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+			{
+				ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Add);
+				manageWindow.Show();
+			}
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
+			{
+				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Add);
+				manageClassWindow.Show();
+			}
 		}
 
 		private void ChangeButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Change);
-			manageWindow.Show();
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
+			    || callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+			{
+				ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Change);
+				manageWindow.Show();
+			}
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
+			{
+				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Change);
+				manageClassWindow.Show();
+			}
 		}
 
 		private void RemoveButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
+			try
 			{
-				try
+				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
 				{
-					if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
+					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
 						Utilities.Database.DeleteStudent(pesel);
-						this.callingWindow.RefreshCurrentView();
 					}
-					if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+				}
+				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+				{
+					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
 						Utilities.Database.DeleteTeacher(pesel);
-						this.callingWindow.RefreshCurrentView();
 					}
 				}
-				catch (Utilities.EntityDoesNotExistException)
+				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
 				{
-					MessageBox.Show("Person with given PESEL number does not existed.", "Error");
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.ToString(), "Error");
+					foreach (string id in callingWindow.GetIdNumbersOfMarkedClasses())
+					{
+						int idNumber = int.Parse(id);
+						Utilities.Database.DeleteClass(idNumber);
+					}
 				}
 			}
+			catch (Utilities.EntityDoesNotExistException)
+			{
+				MessageBox.Show("Entity with given ID number does not existed.", "Error");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString(), "Error");
+			}
+
+			this.callingWindow.RefreshCurrentView();
 		}
 
 		#endregion

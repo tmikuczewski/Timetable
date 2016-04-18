@@ -804,7 +804,6 @@ namespace Timetable.Models.DataSet {
                 this.columnId.Unique = true;
                 this.columnYear.AllowDBNull = false;
                 this.columnCodeName.MaxLength = 4095;
-                this.columnTutorPesel.AllowDBNull = false;
                 this.columnTutorPesel.MaxLength = 11;
             }
             
@@ -3333,11 +3332,11 @@ namespace Timetable.Models.DataSet {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string CodeName {
                 get {
-                    try {
-                        return ((string)(this[this.tableClasses.CodeNameColumn]));
+                    if (this.IsCodeNameNull()) {
+                        return null;
                     }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'CodeName\' in table \'Classes\' is DBNull.", e);
+                    else {
+                        return ((string)(this[this.tableClasses.CodeNameColumn]));
                     }
                 }
                 set {
@@ -3349,7 +3348,12 @@ namespace Timetable.Models.DataSet {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string TutorPesel {
                 get {
-                    return ((string)(this[this.tableClasses.TutorPeselColumn]));
+                    if (this.IsTutorPeselNull()) {
+                        return null;
+                    }
+                    else {
+                        return ((string)(this[this.tableClasses.TutorPeselColumn]));
+                    }
                 }
                 set {
                     this[this.tableClasses.TutorPeselColumn] = value;
@@ -3377,6 +3381,18 @@ namespace Timetable.Models.DataSet {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetCodeNameNull() {
                 this[this.tableClasses.CodeNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsTutorPeselNull() {
+                return this.IsNull(this.tableClasses.TutorPeselColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetTutorPeselNull() {
+                this[this.tableClasses.TutorPeselColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

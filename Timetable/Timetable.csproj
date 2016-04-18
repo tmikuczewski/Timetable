@@ -108,6 +108,9 @@
     <Compile Include="Code\Enums\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="Windows\ManageClassWindow.xaml.cs">
+      <DependentUpon>ManageClassWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ManageWindow.xaml.cs">
       <DependentUpon>ManageWindow.xaml</DependentUpon>
     </Compile>
@@ -142,6 +145,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\ManageClassWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\ManageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

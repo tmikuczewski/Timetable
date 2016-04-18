@@ -75,7 +75,7 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in TeachersTable)
 			{
-				yield return new Teacher(new Code.Pesel(row.Pesel), row.FirstName, row.LastName);
+				yield return new Teacher(new Pesel(row.Pesel), row.FirstName, row.LastName);
 			}
 			yield break;
 		}
@@ -87,9 +87,77 @@ namespace Timetable.Utilities
 		{
 			foreach (var row in ClassesTable)
 			{
-				yield return new Class(row.Id, row.Year, row.CodeName, new Code.Pesel(row.TutorPesel));
+				Pesel pesel = (row.TutorPesel == null) ? null : new Pesel(row.TutorPesel);
+				yield return new Class(row.Id, row.Year, row.CodeName, pesel);
 			}
 			yield break;
+		}
+
+		/// <summary>
+		/// Pobranie danych klasy z bazy danych.</summary>
+		/// <returns>Obiekt typu <c>Class</c>.</returns>
+		public static Class GetClassById(int id)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return new Class(existingClassRow.Id, existingClassRow.Year, existingClassRow.CodeName, null);
+		}
+
+		/// <summary>
+		/// Dodanie nowej klasy do bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int AddClass(int year, string codeName)
+		{
+			TimetableDataSet.ClassesRow newClassRow = ClassesTable.NewClassesRow();
+			newClassRow.Year = year;
+			newClassRow.CodeName = codeName;
+			newClassRow.SetTutorPeselNull();
+
+			ClassesTable.Rows.Add(newClassRow);
+
+			return ClassesTableAdapter.Update(ClassesTable);
+		}
+
+		/// <summary>
+		/// Edycja danych klasy w bazie danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int EditClass(int id, int year, string codeName)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingClassRow.Year = year;
+			existingClassRow.CodeName = codeName;
+			ClassesTable.AcceptChanges();
+
+			return ClassesTableAdapter.Update(ClassesTable);
+		}
+
+		/// <summary>
+		/// Usunięcie klasy z bazy danych.</summary>
+		/// <returns>Ilość zmienionych wierszy.</returns>
+		public static int DeleteClass(int id)
+		{
+			TimetableDataSet.ClassesRow existingClassRow = ClassesTable.FindById(id);
+
+			if (existingClassRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			existingClassRow.Delete();
+			ClassesTable.AcceptChanges();
+
+			return ClassesTableAdapter.Update(ClassesTable);
 		}
 
 		/// <summary>

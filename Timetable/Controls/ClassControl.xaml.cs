@@ -16,7 +16,7 @@
 			this.textBlockId.Text = oClass.Id.ToString();
 			this.textBlockYear.Text = oClass.Year.ToString();
 			this.textBlockCodeName.Text = oClass?.CodeName ?? string.Empty;
-			this.textBlockTutorPesel.Text = oClass.TutorPesel.StringRepresentation;
+			this.textBlockTutorPesel.Text = (oClass.TutorPesel != null) ? oClass.TutorPesel.StringRepresentation : string.Empty;
 		}
 
 		#endregion
@@ -26,6 +26,24 @@
 		#endregion
 
 		#region Public methods
+
+		/// <summary>
+		/// Sprawdza, czy wybrana klasa jest zaznaczona.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsChecked()
+		{
+			return this.checkBox.IsChecked ?? false;
+		}
+
+		/// <summary>
+		/// Zwraca numer id klasy w kontrolce.
+		/// </summary>
+		/// <returns></returns>
+		public string GetId()
+		{
+			return this.textBlockId.Text;
+		}
 
 		#endregion
 

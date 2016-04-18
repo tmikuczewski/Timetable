@@ -65,6 +65,25 @@ namespace Timetable
 			return markedPesels;
 		}
 
+		/// <summary>
+		/// Metoda zwracająca listę numerów ID zaznaczonych klas.
+		/// </summary>
+		/// <returns></returns>
+		public ICollection<string> GetIdNumbersOfMarkedClasses()
+		{
+			var markedIds = new List<string>();
+
+			foreach (ClassControl oClass in this.scrollViewersGrid.Children)
+			{
+				if (oClass.IsChecked())
+				{
+					markedIds.Add(oClass.GetId());
+				}
+			}
+
+			return markedIds;
+		}
+
 		#endregion
 
 		#region Properties
@@ -127,7 +146,7 @@ namespace Timetable
 				default:
 					this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
 					this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
-					// this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
+					this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
 					// this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
 					this.comboBox.SelectedIndex = 0;
 					break;
@@ -142,6 +161,7 @@ namespace Timetable
 			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
+
 		private void AddClassToGrid(Class oClass)
 		{
 			var classControl = new ClassControl(oClass);

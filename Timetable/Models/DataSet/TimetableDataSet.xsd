@@ -456,14 +456,14 @@
             <xs:sequence>
               <xs:element name="Id" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnId" msprop:Generator_ColumnPropNameInRow="Id" msprop:Generator_ColumnPropNameInTable="IdColumn" msprop:Generator_UserColumnName="Id" type="xs:int" />
               <xs:element name="Year" msprop:Generator_ColumnVarNameInTable="columnYear" msprop:Generator_ColumnPropNameInRow="Year" msprop:Generator_ColumnPropNameInTable="YearColumn" msprop:Generator_UserColumnName="Year" type="xs:int" />
-              <xs:element name="CodeName" msprop:Generator_ColumnVarNameInTable="columnCodeName" msprop:Generator_ColumnPropNameInRow="CodeName" msprop:Generator_ColumnPropNameInTable="CodeNameColumn" msprop:Generator_UserColumnName="CodeName" minOccurs="0">
+              <xs:element name="CodeName" msprop:nullValue="_null" msprop:Generator_ColumnPropNameInRow="CodeName" msprop:Generator_ColumnVarNameInTable="columnCodeName" msprop:Generator_ColumnPropNameInTable="CodeNameColumn" msprop:Generator_UserColumnName="CodeName" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="4095" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="TutorPesel" msprop:Generator_ColumnVarNameInTable="columnTutorPesel" msprop:Generator_ColumnPropNameInRow="TutorPesel" msprop:Generator_ColumnPropNameInTable="TutorPeselColumn" msprop:Generator_UserColumnName="TutorPesel">
+              <xs:element name="TutorPesel" msprop:nullValue="_null" msprop:Generator_ColumnPropNameInRow="TutorPesel" msprop:Generator_ColumnVarNameInTable="columnTutorPesel" msprop:Generator_ColumnPropNameInTable="TutorPeselColumn" msprop:Generator_UserColumnName="TutorPesel" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="11" />
@@ -566,7 +566,7 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="ClassId" msprop:nullValue="-1" nillable="true" msprop:Generator_ColumnVarNameInTable="columnClassId" msprop:Generator_ColumnPropNameInRow="ClassId" msprop:Generator_ColumnPropNameInTable="ClassIdColumn" msprop:Generator_UserColumnName="ClassId" type="xs:int" minOccurs="0" />
+              <xs:element name="ClassId" msprop:nullValue="-1" msprop:Generator_ColumnPropNameInRow="ClassId" msprop:Generator_ColumnVarNameInTable="columnClassId" msprop:Generator_ColumnPropNameInTable="ClassIdColumn" msprop:Generator_UserColumnName="ClassId" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
