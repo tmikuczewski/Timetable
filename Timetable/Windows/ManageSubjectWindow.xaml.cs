@@ -6,14 +6,14 @@ using Timetable.Code;
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManageClassWindow.xaml</summary>
-	public partial class ManageClassWindow : System.Windows.Window
+	/// Interaction logic for ManageSubjectWindow.xaml</summary>
+	public partial class ManageSubjectWindow : System.Windows.Window
 	{
 		#region Constructors
 
 		/// <summary>Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
 		/// </summary>
-		public ManageClassWindow(MainWindow window, ExpanderControlType type)
+		public ManageSubjectWindow(MainWindow window, ExpanderControlType type)
 		{
 			this.InitializeComponent();
 			this.callingWindow = window;
@@ -46,22 +46,21 @@ namespace Timetable.Windows
 			{
 				try
 				{
-					string id = this.callingWindow.GetIdNumbersOfMarkedClasses().FirstOrDefault();
-					this.currentClassId = int.Parse(id);
+					string id = this.callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault();
+					this.currentSubjectId = int.Parse(id);
 
-					Models.Class oClass = Utilities.Database.GetClassById(this.currentClassId);
-					this.textBoxId.Text = oClass.Id.ToString();
-					this.textBoxYear.Text = oClass.Year.ToString();
-					this.textBoxCodeName.Text = oClass.CodeName;
+					Models.Subject subject = Utilities.Database.GetSubjectById(this.currentSubjectId);
+					this.textBoxId.Text = subject.Id.ToString();
+					this.textBoxName.Text = subject.Name;
 				}
 				catch (FormatException)
 				{
-					MessageBox.Show("Class with given ID number does not existed.", "Error");
+					MessageBox.Show("Subject with given ID number does not existed.", "Error");
 					this.Close();
 				}
 				catch (Utilities.EntityDoesNotExistException)
 				{
-					MessageBox.Show("Class with given ID number does not existed.", "Error");
+					MessageBox.Show("Subject with given ID number does not existed.", "Error");
 					this.Close();
 				}
 			}
@@ -70,22 +69,19 @@ namespace Timetable.Windows
 		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			string id = this.textBoxId.Text;
-			string year = this.textBoxYear.Text.Trim();
-			string codeName = this.textBoxCodeName.Text.Trim();
+			string name = this.textBoxName.Text.Trim();
 
 			try
 			{
-				if (string.IsNullOrEmpty(year) || string.IsNullOrEmpty(codeName))
+				if (string.IsNullOrEmpty(name))
 				{
 					MessageBox.Show("All fields are required.", "Error");
 				}
 				else
 				{
-					int yearNumber = int.Parse(year);
-
 					if (controlType == ExpanderControlType.Add)
 					{
-						Utilities.Database.AddClass(yearNumber, codeName);
+						Utilities.Database.AddSubject(name);
 
 					}
 
@@ -93,7 +89,7 @@ namespace Timetable.Windows
 					{
 						int idNumber = int.Parse(id);
 
-						Utilities.Database.EditClass(idNumber, yearNumber, codeName);
+						Utilities.Database.EditSubject(idNumber, name);
 					}
 
 					this.callingWindow.RefreshCurrentView();
@@ -127,7 +123,7 @@ namespace Timetable.Windows
 
 		private readonly ExpanderControlType controlType;
 
-		private int currentClassId;
+		private int currentSubjectId;
 
 		#endregion
 	}

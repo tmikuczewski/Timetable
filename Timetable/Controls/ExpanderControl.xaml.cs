@@ -86,6 +86,11 @@ namespace Timetable.Controls
 				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Add);
 				manageClassWindow.Show();
 			}
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+			{
+				ManageSubjectWindow manageSubjectWindow = new ManageSubjectWindow(callingWindow, ExpanderControlType.Add);
+				manageSubjectWindow.Show();
+			}
 		}
 
 		private void ChangeButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -100,6 +105,11 @@ namespace Timetable.Controls
 			{
 				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Change);
 				manageClassWindow.Show();
+			}
+			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+			{
+				ManageSubjectWindow manageSubjectWindow = new ManageSubjectWindow(callingWindow, ExpanderControlType.Change);
+				manageSubjectWindow.Show();
 			}
 		}
 
@@ -127,6 +137,14 @@ namespace Timetable.Controls
 					{
 						int idNumber = int.Parse(id);
 						Utilities.Database.DeleteClass(idNumber);
+					}
+				}
+				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+				{
+					foreach (string id in callingWindow.GetIdNumbersOfMarkedSubjects())
+					{
+						int idNumber = int.Parse(id);
+						Utilities.Database.DeleteSubject(idNumber);
 					}
 				}
 			}
