@@ -397,7 +397,98 @@ namespace Timetable.Utilities
 			SubjectsTable.AcceptChanges();
 
 			return SubjectsTableAdapter.Update(SubjectsTable);
-		}
+        }
+
+        /// <summary>		
+ 		/// Pobranie danych sali z bazy danych.</summary>		
+ 		/// <returns>Obiekt typu <c>Classroom</c>.</returns>		
+ 		public static Classroom GetClassroomById(int id)
+ 		{		
+ 			TimetableDataSet.ClassroomsRow existingClassroomRow = ClassroomsTable.FindById(id);		
+ 		
+ 			if (existingClassroomRow == null)		
+ 			{		
+ 				throw new EntityDoesNotExistException();		
+ 			}		
+ 		
+ 			return new Classroom(existingClassroomRow.Id,
+ 				existingClassroomRow.Name,
+ 				new Pesel(existingClassroomRow.AdministratorPesel));		
+ 		}		
+ 		
+ 		/// <summary>		
+ 		/// Pobranie danych dnia tygodnia z bazy danych.</summary>		
+ 		/// <returns>Obiekt typu <c>Day</c>.</returns>		
+ 		public static Day GetDayById(int id)
+ 		{		
+ 			TimetableDataSet.DaysRow existingDayRow = DaysTable.FindById(id);		
+ 		
+ 			if (existingDayRow == null)		
+ 			{		
+ 				throw new EntityDoesNotExistException();		
+ 			}		
+ 		
+ 			return new Day(existingDayRow.Id, existingDayRow.Name);		
+ 		}		
+ 		
+ 		/// <summary>		
+ 		/// Pobranie danych bloku godzinowego z bazy danych.</summary>		
+ 		/// <returns>Obiekt typu <c>Hour</c>.</returns>		
+ 		public static Hour GetHourById(int id)
+ 		{		
+ 			TimetableDataSet.HoursRow existingHourRow = HoursTable.FindById(id);		
+ 		
+ 			if (existingHourRow == null)		
+ 			{		
+ 				throw new EntityDoesNotExistException();		
+ 			}		
+ 		
+ 			return new Hour(existingHourRow.Id, existingHourRow.Hour);		
+ 		}		
+ 		
+ 		/// <summary>		
+ 		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>		
+ 		/// <returns>Lista przedmiotów dla danej klasy (<c>IEnumerable&lt;Models.Lesson&gt;</c>)</returns>		
+ 		public static IEnumerable<Lesson> GetLessonsForClass(int classId)
+ 		{		
+ 			foreach (var row in LessonsTable.Where(l => l.ClassId == classId))		
+ 			{		
+ 				Lesson lesson = new Lesson();		
+ 				lesson.Teacher = GetTeacherByPesel(row.TeacherPesel);		
+ 				lesson.Subject = GetSubjectById(row.SubjectId);		
+ 				lesson.Class = GetClassById(row.ClassId);		
+ 				yield return lesson;		
+ 			}		
+ 			yield break;		
+ 		}		
+ 		
+ 		/// <summary>		
+ 		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>		
+ 		/// <returns>Lista lekcji dla danej klasy (<c>IEnumerable&lt;Models.LessonPlace&gt;</c>)</returns>		
+ 		public static IEnumerable<LessonPlace> GetTimetableForClass(int classId)
+ 		{		
+ 			var lessonsList = GetLessonsForClass(classId);		
+ 		
+ 			var lessonsIdList = new List<int>();		
+ 		
+ 			foreach (var row in lessonsList)		
+ 			{		
+ 				lessonsIdList.Add(row.Id);		
+ 			}		
+ 		
+ 			foreach (var row in LessonsPlacesTable.Where(l => lessonsIdList.Contains(l.LessonId)))		
+ 			{		
+ 				LessonPlace lp = new LessonPlace();		
+ 				lp.Lesson = lessonsList.FirstOrDefault(l => l.Id == row.LessonId);		
+ 				lp.Classroom = GetClassroomById(row.ClassroomId);		
+ 				lp.Day = GetDayById(row.DayId);		
+ 				lp.Hour = GetHourById(row.HourId);		
+ 				yield return lp;		
+ 			}		
+ 		
+ 			yield break;		
+ 		}		
+ 
 
 		#endregion
 
