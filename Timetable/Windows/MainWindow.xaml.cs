@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-
+using System.Windows;
 using Timetable.Controls;
 using Timetable.Models;
 using Timetable.Code;
@@ -295,7 +295,25 @@ namespace Timetable
 		}
 		private void comboBoxPlanning2_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
-			var timetable = Utilities.Database.GetTimetableForClass(currentClassId);
+			List<Class> classesList = Utilities.Database.GetClasses().OrderBy(c => c.Year).ToList();
+			int index = this.comboBoxPlanning2.Items.Count > 0 ? this.comboBoxPlanning2.SelectedIndex : -1;
+
+			if (index >= 0)
+			{
+				this.currentClassId = classesList.ElementAt(index).Id;
+
+				foreach (LessonPlace lp in Utilities.Database.GetTimetableForClass(currentClassId))
+				{
+					MessageBox.Show(lp.Lesson.Id + " "
+					                + lp.Lesson.Subject + " "
+					                + lp.Lesson.Class + " "
+					                + lp.Lesson.Teacher + " "
+					                + lp.Classroom.Name + " "
+					                + lp.Day.Name + " "
+					                + lp.Hour.BeginHour);
+				}
+			}
+
 			// TODO: Wyświetlić plan danej klasy / danego nauczyciela.
 		}
 
