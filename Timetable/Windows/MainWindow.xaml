@@ -108,8 +108,11 @@
 						<Border BorderBrush="{x:Null}" Grid.Column="5">
 							<TextBlock TextWrapping="Wrap" Text="FR" VerticalAlignment="Center" TextAlignment="Center"/>
 						</Border>
-						<Controls:CellControl Grid.Column="1" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="111"/>
 					</Grid>
+					<ScrollViewer x:Name="scrollViewerPlanningRemainingLessons" Grid.Column="1" Grid.Row="1" Margin="0,0,10,10" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+					<Border BorderBrush="{x:Null}" Grid.Column="1" HorizontalAlignment="Left" Height="37" Margin="10,6,0,0" VerticalAlignment="Top" Width="133">
+						<TextBlock x:Name="textBlockPlanningRemainigLessons" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Text="TextBlock"/>
+					</Border>
 				</Grid>
 			</TabItem>
 			<TabItem x:Name="tabItemSummary" Header="Summary" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="17,0,-17,0" FontSize="14.667">
@@ -188,6 +191,15 @@
 				<ComboBox x:Name="comboBox" FontSize="14.667" Grid.Column="1" SelectionChanged="comboBox_SelectionChanged"/>
 			</Grid>
 			<Expander x:Name="expander" Header="Operation" Margin="208,0,-1,0" VerticalAlignment="Top" Background="Transparent" FontSize="14.667" HorizontalAlignment="Left" Width="95"/>
+		</Grid>
+		<Grid x:Name="gridSummaryFilter" HorizontalAlignment="Right" Height="30" Margin="0,10,139,0" VerticalAlignment="Top" Width="250">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,18,0,20" Width="111"/>
+			<ComboBox x:Name="comboBoxSummary1" Height="24" Margin="5,0" SelectionChanged="comboBoxPlanning1_SelectionChanged" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboBoxSummary2" Margin="5,0" Height="24" SelectionChanged="comboBoxPlanning2_SelectionChanged" Grid.Column="1" VerticalAlignment="Top"/>
 		</Grid>
 
 	</Grid>

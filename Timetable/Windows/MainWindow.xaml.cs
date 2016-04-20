@@ -228,6 +228,7 @@ namespace Timetable
 			switch (this.tabControl.SelectedIndex)
 			{
 				case 0:
+					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Hidden;
 					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
 					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Visible;
 					this.expander.Visibility = System.Windows.Visibility.Visible;
@@ -235,9 +236,11 @@ namespace Timetable
 					break;
 				case 1:
 				case 2:
+					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Hidden;
 					this.gridOperations.Visibility = System.Windows.Visibility.Hidden;
 					break;
 				case 3:
+					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Visible;
 					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
 					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Hidden;
 					this.expander.Visibility = System.Windows.Visibility.Visible;
