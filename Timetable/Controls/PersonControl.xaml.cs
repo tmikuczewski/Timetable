@@ -1,36 +1,43 @@
 ﻿using System.Linq;
-
-using Timetable.Models;
+using Timetable.Models.DataSet;
 
 namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for PersonControl.xaml</summary>
+	/// Interaction logic for PersonControl.xaml
+	/// </summary>
 	public partial class PersonControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors
 
 		/// <summary>
 		/// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="person">Obiekt typu <c>Models.Base.Person</c> wypełniający danymi pola tekstowe kontrol.</param>
-		public PersonControl(Models.Base.Person person)
+		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public PersonControl(TimetableDataSet.StudentsRow studentRow)
 		{
 			InitializeComponent();
 
-			this.textBlockPesel.Text = person.Pesel.StringRepresentation;
-			this.textBlockFirstName.Text = person.FirstName;
-			this.textBlockLastName.Text = person.LastName;
+			this.textBlockPesel.Text = studentRow.Pesel;
+			this.textBlockFirstName.Text = studentRow.FirstName;
+			this.textBlockLastName.Text = studentRow.LastName;
+			this.textBlockInfo.Text = (studentRow.ClassesRow != null)
+				? studentRow.ClassesRow.Year + " " + studentRow.ClassesRow.CodeName
+				: string.Empty;
+		}
 
-			if (person is Teacher)
-			{
-				//TODO: 'CodeName' klasy, której jest wychowawcą.
-				this.textBlockInfo.Text = string.Empty;
-			}
-			else if (person is Student)
-			{
-				//TODO: 'ClassId' klasy, do której uczęszcza student.
-				this.textBlockInfo.Text = string.Empty;
-			}
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+		/// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public PersonControl(TimetableDataSet.TeachersRow teacherRow)
+		{
+			InitializeComponent();
+
+			this.textBlockPesel.Text = teacherRow.Pesel;
+			this.textBlockFirstName.Text = teacherRow.FirstName;
+			this.textBlockLastName.Text = teacherRow.LastName;
+			this.textBlockInfo.Text = (teacherRow.GetClassesRows().Length > 0)
+				? teacherRow.GetClassesRows().First().Year + " " + teacherRow.GetClassesRows().First().CodeName
+				: string.Empty;
 		}
 
 		#endregion

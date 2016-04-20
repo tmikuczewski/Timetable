@@ -2,18 +2,22 @@
 using System.Linq;
 using System.Windows;
 using Timetable.Code;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManageWindow.xaml</summary>
-	public partial class ManageWindow : System.Windows.Window
+	/// Interaction logic for ManagePersonWindow.xaml
+	/// </summary>
+	public partial class ManagePersonWindow : System.Windows.Window
 	{
 		#region Constructors
 
-		/// <summary>Konstruktor tworzący obiekt typu <c>ManageWindow</c>.
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
 		/// </summary>
-		public ManageWindow(MainWindow window, ExpanderControlType type)
+		public ManagePersonWindow(MainWindow window, ExpanderControlType type)
 		{
 			this.InitializeComponent();
 			this.callingWindow = window;
@@ -43,33 +47,63 @@ namespace Timetable.Windows
 
 		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			timetableDataSet = new TimetableDataSet();
+
+			studentsTableAdapter = new StudentsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+
+			studentsTableAdapter.Fill(timetableDataSet.Students);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
+			if (this.controlType == ExpanderControlType.Add)
+			{
+				if (contentType == ComboBoxContent.Students)
+				{
+					currentStudentRow = timetableDataSet.Students.NewStudentsRow();
+				}
+
+				if (contentType == ComboBoxContent.Teachers)
+				{
+					currentTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
+				}
+			}
+
 			if (this.controlType == ExpanderControlType.Change)
 			{
 				this.currentPesel = this.callingWindow.GetPeselNumbersOfMarkedPeople().FirstOrDefault();
 
-				try
+				if (contentType == ComboBoxContent.Students)
 				{
-					if (contentType == ComboBoxContent.Students)
-					{
-						Models.Student student = Utilities.Database.GetStudentByPesel(this.currentPesel);
+					currentStudentRow = timetableDataSet.Students.FindByPesel(this.currentPesel);
 
-						this.maskedTextBoxPesel.Text = student.Pesel.StringRepresentation;
-						this.textBoxFirstName.Text = student.FirstName;
-						this.textBoxLastName.Text = student.LastName;
+					if (currentStudentRow != null)
+					{
+						this.maskedTextBoxPesel.Text = currentStudentRow.Pesel;
+						this.textBoxFirstName.Text = currentStudentRow.FirstName;
+						this.textBoxLastName.Text = currentStudentRow.LastName;
 					}
-					if (contentType == ComboBoxContent.Teachers)
+					else
 					{
-						Models.Teacher teacher = Utilities.Database.GetTeacherByPesel(this.currentPesel);
-
-						this.maskedTextBoxPesel.Text = teacher.Pesel.StringRepresentation;
-						this.textBoxFirstName.Text = teacher.FirstName;
-						this.textBoxLastName.Text = teacher.LastName;
+						MessageBox.Show("Student with given PESEL number does not existed.", "Error");
+						this.Close();
 					}
 				}
-				catch (Utilities.EntityDoesNotExistException)
+
+				if (contentType == ComboBoxContent.Teachers)
 				{
-					MessageBox.Show("Person with given PESEL number does not existed.", "Error");
-					this.Close();
+					currentTeacherRow = timetableDataSet.Teachers.FindByPesel(this.currentPesel);
+
+					if (currentTeacherRow != null)
+					{
+						this.maskedTextBoxPesel.Text = currentTeacherRow.Pesel;
+						this.textBoxFirstName.Text = currentTeacherRow.FirstName;
+						this.textBoxLastName.Text = currentTeacherRow.LastName;
+					}
+					else
+					{
+						MessageBox.Show("Teacher with given PESEL number does not existed.", "Error");
+						this.Close();
+					}
 				}
 			}
 		}
@@ -88,30 +122,47 @@ namespace Timetable.Windows
 				}
 				else
 				{
-					if (controlType == ExpanderControlType.Add)
+					if (contentType == ComboBoxContent.Students)
 					{
-						if (contentType == ComboBoxContent.Students)
+						currentStudentRow.FirstName = firstName;
+						currentStudentRow.LastName = lastName;
+						//currentStudentRow.ClassId = DBNull.Value;
+
+						if (this.controlType == ExpanderControlType.Add)
 						{
 							Pesel pesel = new Pesel(peselString);
-							Utilities.Database.AddStudent(pesel.ToString(), firstName, lastName);
+							currentStudentRow.Pesel = pesel.StringRepresentation;
+
+							if (timetableDataSet.Students.FindByPesel(currentStudentRow.Pesel) != null)
+							{
+								throw new Utilities.DuplicateEntityException();
+							}
+
+							timetableDataSet.Students.Rows.Add(currentStudentRow);
 						}
-						if (contentType == ComboBoxContent.Teachers)
-						{
-							Pesel pesel = new Pesel(peselString);
-							Utilities.Database.AddTeacher(pesel.ToString(), firstName, lastName);
-						}
+
+						studentsTableAdapter.Update(timetableDataSet.Students);
 					}
 
-					if (controlType == ExpanderControlType.Change)
+					if (contentType == ComboBoxContent.Teachers)
 					{
-						if (contentType == ComboBoxContent.Students)
+						currentTeacherRow.FirstName = firstName;
+						currentTeacherRow.LastName = lastName;
+
+						if (this.controlType == ExpanderControlType.Add)
 						{
-							Utilities.Database.EditStudent(currentPesel, firstName, lastName);
+							Pesel pesel = new Pesel(peselString);
+							currentTeacherRow.Pesel = pesel.StringRepresentation;
+
+							if (timetableDataSet.Teachers.FindByPesel(currentTeacherRow.Pesel) != null)
+							{
+								throw new Utilities.DuplicateEntityException();
+							}
+
+							timetableDataSet.Teachers.Rows.Add(currentTeacherRow);
 						}
-						if (contentType == ComboBoxContent.Teachers)
-						{
-							Utilities.Database.EditTeacher(currentPesel, firstName, lastName);
-						}
+
+						teachersTableAdapter.Update(timetableDataSet.Teachers);
 					}
 
 					this.callingWindow.RefreshCurrentView();
@@ -152,6 +203,14 @@ namespace Timetable.Windows
 		private readonly ComboBoxContent contentType;
 
 		private string currentPesel;
+
+		private TimetableDataSet timetableDataSet;
+
+		private StudentsTableAdapter studentsTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
+
+		private TimetableDataSet.StudentsRow currentStudentRow;
+		private TimetableDataSet.TeachersRow currentTeacherRow;
 
 		#endregion
 	}

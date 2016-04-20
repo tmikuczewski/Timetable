@@ -8,12 +8,14 @@ using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManageClassWindow.xaml</summary>
+	/// Interaction logic for ManageClassWindow.xaml
+	/// </summary>
 	public partial class ManageClassWindow : System.Windows.Window
 	{
 		#region Constructors
 
-		/// <summary>Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
 		/// </summary>
 		public ManageClassWindow(MainWindow window, ExpanderControlType type)
 		{
@@ -47,8 +49,9 @@ namespace Timetable.Windows
 			timetableDataSet = new TimetableDataSet();
 
 			classesTableAdapter = new ClassesTableAdapter();
-			classesTableAdapter.Fill(timetableDataSet.Classes);
 			teachersTableAdapter = new TeachersTableAdapter();
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
 
 			comboBoxTutor.ItemsSource = timetableDataSet.Teachers.DefaultView;
@@ -57,7 +60,7 @@ namespace Timetable.Windows
 
 			if (this.controlType == ExpanderControlType.Add)
 			{
-				classRow = timetableDataSet.Classes.NewClassesRow();
+				currentClassRow = timetableDataSet.Classes.NewClassesRow();
 			}
 
 			if (this.controlType == ExpanderControlType.Change)
@@ -66,14 +69,14 @@ namespace Timetable.Windows
 
 				int.TryParse(currentClass, out this.currentClassId);
 
-				classRow = timetableDataSet.Classes.FindById(this.currentClassId);
+				currentClassRow = timetableDataSet.Classes.FindById(this.currentClassId);
 
-				if (classRow != null)
+				if (currentClassRow != null)
 				{
-					this.textBoxId.Text = classRow.Id.ToString();
-					this.textBoxYear.Text = classRow.Year.ToString();
-					this.textBoxCodeName.Text = classRow.CodeName;
-					this.comboBoxTutor.SelectedValue = classRow.TutorPesel;
+					this.textBoxId.Text = currentClassRow.Id.ToString();
+					this.textBoxYear.Text = currentClassRow.Year.ToString();
+					this.textBoxCodeName.Text = currentClassRow.CodeName;
+					this.comboBoxTutor.SelectedValue = currentClassRow.TutorPesel;
 				}
 				else
 				{
@@ -100,17 +103,17 @@ namespace Timetable.Windows
 				{
 					int yearNumber = int.Parse(year);
 
-					classRow.Year = yearNumber;
-					classRow.CodeName = codeName;
+					currentClassRow.Year = yearNumber;
+					currentClassRow.CodeName = codeName;
 
 					if (this.comboBoxTutor.SelectedValue != null)
 					{
-						classRow.TutorPesel = this.comboBoxTutor.SelectedValue.ToString();
+						currentClassRow.TutorPesel = this.comboBoxTutor.SelectedValue.ToString();
 					}
 
 					if (this.controlType == ExpanderControlType.Add)
 					{
-						timetableDataSet.Classes.Rows.Add(classRow);
+						timetableDataSet.Classes.Rows.Add(currentClassRow);
 					}
 
 					classesTableAdapter.Update(timetableDataSet.Classes);
@@ -121,7 +124,7 @@ namespace Timetable.Windows
 			}
 			catch (FormatException)
 			{
-				MessageBox.Show("Number is invalid.", "Error");
+				MessageBox.Show("Year is invalid.", "Error");
 			}
 			catch (Exception ex)
 			{
@@ -142,18 +145,18 @@ namespace Timetable.Windows
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-
-		private ClassesTableAdapter classesTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
-
-		private TimetableDataSet.ClassesRow classRow;
-
 		private readonly MainWindow callingWindow;
 
 		private readonly ExpanderControlType controlType;
 
 		private int currentClassId;
+
+		private TimetableDataSet timetableDataSet;
+
+		private ClassesTableAdapter classesTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
+
+		private TimetableDataSet.ClassesRow currentClassRow;
 
 		#endregion
 	}

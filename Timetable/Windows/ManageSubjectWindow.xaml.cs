@@ -2,16 +2,20 @@
 using System.Linq;
 using System.Windows;
 using Timetable.Code;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManageSubjectWindow.xaml</summary>
+	/// Interaction logic for ManageSubjectWindow.xaml
+	/// </summary>
 	public partial class ManageSubjectWindow : System.Windows.Window
 	{
 		#region Constructors
 
-		/// <summary>Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
 		/// </summary>
 		public ManageSubjectWindow(MainWindow window, ExpanderControlType type)
 		{
@@ -42,23 +46,31 @@ namespace Timetable.Windows
 
 		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			timetableDataSet = new TimetableDataSet();
+
+			subjectsTableAdapter = new SubjectsTableAdapter();
+
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+
+			if (this.controlType == ExpanderControlType.Add)
+			{
+				currentSubjectRow = timetableDataSet.Subjects.NewSubjectsRow();
+			}
+
 			if (this.controlType == ExpanderControlType.Change)
 			{
-				try
-				{
-					string id = this.callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault();
-					this.currentSubjectId = int.Parse(id);
+				string currentSubject = this.callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault();
 
-					Models.Subject subject = Utilities.Database.GetSubjectById(this.currentSubjectId);
-					this.textBoxId.Text = subject.Id.ToString();
-					this.textBoxName.Text = subject.Name;
-				}
-				catch (FormatException)
+				int.TryParse(currentSubject, out this.currentSubjectId);
+
+				currentSubjectRow = timetableDataSet.Subjects.FindById(this.currentSubjectId);
+
+				if (currentSubjectRow != null)
 				{
-					MessageBox.Show("Subject with given ID number does not existed.", "Error");
-					this.Close();
+					this.textBoxId.Text = currentSubjectRow.Id.ToString();
+					this.textBoxName.Text = currentSubjectRow.Name;
 				}
-				catch (Utilities.EntityDoesNotExistException)
+				else
 				{
 					MessageBox.Show("Subject with given ID number does not existed.", "Error");
 					this.Close();
@@ -68,7 +80,6 @@ namespace Timetable.Windows
 
 		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			string id = this.textBoxId.Text;
 			string name = this.textBoxName.Text.Trim();
 
 			try
@@ -79,26 +90,18 @@ namespace Timetable.Windows
 				}
 				else
 				{
-					if (controlType == ExpanderControlType.Add)
-					{
-						Utilities.Database.AddSubject(name);
+					currentSubjectRow.Name = name;
 
+					if (this.controlType == ExpanderControlType.Add)
+					{
+						timetableDataSet.Subjects.Rows.Add(currentSubjectRow);
 					}
 
-					if (controlType == ExpanderControlType.Change)
-					{
-						int idNumber = int.Parse(id);
-
-						Utilities.Database.EditSubject(idNumber, name);
-					}
+					subjectsTableAdapter.Update(timetableDataSet.Subjects);
 
 					this.callingWindow.RefreshCurrentView();
 					this.Close();
 				}
-			}
-			catch (FormatException)
-			{
-				MessageBox.Show("Number is invalid.", "Error");
 			}
 			catch (Exception ex)
 			{
@@ -124,6 +127,12 @@ namespace Timetable.Windows
 		private readonly ExpanderControlType controlType;
 
 		private int currentSubjectId;
+
+		private TimetableDataSet timetableDataSet;
+
+		private SubjectsTableAdapter subjectsTableAdapter;
+
+		private TimetableDataSet.SubjectsRow currentSubjectRow;
 
 		#endregion
 	}

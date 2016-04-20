@@ -1,20 +1,23 @@
-﻿namespace Timetable.Controls
+﻿using Timetable.Models.DataSet;
+
+namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for SubjectControl.xaml</summary>
+	/// Interaction logic for SubjectControl.xaml
+	/// </summary>
 	public partial class SubjectControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors
 
 		/// <summary>
 		/// Konstruktor tworzący obiekt typu <c>Controls.SubjectControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="subject">Obiekt typu <c>Models.Subject</c> wypełniający danymi pola tekstowe kontrol.</param>
-		public SubjectControl(Models.Subject subject)
+		/// <param name="subjectRow">Obiekt typu <c>TimetableDataSet.SubjectsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public SubjectControl(TimetableDataSet.SubjectsRow subjectRow)
 		{
 			InitializeComponent();
 
-			this.textBlockId.Text = subject.Id.ToString();
-			this.textBlockName.Text = subject.Name ?? string.Empty;
+			this.textBlockId.Text = subjectRow.Id.ToString();
+			this.textBlockName.Text = subjectRow.Name ?? string.Empty;
 		}
 
 		#endregion

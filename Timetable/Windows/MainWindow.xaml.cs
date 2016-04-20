@@ -4,6 +4,8 @@ using System.Windows;
 using Timetable.Controls;
 using Timetable.Models;
 using Timetable.Code;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable
 {
@@ -14,7 +16,8 @@ namespace Timetable
 	{
 		#region Constructors
 
-		/// <summary>Konstruktor tworzący obiekt typu <c>MainWindow</c>.
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>MainWindow</c>.
 		/// </summary>
 		public MainWindow()
 		{
@@ -123,27 +126,31 @@ namespace Timetable
 			switch (content)
 			{
 				case ComboBoxContent.Teachers:
-					foreach (Teacher teacher in Utilities.Database.GetTeachers())
+					teachersTableAdapter.Fill(timetableDataSet.Teachers);
+					foreach (TimetableDataSet.TeachersRow teacherRow in timetableDataSet.Teachers.Rows)
 					{
-						this.AddPersonToGrid(teacher);
+						this.AddPersonToGrid(teacherRow);
 					}
 					break;
 				case ComboBoxContent.Classes:
-					foreach (Class oClass in Utilities.Database.GetClasses())
+					classesTableAdapter.Fill(timetableDataSet.Classes);
+					foreach (TimetableDataSet.ClassesRow classRow in timetableDataSet.Classes.Rows)
 					{
-						this.AddClassToGrid(oClass);
+						this.AddClassToGrid(classRow);
 					}
 					break;
 				case ComboBoxContent.Subjects:
-					foreach (Subject subject in Utilities.Database.GetSubjects())
+					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+					foreach (TimetableDataSet.SubjectsRow subjectRow in timetableDataSet.Subjects.Rows)
 					{
-						this.AddSubjectToGrid(subject);
+						this.AddSubjectToGrid(subjectRow);
 					}
 					break;
 				default:
-					foreach (Student student in Utilities.Database.GetStudents())
+					studentsTableAdapter.Fill(timetableDataSet.Students);
+					foreach (TimetableDataSet.StudentsRow studentRow in timetableDataSet.Students.Rows)
 					{
-						this.AddPersonToGrid(student);
+						this.AddPersonToGrid(studentRow);
 					}
 					break;
 			}
@@ -185,27 +192,36 @@ namespace Timetable
 			this.comboBoxContent = ComboBoxContent.Students;
 		}
 
-		private void AddPersonToGrid(Models.Base.Person person)
+		private void AddPersonToGrid(TimetableDataSet.StudentsRow studentRow)
 		{
-			var personControl = new PersonControl(person);
+			var personControl = new PersonControl(studentRow);
 
 			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(PersonControl.HEIGHT) });
 			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
 
-		private void AddClassToGrid(Class oClass)
+		private void AddPersonToGrid(TimetableDataSet.TeachersRow teacherRow)
 		{
-			var classControl = new ClassControl(oClass);
+			var personControl = new PersonControl(teacherRow);
+
+			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(PersonControl.HEIGHT) });
+			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.Children.Add(personControl);
+		}
+
+		private void AddClassToGrid(TimetableDataSet.ClassesRow classRow)
+		{
+			var classControl = new ClassControl(classRow);
 
 			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
 			System.Windows.Controls.Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(classControl);
 		}
 
-		private void AddSubjectToGrid(Subject subject)
+		private void AddSubjectToGrid(TimetableDataSet.SubjectsRow subjectRow)
 		{
-			var subjectControl = new SubjectControl(subject);
+			var subjectControl = new SubjectControl(subjectRow);
 
 			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
 			System.Windows.Controls.Grid.SetRow(subjectControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
@@ -218,6 +234,28 @@ namespace Timetable
 
 		private void mainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			timetableDataSet = new TimetableDataSet();
+
+			classesTableAdapter = new ClassesTableAdapter();
+			classroomsTableAdapter = new ClassroomsTableAdapter();
+			daysTableAdapter = new DaysTableAdapter();
+			hoursTableAdapter = new HoursTableAdapter();
+			lessonsTableAdapter = new LessonsTableAdapter();
+			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			studentsTableAdapter = new StudentsTableAdapter();
+			subjectsTableAdapter = new SubjectsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+			daysTableAdapter.Fill(timetableDataSet.Days);
+			hoursTableAdapter.Fill(timetableDataSet.Hours);
+			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+			studentsTableAdapter.Fill(timetableDataSet.Students);
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
@@ -279,38 +317,45 @@ namespace Timetable
 			switch (comboBoxContent)
 			{
 				case ComboBoxContent.Classes:
-					List<Class> classesList = Utilities.Database.GetClasses().OrderBy(c => c.Year).ToList();
+					List<TimetableDataSet.ClassesRow> classesList = timetableDataSet.Classes
+						.OrderBy(c => c.Year)
+						.ToList();
 					this.comboBoxPlanning2.ItemsSource = classesList
 						.Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					this.currentClassId = classesList.ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
 					break;
 				case ComboBoxContent.Teachers:
-					this.comboBoxPlanning2.ItemsSource = Utilities.Database.GetTeachers().
-						OrderBy(t => t.Pesel.BirthDate).
-						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+					this.comboBoxPlanning2.ItemsSource = timetableDataSet.Teachers
+						.OrderBy(t => t.Pesel)
+						.Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
 			}
 		}
 		private void comboBoxPlanning2_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
-			List<Class> classesList = Utilities.Database.GetClasses().OrderBy(c => c.Year).ToList();
+			List<TimetableDataSet.ClassesRow> classesList = timetableDataSet.Classes
+				.OrderBy(c => c.Year)
+				.ToList();
 			int index = this.comboBoxPlanning2.Items.Count > 0 ? this.comboBoxPlanning2.SelectedIndex : -1;
 
 			if (index >= 0)
 			{
 				this.currentClassId = classesList.ElementAt(index).Id;
 
-				foreach (LessonPlace lp in Utilities.Database.GetTimetableForClass(currentClassId))
+				foreach (TimetableDataSet.LessonsPlacesRow lp
+					in timetableDataSet.LessonsPlaces.Where(lp => lp.LessonsRow.ClassId == currentClassId))
 				{
-					MessageBox.Show(lp.Lesson.Id + " "
-					                + lp.Lesson.Subject + " "
-					                + lp.Lesson.Class + " "
-					                + lp.Lesson.Teacher + " "
-					                + lp.Classroom.Name + " "
-					                + lp.Day.Name + " "
-					                + lp.Hour.BeginHour);
+					MessageBox.Show(lp.LessonsRow.Id + " - "
+					                + lp.LessonsRow.SubjectsRow.Name + " - "
+					                + lp.LessonsRow.ClassesRow.Year + " "
+					                + lp.LessonsRow.ClassesRow.CodeName + " - "
+					                + lp.LessonsRow.TeachersRow.FirstName + " "
+					                + lp.LessonsRow.TeachersRow.LastName + " - "
+					                + lp.ClassroomsRow.Name + " - "
+					                + lp.DaysRow.Name + " - "
+					                + lp.HoursRow.Hour);
 				}
 			}
 
@@ -332,6 +377,18 @@ namespace Timetable
 		private int currentClassId;
 
 		private int currentTeacherId;
+
+		private TimetableDataSet timetableDataSet;
+
+		private ClassesTableAdapter classesTableAdapter;
+		private ClassroomsTableAdapter classroomsTableAdapter;
+		private DaysTableAdapter daysTableAdapter;
+		private HoursTableAdapter hoursTableAdapter;
+		private LessonsTableAdapter lessonsTableAdapter;
+		private LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
+		private StudentsTableAdapter studentsTableAdapter;
+		private SubjectsTableAdapter subjectsTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
 
 		#endregion
 	}

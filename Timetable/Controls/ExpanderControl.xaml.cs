@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows;
-
 using Timetable.Code;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 using Timetable.Windows;
 
 namespace Timetable.Controls
@@ -28,17 +29,14 @@ namespace Timetable.Controls
 			switch (ect)
 			{
 				case ExpanderControlType.Add:
-					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.plus);
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.add);
 					this.button.Click += AddButton_Click;
 					break;
 				case ExpanderControlType.Change:
-					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pen);
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.manage);
 					this.button.Click += ChangeButton_Click;
 					break;
 				case ExpanderControlType.Remove:
-					// this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.recycleBin);
 					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.delete);
 					this.button.Click += RemoveButton_Click;
 					break;
@@ -51,6 +49,18 @@ namespace Timetable.Controls
 					this.button.Click += RemoveButton_Click;
 					break;
 			}
+
+			timetableDataSet = new TimetableDataSet();
+
+			classesTableAdapter = new ClassesTableAdapter();
+			studentsTableAdapter = new StudentsTableAdapter();
+			subjectsTableAdapter = new SubjectsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			studentsTableAdapter.Fill(timetableDataSet.Students);
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
 		}
 
 		#endregion
@@ -78,7 +88,7 @@ namespace Timetable.Controls
 			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
 				|| callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 			{
-				ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Add);
+				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Add);
 				manageWindow.Show();
 			}
 			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
@@ -98,7 +108,7 @@ namespace Timetable.Controls
 			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
 			    || callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 			{
-				ManageWindow manageWindow = new ManageWindow(callingWindow, ExpanderControlType.Change);
+				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Change);
 				manageWindow.Show();
 			}
 			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
@@ -121,36 +131,39 @@ namespace Timetable.Controls
 				{
 					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
-						Utilities.Database.DeleteStudent(pesel);
+						timetableDataSet.Students.FindByPesel(pesel).Delete();
+						studentsTableAdapter.Update(timetableDataSet.Students);
 					}
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 				{
 					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
-						Utilities.Database.DeleteTeacher(pesel);
+						timetableDataSet.Teachers.FindByPesel(pesel).Delete();
+						teachersTableAdapter.Update(timetableDataSet.Teachers);
+
 					}
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
 				{
 					foreach (string id in callingWindow.GetIdNumbersOfMarkedClasses())
 					{
-						int idNumber = int.Parse(id);
-						Utilities.Database.DeleteClass(idNumber);
+						int idNumber;
+						int.TryParse(id, out idNumber);
+						timetableDataSet.Classes.FindById(idNumber).Delete();
+						classesTableAdapter.Update(timetableDataSet.Classes);
 					}
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
 				{
 					foreach (string id in callingWindow.GetIdNumbersOfMarkedSubjects())
 					{
-						int idNumber = int.Parse(id);
-						Utilities.Database.DeleteSubject(idNumber);
+						int idNumber;
+						int.TryParse(id, out idNumber);
+						timetableDataSet.Subjects.FindById(idNumber).Delete();
+						subjectsTableAdapter.Update(timetableDataSet.Subjects);
 					}
 				}
-			}
-			catch (Utilities.EntityDoesNotExistException)
-			{
-				MessageBox.Show("Entity with given ID number does not existed.", "Error");
 			}
 			catch (Exception ex)
 			{
@@ -169,6 +182,13 @@ namespace Timetable.Controls
 		#region Fields
 
 		private readonly MainWindow callingWindow;
+
+		private TimetableDataSet timetableDataSet;
+
+		private ClassesTableAdapter classesTableAdapter;
+		private StudentsTableAdapter studentsTableAdapter;
+		private SubjectsTableAdapter subjectsTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
 
 		#endregion
 	}

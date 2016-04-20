@@ -1,22 +1,25 @@
-﻿namespace Timetable.Controls
+﻿using Timetable.Models.DataSet;
+
+namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for ClassControl.xaml</summary>
+	/// Interaction logic for ClassControl.xaml
+	/// </summary>
 	public partial class ClassControl : System.Windows.Controls.UserControl
 	{
 		#region Constructors
 
 		/// <summary>
 		/// Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="oClass">Obiekt typu <c>Models.Base.Class</c> wypełniający danymi pola tekstowe kontrol.</param>
-		public ClassControl(Models.Class oClass)
+		/// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public ClassControl(TimetableDataSet.ClassesRow classRow)
 		{
 			InitializeComponent();
 
-			this.textBlockId.Text = oClass.Id.ToString();
-			this.textBlockYear.Text = oClass.Year.ToString();
-			this.textBlockCodeName.Text = oClass?.CodeName ?? string.Empty;
-			this.textBlockTutorPesel.Text = (oClass.TutorPesel != null) ? oClass.TutorPesel.StringRepresentation : string.Empty;
+			this.textBlockId.Text = classRow.Id.ToString();
+			this.textBlockYear.Text = classRow.Year.ToString();
+			this.textBlockCodeName.Text = classRow.CodeName ?? string.Empty;
+			this.textBlockTutorPesel.Text = classRow.TutorPesel ?? string.Empty;
 		}
 
 		#endregion
