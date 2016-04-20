@@ -327,7 +327,7 @@ namespace Timetable.Utilities
 			{
 				throw new EntityDoesNotExistException();
 			}
-			ClassesTableAdapter.Delete(existingClassRow.Id, existingClassRow.Year, existingClassRow.TutorPesel);
+			ClassesTableAdapter.Delete(existingClassRow.Id, existingClassRow.Year, existingClassRow.TutorPesel ?? "");
 
 			existingClassRow.Delete();
 			ClassesTable.AcceptChanges();

@@ -51,7 +51,7 @@
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Tutor"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
-					<ComboBox x:Name="comboBox" Margin="0,46,10,43"/>
+					<ComboBox x:Name="comboBoxTutor" Margin="0,40,10,40"/>
 				</Border>
 			</Grid>
 		</GroupBox>

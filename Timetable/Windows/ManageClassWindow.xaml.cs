@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-
 using Timetable.Code;
+using Timetable.Models.DataSet;
+using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
 
 namespace Timetable.Windows
 {
@@ -43,24 +44,38 @@ namespace Timetable.Windows
 
 		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			timetableDataSet = new TimetableDataSet();
+
+			classesTableAdapter = new ClassesTableAdapter();
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			teachersTableAdapter = new TeachersTableAdapter();
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
+			comboBoxTutor.ItemsSource = timetableDataSet.Teachers.DefaultView;
+			comboBoxTutor.DisplayMemberPath = "LastName";
+			comboBoxTutor.SelectedValuePath = "Pesel";
+
+			if (this.controlType == ExpanderControlType.Add)
+			{
+				classRow = timetableDataSet.Classes.NewClassesRow();
+			}
+
 			if (this.controlType == ExpanderControlType.Change)
 			{
-				try
-				{
-					string id = this.callingWindow.GetIdNumbersOfMarkedClasses().FirstOrDefault();
-					this.currentClassId = int.Parse(id);
+				string currentClass = this.callingWindow.GetIdNumbersOfMarkedClasses().FirstOrDefault();
 
-					Models.Class oClass = Utilities.Database.GetClassById(this.currentClassId);
-					this.textBoxId.Text = oClass.Id.ToString();
-					this.textBoxYear.Text = oClass.Year.ToString();
-					this.textBoxCodeName.Text = oClass.CodeName;
-				}
-				catch (FormatException)
+				int.TryParse(currentClass, out this.currentClassId);
+
+				classRow = timetableDataSet.Classes.FindById(this.currentClassId);
+
+				if (classRow != null)
 				{
-					MessageBox.Show("Class with given ID number does not existed.", "Error");
-					this.Close();
+					this.textBoxId.Text = classRow.Id.ToString();
+					this.textBoxYear.Text = classRow.Year.ToString();
+					this.textBoxCodeName.Text = classRow.CodeName;
+					this.comboBoxTutor.SelectedValue = classRow.TutorPesel;
 				}
-				catch (Utilities.EntityDoesNotExistException)
+				else
 				{
 					MessageBox.Show("Class with given ID number does not existed.", "Error");
 					this.Close();
@@ -70,13 +85,14 @@ namespace Timetable.Windows
 
 		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			string id = this.textBoxId.Text;
 			string year = this.textBoxYear.Text.Trim();
 			string codeName = this.textBoxCodeName.Text.Trim();
 
 			try
 			{
-				if (string.IsNullOrEmpty(year) || string.IsNullOrEmpty(codeName))
+				if (this.comboBoxTutor.SelectedValue == null
+					|| string.IsNullOrEmpty(year)
+					|| string.IsNullOrEmpty(codeName))
 				{
 					MessageBox.Show("All fields are required.", "Error");
 				}
@@ -84,18 +100,20 @@ namespace Timetable.Windows
 				{
 					int yearNumber = int.Parse(year);
 
-					if (controlType == ExpanderControlType.Add)
-					{
-						Utilities.Database.AddClass(yearNumber, codeName);
+					classRow.Year = yearNumber;
+					classRow.CodeName = codeName;
 
+					if (this.comboBoxTutor.SelectedValue != null)
+					{
+						classRow.TutorPesel = this.comboBoxTutor.SelectedValue.ToString();
 					}
 
-					if (controlType == ExpanderControlType.Change)
+					if (this.controlType == ExpanderControlType.Add)
 					{
-						int idNumber = int.Parse(id);
-
-						Utilities.Database.EditClass(idNumber, yearNumber, codeName);
+						timetableDataSet.Classes.Rows.Add(classRow);
 					}
+
+					classesTableAdapter.Update(timetableDataSet.Classes);
 
 					this.callingWindow.RefreshCurrentView();
 					this.Close();
@@ -123,6 +141,13 @@ namespace Timetable.Windows
 		#endregion
 
 		#region Fields
+
+		private TimetableDataSet timetableDataSet;
+
+		private ClassesTableAdapter classesTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
+
+		private TimetableDataSet.ClassesRow classRow;
 
 		private readonly MainWindow callingWindow;
 
