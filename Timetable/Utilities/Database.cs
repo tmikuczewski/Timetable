@@ -149,18 +149,28 @@ namespace Timetable.Utilities
 		public static int EditStudent(string pesel, string firstName, string lastName)
 		{
 			TimetableDataSet.StudentsRow existingStudentRow = StudentsTable.FindByPesel(pesel);
+            DataTable st = StudentsTable;
 
 			if (existingStudentRow == null)
 			{
 				throw new EntityDoesNotExistException();
 			}
-
-			existingStudentRow.FirstName = firstName;
+            Console.WriteLine("pesel " + pesel);
+            Console.WriteLine("firstName " + firstName);
+            Console.WriteLine("lastName " + lastName);
+            existingStudentRow.BeginEdit();
+            existingStudentRow.FirstName = firstName;
 			existingStudentRow.LastName = lastName;
-			StudentsTable.AcceptChanges();
+            existingStudentRow.EndEdit();
 
-			return StudentsTableAdapter.Update(StudentsTable);
-		}
+
+            StudentsTable.AcceptChanges();
+
+            //StudentsTableAdapter.Update()
+            StudentsTableAdapter.Update(pesel, firstName, lastName, existingStudentRow.ClassId, existingStudentRow.Pesel, existingStudentRow.ClassId);
+            //return 1;
+            return StudentsTableAdapter.Update(StudentsTable);
+        }
 
 		/// <summary>
 		/// Usunięcie ucznia z bazy danych.</summary>
@@ -174,10 +184,11 @@ namespace Timetable.Utilities
 				throw new EntityDoesNotExistException();
 			}
 
-			existingStudentRow.Delete();
-			StudentsTable.AcceptChanges();
+            StudentsTableAdapter.Delete(existingStudentRow.Pesel, existingStudentRow.ClassId);
 
-			return StudentsTableAdapter.Update(StudentsTable);
+            existingStudentRow.Delete();
+            StudentsTable.AcceptChanges();
+            return StudentsTableAdapter.Update(StudentsTable);
 		}
 
 		/// <summary>
@@ -232,6 +243,7 @@ namespace Timetable.Utilities
 			existingTeacherRow.FirstName = firstName;
 			existingTeacherRow.LastName = lastName;
 			TeachersTable.AcceptChanges();
+            TeachersTableAdapter.Update(existingTeacherRow.Pesel, firstName, lastName, existingTeacherRow.Pesel);
 
 			return TeachersTableAdapter.Update(TeachersTable);
 		}
@@ -248,9 +260,10 @@ namespace Timetable.Utilities
 				throw new EntityDoesNotExistException();
 			}
 
-			existingTeacherRow.Delete();
+            TeachersTableAdapter.Delete(existingTeacherRow.Pesel);
+            existingTeacherRow.Delete();
 			TeachersTable.AcceptChanges();
-
+            
 			return TeachersTableAdapter.Update(TeachersTable);
 		}
 
@@ -299,7 +312,7 @@ namespace Timetable.Utilities
 			existingClassRow.Year = year;
 			existingClassRow.CodeName = codeName;
 			ClassesTable.AcceptChanges();
-
+            ClassesTableAdapter.Update(year, codeName, existingClassRow.TutorPesel, existingClassRow.Id, existingClassRow.Year, existingClassRow.TutorPesel);
 			return ClassesTableAdapter.Update(ClassesTable);
 		}
 
@@ -314,6 +327,7 @@ namespace Timetable.Utilities
 			{
 				throw new EntityDoesNotExistException();
 			}
+            ClassesTableAdapter.Delete(existingClassRow.Id, existingClassRow.Year, existingClassRow.TutorPesel);
 
 			existingClassRow.Delete();
 			ClassesTable.AcceptChanges();
@@ -363,7 +377,7 @@ namespace Timetable.Utilities
 
 			existingSubjectRow.Name = name;
 			SubjectsTable.AcceptChanges();
-
+            SubjectsTableAdapter.Update(name, existingSubjectRow.Id);
 			return SubjectsTableAdapter.Update(SubjectsTable);
 		}
 
@@ -378,101 +392,11 @@ namespace Timetable.Utilities
 			{
 				throw new EntityDoesNotExistException();
 			}
-
+            SubjectsTableAdapter.Delete(existingSubjectRow.Id);
 			existingSubjectRow.Delete();
 			SubjectsTable.AcceptChanges();
 
 			return SubjectsTableAdapter.Update(SubjectsTable);
-		}
-
-		/// <summary>
-		/// Pobranie danych sali z bazy danych.</summary>
-		/// <returns>Obiekt typu <c>Classroom</c>.</returns>
-		public static Classroom GetClassroomById(int id)
-		{
-			TimetableDataSet.ClassroomsRow existingClassroomRow = ClassroomsTable.FindById(id);
-
-			if (existingClassroomRow == null)
-			{
-				throw new EntityDoesNotExistException();
-			}
-
-			return new Classroom(existingClassroomRow.Id,
-				existingClassroomRow.Name,
-				new Pesel(existingClassroomRow.AdministratorPesel));
-		}
-
-		/// <summary>
-		/// Pobranie danych dnia tygodnia z bazy danych.</summary>
-		/// <returns>Obiekt typu <c>Day</c>.</returns>
-		public static Day GetDayById(int id)
-		{
-			TimetableDataSet.DaysRow existingDayRow = DaysTable.FindById(id);
-
-			if (existingDayRow == null)
-			{
-				throw new EntityDoesNotExistException();
-			}
-
-			return new Day(existingDayRow.Id, existingDayRow.Name);
-		}
-
-		/// <summary>
-		/// Pobranie danych bloku godzinowego z bazy danych.</summary>
-		/// <returns>Obiekt typu <c>Hour</c>.</returns>
-		public static Hour GetHourById(int id)
-		{
-			TimetableDataSet.HoursRow existingHourRow = HoursTable.FindById(id);
-
-			if (existingHourRow == null)
-			{
-				throw new EntityDoesNotExistException();
-			}
-
-			return new Hour(existingHourRow.Id, existingHourRow.Hour);
-		}
-
-		/// <summary>
-		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
-		/// <returns>Lista przedmiotów dla danej klasy (<c>IEnumerable&lt;Models.Lesson&gt;</c>)</returns>
-		public static IEnumerable<Lesson> GetLessonsForClass(int classId)
-		{
-			foreach (var row in LessonsTable.Where(l => l.ClassId == classId))
-			{
-				Lesson lesson = new Lesson();
-				lesson.Teacher = GetTeacherByPesel(row.TeacherPesel);
-				lesson.Subject = GetSubjectById(row.SubjectId);
-				lesson.Class = GetClassById(row.ClassId);
-				yield return lesson;
-			}
-			yield break;
-		}
-
-		/// <summary>
-		/// Przykładowa implementacja metody wykonującej jedno z zapytań.</summary>
-		/// <returns>Lista lekcji dla danej klasy (<c>IEnumerable&lt;Models.LessonPlace&gt;</c>)</returns>
-		public static IEnumerable<LessonPlace> GetTimetableForClass(int classId)
-		{
-			var lessonsList = GetLessonsForClass(classId);
-
-			var lessonsIdList = new List<int>();
-
-			foreach (var row in lessonsList)
-			{
-				lessonsIdList.Add(row.Id);
-			}
-
-			foreach (var row in LessonsPlacesTable.Where(l => lessonsIdList.Contains(l.LessonId)))
-			{
-				LessonPlace lp = new LessonPlace();
-				lp.Lesson = lessonsList.FirstOrDefault(l => l.Id == row.LessonId);
-				lp.Classroom = GetClassroomById(row.ClassroomId);
-				lp.Day = GetDayById(row.DayId);
-				lp.Hour = GetHourById(row.HourId);
-				yield return lp;
-			}
-
-			yield break;
 		}
 
 		#endregion
