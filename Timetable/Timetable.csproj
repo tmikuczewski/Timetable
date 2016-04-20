@@ -98,6 +98,10 @@
       <DependentUpon>PersonControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Base\Person.cs" />
+    <Compile Include="Models\Classroom.cs" />
+    <Compile Include="Models\Day.cs" />
+    <Compile Include="Models\Hour.cs" />
+    <Compile Include="Models\LessonPlace.cs" />
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\Class.cs" />
     <Compile Include="Models\Lesson.cs" />

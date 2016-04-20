@@ -1,9 +1,9 @@
 ﻿namespace Timetable.Models
 {
 	/// <summary>
-	/// Klasa reprezentująca lekcję.
+	/// Klasa reprezentująca komórkę w planie lekcji.
 	/// </summary>
-	public class Lesson
+	public class LessonPlace
 	{
 		#region Constructors
 
@@ -20,20 +20,20 @@
 		#region Properties
 
 		/// <summary>
-		/// Numer identyfikacyjny lekcji.</summary>
-		public int Id { get; set; }
+		/// Obiekt lekcji określający klasę, przedmiot i nauczyciela.</summary>
+		public Lesson Lesson { get; set; }
 
 		/// <summary>
-		/// Nauczyciel prowadzący przedmiot.</summary>
-		public Teacher Teacher { get; set; }
+		/// Sala.</summary>
+		public Classroom Classroom { get; set; }
 
 		/// <summary>
-		/// Rodzaj przedmiotu.</summary>
-		public Subject Subject { get; set; }
+		/// Dzień tygodnia.</summary>
+		public Day Day { get; set; }
 
 		/// <summary>
-		/// Klasa, do której przypisany jest przedmiot.</summary>
-		public Class Class { get; set; }
+		/// Blog godzinowy.</summary>
+		public Hour Hour { get; set; }
 
 		#endregion
 

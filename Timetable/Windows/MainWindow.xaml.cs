@@ -276,10 +276,11 @@ namespace Timetable
 			switch (comboBoxContent)
 			{
 				case ComboBoxContent.Classes:
-					this.comboBoxPlanning2.ItemsSource = Utilities.Database.GetClasses().
-						OrderBy(c => c.Year).
-						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+					List<Class> classesList = Utilities.Database.GetClasses().OrderBy(c => c.Year).ToList();
+					this.comboBoxPlanning2.ItemsSource = classesList
+						.Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
+					this.currentClassId = classesList.ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
 					break;
 				case ComboBoxContent.Teachers:
 					this.comboBoxPlanning2.ItemsSource = Utilities.Database.GetTeachers().
@@ -291,6 +292,7 @@ namespace Timetable
 		}
 		private void comboBoxPlanning2_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
+			var timetable = Utilities.Database.GetTimetableForClass(currentClassId);
 			// TODO: Wyświetlić plan danej klasy / danego nauczyciela.
 		}
 
@@ -305,6 +307,10 @@ namespace Timetable
 		#region Fields
 
 		private ComboBoxContent comboBoxContent = ComboBoxContent.Entities;
+
+		private int currentClassId;
+
+		private int currentTeacherId;
 
 		#endregion
 	}
