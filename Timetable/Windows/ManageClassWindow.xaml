@@ -7,7 +7,7 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d"
-		Title="Management - Timetable" Height="400" Width="500" MinWidth="500" MinHeight="400" Loaded="managementWindow_Loaded" WindowStartupLocation="CenterScreen">
+		Title="Management - Timetable" Height="600" Width="500" MinWidth="500" MinHeight="600" Loaded="managementWindow_Loaded" WindowStartupLocation="CenterScreen" MaxWidth="800" MaxHeight="600" WindowStyle="ToolWindow">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
@@ -24,6 +24,7 @@
 					<ColumnDefinition Width="3*"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
+					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
@@ -45,6 +46,12 @@
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217">
 					<TextBox x:Name="textBoxCodeName" VerticalAlignment="Center" FontSize="24" BorderThickness="1" Margin="0,28,10,29"/>
+				</Border>
+				<Border BorderBrush="{x:Null}" Grid.Row="2" Margin="0,113,0,0" Grid.RowSpan="2">
+					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Tutor"/>
+				</Border>
+				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
+					<ComboBox x:Name="comboBox" Margin="0,46,10,43"/>
 				</Border>
 			</Grid>
 		</GroupBox>
