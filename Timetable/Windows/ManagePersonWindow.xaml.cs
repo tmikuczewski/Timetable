@@ -48,11 +48,26 @@ namespace Timetable.Windows
 		{
 			timetableDataSet = new TimetableDataSet();
 
+			classesTableAdapter = new ClassesTableAdapter();
 			studentsTableAdapter = new StudentsTableAdapter();
 			teachersTableAdapter = new TeachersTableAdapter();
 
+			classesTableAdapter.Fill(timetableDataSet.Classes);
 			studentsTableAdapter.Fill(timetableDataSet.Students);
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
+			if (contentType == ComboBoxContent.Students)
+			{
+				comboBoxClass.ItemsSource = timetableDataSet.Classes.DefaultView;
+				comboBoxClass.DisplayMemberPath = "Year";
+				comboBoxClass.SelectedValuePath = "Id";
+			}
+
+			if (contentType == ComboBoxContent.Teachers)
+			{
+				comboBoxClassLabel.Visibility = Visibility.Hidden;
+				comboBoxClass.Visibility = Visibility.Hidden;
+			}
 
 			if (this.controlType == ExpanderControlType.Add)
 			{
@@ -80,6 +95,7 @@ namespace Timetable.Windows
 						this.maskedTextBoxPesel.Text = currentStudentRow.Pesel;
 						this.textBoxFirstName.Text = currentStudentRow.FirstName;
 						this.textBoxLastName.Text = currentStudentRow.LastName;
+						this.comboBoxClass.SelectedValue = currentStudentRow.ClassId;
 					}
 					else
 					{
@@ -115,17 +131,28 @@ namespace Timetable.Windows
 
 			try
 			{
-				if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+				if (contentType == ComboBoxContent.Students)
 				{
-					MessageBox.Show("All fields are required.", "Error");
-				}
-				else
-				{
-					if (contentType == ComboBoxContent.Students)
+					if (this.comboBoxClass.SelectedValue == null
+						|| string.IsNullOrEmpty(firstName)
+						|| string.IsNullOrEmpty(lastName))
+					{
+						MessageBox.Show("All fields are required.", "Error");
+					}
+					else
 					{
 						currentStudentRow.FirstName = firstName;
 						currentStudentRow.LastName = lastName;
-						//currentStudentRow.ClassId = DBNull.Value;
+
+						if (this.comboBoxClass.SelectedValue != null)
+						{
+							int classId;
+
+							if (int.TryParse(this.comboBoxClass.SelectedValue.ToString(), out classId))
+							{
+								currentStudentRow.ClassId = classId;
+							}
+						}
 
 						if (this.controlType == ExpanderControlType.Add)
 						{
@@ -141,9 +168,20 @@ namespace Timetable.Windows
 						}
 
 						studentsTableAdapter.Update(timetableDataSet.Students);
-					}
 
-					if (contentType == ComboBoxContent.Teachers)
+						this.callingWindow.RefreshCurrentView();
+						this.Close();
+					}
+				}
+
+				if (contentType == ComboBoxContent.Teachers)
+				{
+					if (string.IsNullOrEmpty(firstName)
+						|| string.IsNullOrEmpty(lastName))
+					{
+						MessageBox.Show("All fields are required.", "Error");
+					}
+					else
 					{
 						currentTeacherRow.FirstName = firstName;
 						currentTeacherRow.LastName = lastName;
@@ -162,10 +200,10 @@ namespace Timetable.Windows
 						}
 
 						teachersTableAdapter.Update(timetableDataSet.Teachers);
-					}
 
-					this.callingWindow.RefreshCurrentView();
-					this.Close();
+						this.callingWindow.RefreshCurrentView();
+						this.Close();
+					}
 				}
 			}
 			catch (Utilities.InvalidPeselException)
@@ -205,6 +243,7 @@ namespace Timetable.Windows
 
 		private TimetableDataSet timetableDataSet;
 
+		private ClassesTableAdapter classesTableAdapter;
 		private StudentsTableAdapter studentsTableAdapter;
 		private TeachersTableAdapter teachersTableAdapter;
 

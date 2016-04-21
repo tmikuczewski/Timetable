@@ -128,6 +128,8 @@ namespace Timetable.Controls
 			{
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
 				{
+					studentsTableAdapter.Fill(timetableDataSet.Students);
+
 					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
 						timetableDataSet.Students.FindByPesel(pesel).Delete();
@@ -136,6 +138,8 @@ namespace Timetable.Controls
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 				{
+					teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
 					foreach (string pesel in callingWindow.GetPeselNumbersOfMarkedPeople())
 					{
 						timetableDataSet.Teachers.FindByPesel(pesel).Delete();
@@ -145,6 +149,8 @@ namespace Timetable.Controls
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
 				{
+					classesTableAdapter.Fill(timetableDataSet.Classes);
+
 					foreach (string id in callingWindow.GetIdNumbersOfMarkedClasses())
 					{
 						int idNumber;
@@ -155,6 +161,8 @@ namespace Timetable.Controls
 				}
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
 				{
+					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+
 					foreach (string id in callingWindow.GetIdNumbersOfMarkedSubjects())
 					{
 						int idNumber;
