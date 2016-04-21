@@ -59,7 +59,6 @@ namespace Timetable.Windows
 			if (contentType == ComboBoxContent.Students)
 			{
 				comboBoxClass.ItemsSource = timetableDataSet.Classes.DefaultView;
-				comboBoxClass.DisplayMemberPath = "Year";
 				comboBoxClass.SelectedValuePath = "Id";
 			}
 

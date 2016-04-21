@@ -51,7 +51,20 @@
 					<TextBlock x:Name="comboBoxClassLabel" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Class"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
-					<ComboBox x:Name="comboBoxClass" Margin="0,40,10,40"/>
+					<ComboBox x:Name="comboBoxClass" Margin="0,40,10,40">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} {1}">
+											<Binding Path="Year" FallbackValue="" />
+											<Binding Path="CodeName" FallbackValue="" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 				</Border>
 			</Grid>
 		</GroupBox>

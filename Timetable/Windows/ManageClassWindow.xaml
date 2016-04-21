@@ -51,7 +51,20 @@
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Tutor"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
-					<ComboBox x:Name="comboBoxTutor" Margin="0,40,10,40"/>
+					<ComboBox x:Name="comboBoxTutor" Margin="0,40,10,40">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} {1}">
+											<Binding Path="FirstName" FallbackValue="" />
+											<Binding Path="LastName" FallbackValue="" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 				</Border>
 			</Grid>
 		</GroupBox>

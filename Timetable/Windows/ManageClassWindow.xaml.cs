@@ -54,7 +54,6 @@ namespace Timetable.Windows
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
 
 			comboBoxTutor.ItemsSource = timetableDataSet.Teachers.DefaultView;
-			comboBoxTutor.DisplayMemberPath = "LastName";
 			comboBoxTutor.SelectedValuePath = "Pesel";
 
 			if (this.controlType == ExpanderControlType.Add)
