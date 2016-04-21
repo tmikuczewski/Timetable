@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using Timetable.Controls;
-using Timetable.Models;
-using Timetable.Code;
-using Timetable.Models.DataSet;
-using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetTableAdapters;
+using Timetable.Utilities;
 
-namespace Timetable
+namespace Timetable.Windows
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -58,11 +56,11 @@ namespace Timetable
 		{
 			var markedPesels = new List<string>();
 
-			foreach (PersonControl person in this.scrollViewersGrid.Children)
+			foreach (PersonControl personControl in this.scrollViewersGrid.Children)
 			{
-				if (person.IsChecked())
+				if (personControl.IsChecked())
 				{
-					markedPesels.Add(person.GetPesel());
+					markedPesels.Add(personControl.GetPesel());
 				}
 			}
 
@@ -77,11 +75,11 @@ namespace Timetable
 		{
 			var markedIds = new List<string>();
 
-			foreach (ClassControl oClass in this.scrollViewersGrid.Children)
+			foreach (ClassControl classControl in this.scrollViewersGrid.Children)
 			{
-				if (oClass.IsChecked())
+				if (classControl.IsChecked())
 				{
-					markedIds.Add(oClass.GetId());
+					markedIds.Add(classControl.GetId());
 				}
 			}
 
@@ -96,11 +94,11 @@ namespace Timetable
 		{
 			var markedIds = new List<string>();
 
-			foreach (SubjectControl subject in this.scrollViewersGrid.Children)
+			foreach (SubjectControl subjectControl in this.scrollViewersGrid.Children)
 			{
-				if (subject.IsChecked())
+				if (subjectControl.IsChecked())
 				{
-					markedIds.Add(subject.GetId());
+					markedIds.Add(subjectControl.GetId());
 				}
 			}
 

@@ -1,4 +1,4 @@
-﻿namespace Timetable.Code
+﻿namespace Timetable.Utilities
 {
 	/// <summary>
 	/// Rodzaj wyświetlanych danych w kontrolce <c>ExpanderControl</c>.</summary>

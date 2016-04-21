@@ -84,7 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Code\Classes\Pesel.cs" />
     <Compile Include="Controls\CellControl.xaml.cs">
       <DependentUpon>CellControl.xaml</DependentUpon>
     </Compile>
@@ -97,24 +96,14 @@
     <Compile Include="Controls\PersonControl.xaml.cs">
       <DependentUpon>PersonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Base\Person.cs" />
-    <Compile Include="Models\Classroom.cs" />
-    <Compile Include="Models\Day.cs" />
-    <Compile Include="Models\Hour.cs" />
-    <Compile Include="Models\LessonPlace.cs" />
-    <Compile Include="Models\Subject.cs" />
-    <Compile Include="Models\Class.cs" />
-    <Compile Include="Models\Lesson.cs" />
-    <Compile Include="Models\Student.cs" />
-    <Compile Include="Models\Teacher.cs" />
-    <Compile Include="Models\DataSet\TimetableDataSet.Designer.cs">
+    <Compile Include="TimetableDataSet.Designer.cs">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\Database.cs" />
-    <Compile Include="Code\Enums\Enums.cs" />
+    <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
+    <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
       <DependentUpon>ClassroomsHelperWindow.xaml</DependentUpon>
@@ -211,15 +200,15 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Models\DataSet\TimetableDataSet.xsc">
+    <None Include="TimetableDataSet.xsc">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Models\DataSet\TimetableDataSet.xsd">
+    <None Include="TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Models\DataSet\TimetableDataSet.xss">
+    <None Include="TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
   </ItemGroup>
@@ -255,9 +244,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Models\DbSchema\2016_04_18_Migration_NullableColumns.sql" />
-    <Content Include="Models\DbSchema\timetable-schema.sql" />
-    <Content Include="Models\DbSchema\timetable-seed.sql" />
+    <Content Include="DbSchema\2016_04_18_Migration_NullableFields.sql" />
+    <Content Include="DbSchema\timetable-schema.sql" />
+    <Content Include="DbSchema\timetable-seed.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

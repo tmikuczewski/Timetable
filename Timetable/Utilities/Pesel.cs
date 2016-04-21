@@ -1,4 +1,4 @@
-﻿namespace Timetable.Code
+﻿namespace Timetable.Utilities
 {
 	/// <summary>
 	/// Klasa przechowująca walidującac i przechowująca informację o jednym poprawnym kodzie PESEL.</summary>
@@ -21,7 +21,7 @@
 			}
 			else
 			{
-				throw new Utilities.InvalidPeselException();
+				throw new InvalidPeselException();
 			}
 		}
 
@@ -83,12 +83,12 @@
 				}
 				else
 				{
-					throw new Utilities.InvalidPeselException();
+					throw new InvalidPeselException();
 				}
 			}
 			else
 			{
-				throw new Utilities.InvalidPeselException();
+				throw new InvalidPeselException();
 			}
 		}
 		/// <summary>
@@ -114,7 +114,7 @@
 		/// Metoda zwracająca płeć osoby posiadającej podany numer PESEL.</summary>
 		/// <param name="pesel">Numer PESEL w postaci <c>System.String</c>, na podstawie którego ma zostać określona płeć.</param>
 		/// <returns>Wartość wyliczeniową typu <c>Enums.Sex</c> określającą płeć osoby o podanym numerze PESEL.</returns>
-		public static Code.Sex GetSex(string pesel)
+		public static Sex GetSex(string pesel)
 		{
 			if (IsValid(pesel))
 			{
@@ -122,7 +122,7 @@
 			}
 			else
 			{
-				throw new Utilities.InvalidPeselException();
+				throw new InvalidPeselException();
 			}
 		}
 

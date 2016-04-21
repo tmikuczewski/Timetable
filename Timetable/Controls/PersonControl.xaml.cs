@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Timetable.Models.DataSet;
 
 namespace Timetable.Controls
 {

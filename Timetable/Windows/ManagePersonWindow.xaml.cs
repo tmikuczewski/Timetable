@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using Timetable.Code;
-using Timetable.Models.DataSet;
-using Timetable.Models.DataSet.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetTableAdapters;
+using Timetable.Utilities;
 
 namespace Timetable.Windows
 {

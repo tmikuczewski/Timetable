@@ -1,6 +1,4 @@
-﻿using Timetable.Models.DataSet;
-
-namespace Timetable.Controls
+﻿namespace Timetable.Controls
 {
 	/// <summary>
 	/// Interaction logic for ClassControl.xaml
