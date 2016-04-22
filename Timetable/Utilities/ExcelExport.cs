@@ -61,11 +61,12 @@ namespace Timetable.Utilities
 
             writeTimeTableForClass(classId);
 
+
             var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
             var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
             String path = $"{applicationPath}Klasa {schoolClass.Year}{schoolClass.CodeName}-{date}.xls";
-
+            setHeader($"Klasa {schoolClass.Year}{schoolClass.CodeName}");
             save(path);
 
         }
@@ -81,7 +82,7 @@ namespace Timetable.Utilities
             var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
             //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
             String path = $"{applicationPath}{teacher.LastName} {teacher.FirstName}-{date}.xls";
-
+            setHeader($"{teacher.LastName} {teacher.FirstName}");
             save(path);
 
         }
@@ -98,7 +99,7 @@ namespace Timetable.Utilities
             //var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
             //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
             String path = $"{applicationPath}Sala {classRoom.Name}-{date}.xls";
-
+            setHeader($"Sala {classRoom.Name}");
             save(path);
 
         }
@@ -143,6 +144,18 @@ namespace Timetable.Utilities
             }
             range = xlWorkSheet.get_Range("B4", "F27");
             range.BorderAround(Excel.XlLineStyle.xlContinuous);
+        }
+
+        private void setHeader(string header)
+        {
+            Excel.Range range;
+            xlWorkSheet.Cells[1, 1] = header;
+            range = xlWorkSheet.get_Range("A1", "F2");
+            range.Merge();
+            //range.Text = header;
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            range.Font.Size = range.Font.Size + 5;
         }
 
         private void writeTimeTableForClass(int classId)
