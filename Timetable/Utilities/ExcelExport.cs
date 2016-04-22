@@ -70,6 +70,39 @@ namespace Timetable.Utilities
 
         }
 
+        public void SaveTimeTableForTeacher(string pesel)
+        {
+            prepareExcel();
+
+            writeTimeTableForTeacher(pesel);
+
+            var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
+            var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
+            //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
+            String path = $"{applicationPath}{teacher.LastName} {teacher.FirstName}-{date}.xls";
+
+            save(path);
+
+        }
+
+        public void SaveTimeTableForClassRoom(int classRoomId)
+        {
+            prepareExcel();
+
+            writeTimeTableForClassRoom(classRoomId);
+
+            var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
+            var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var classRoom = timetableDataSet.Classrooms.Where(c => c.Id == classRoomId).First();
+            //var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
+            //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
+            String path = $"{applicationPath}Sala {classRoom.Name}-{date}.xls";
+
+            save(path);
+
+        }
+
         private void save(string path)
         {
             xlWorkSheet.Columns.AutoFit();
@@ -129,6 +162,58 @@ namespace Timetable.Utilities
                     xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = teacher.FirstName + " " + teacher.LastName;
                     xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "sala " + timetableDataSet.Classrooms.Where(c=>c.Id == lessonPlace.ClassroomId).First().Name;
                     Excel.Range range = xlWorkSheet.get_Range(""+ (char)('B'+day) + (4 + hour * 3), "" + (char)('B' + day) + (4 + hour * 3 + 2));
+                    range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    range.BorderAround(Excel.XlLineStyle.xlContinuous);
+                }
+            }
+        }
+
+        private void writeTimeTableForTeacher(string pesel)
+        {
+            for (int day = 0; day < 5; day++)
+            {
+                for (int hour = 0; hour < 8; hour++)
+                {
+                    var lessonPlace = timetableDataSet.LessonsPlaces.Where(lp =>
+                    lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.TeacherPesel == pesel).FirstOrDefault();
+                    if (lessonPlace == null) continue;
+
+
+                    var subject = timetableDataSet.Lessons.Where(l => l.Id == lessonPlace.LessonId).First();
+                    var schoolClass = timetableDataSet.Classes.Where(sc => sc.Id == subject.ClassId).First();
+                    //var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == subject.TeacherPesel).First();
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = timetableDataSet.Subjects.Where(s => s.Id == subject.Id).First().Name;
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = schoolClass.Year + schoolClass.CodeName;
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "sala " + timetableDataSet.Classrooms.Where(c => c.Id == lessonPlace.ClassroomId).First().Name;
+                    Excel.Range range = xlWorkSheet.get_Range("" + (char)('B' + day) + (4 + hour * 3), "" + (char)('B' + day) + (4 + hour * 3 + 2));
+                    range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    range.BorderAround(Excel.XlLineStyle.xlContinuous);
+                }
+            }
+        }
+
+
+        private void writeTimeTableForClassRoom(int classRoomId)
+        {
+            for (int day = 0; day < 5; day++)
+            {
+                for (int hour = 0; hour < 8; hour++)
+                {
+                    var lessonPlace = timetableDataSet.LessonsPlaces.Where(lp =>
+                    lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.ClassroomId == classRoomId).FirstOrDefault();
+                    if (lessonPlace == null) continue;
+
+
+                    var subject = timetableDataSet.Lessons.Where(l => l.Id == lessonPlace.LessonId).First();
+                    var schoolClass = timetableDataSet.Classes.Where(sc => sc.Id == subject.ClassId).First();
+                    var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == subject.TeacherPesel).First();
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = timetableDataSet.Subjects.Where(s => s.Id == subject.Id).First().Name;
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = teacher.FirstName + " " + teacher.LastName;
+                    xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = schoolClass.Year + schoolClass.CodeName;
+                    //xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "sala " + timetableDataSet.Classrooms.Where(c => c.Id == lessonPlace.ClassroomId).First().Name;
+                    Excel.Range range = xlWorkSheet.get_Range("" + (char)('B' + day) + (4 + hour * 3), "" + (char)('B' + day) + (4 + hour * 3 + 2));
                     range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                     range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
                     range.BorderAround(Excel.XlLineStyle.xlContinuous);
