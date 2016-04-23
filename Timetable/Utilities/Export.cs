@@ -8,15 +8,33 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Timetable.Utilities
 {
+    /// <summary>
+    /// Typ pliku do jakiego eksportowany jest plan
+    /// </summary>
+    public enum ExportFileType
+    {
+        /// <summary>
+        /// XLS (Excel)
+        /// </summary>
+        XLS,
+        /// <summary>
+        /// PDF
+        /// </summary>
+        PDF
+    }
+
     //http://csharp.net-informations.com/excel/csharp-format-excel.htm
-    class ExcelExport
+    class Export
     {
         private Excel.Application xlApp;
         private Excel.Workbook xlWorkBook;
         private Excel.Worksheet xlWorkSheet;
         private object misValue = System.Reflection.Missing.Value;
 
-        public ExcelExport()
+        /// <summary>
+        /// Klasa eksportująca plan z bazy do Excelowego formatu XLS
+        /// </summary>
+        public Export()
         {
             timetableDataSet = new TimetableDataSet();
 
@@ -41,13 +59,16 @@ namespace Timetable.Utilities
 
         }
 
+        /// <summary>
+        /// Przygotowanie nowego dokumentu
+        /// </summary>
         private void prepareExcel()
         {
             xlApp = new Microsoft.Office.Interop.Excel.Application();
 
             if (xlApp == null)
             {
-                return;
+                throw new ExcelApplicationException("Cannot initialize Microsoft.Office.Interop.Excel.Application");
             }
 
             xlWorkBook = xlApp.Workbooks.Add(misValue);
@@ -55,23 +76,29 @@ namespace Timetable.Utilities
 
             prepareTable();
         }
-        public void SaveTimeTableForClass(int classId)
+
+        /// <summary>
+        /// Zapisuje
+        /// </summary>
+        /// <param name="classId"></param>
+        public void SaveTimeTableForClass(int classId, ExportFileType fileType)
         {
             prepareExcel();
-
             writeTimeTableForClass(classId);
-
-
             var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
             var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
+            var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).FirstOrDefault();
+            if(schoolClass == null)
+            {
+                throw new EntityDoesNotExistException("Class with id=" + classId + " does not exists");
+            }
             String path = $"{applicationPath}Klasa {schoolClass.Year}{schoolClass.CodeName}-{date}.xls";
             setHeader($"Klasa {schoolClass.Year}{schoolClass.CodeName}");
-            save(path);
+            save(path,fileType);
 
         }
 
-        public void SaveTimeTableForTeacher(string pesel)
+        public void SaveTimeTableForTeacher(string pesel, ExportFileType fileType)
         {
             prepareExcel();
 
@@ -79,15 +106,19 @@ namespace Timetable.Utilities
 
             var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
             var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
-            //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
+            var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).FirstOrDefault();
+            if(teacher == null)
+            {
+                throw new EntityDoesNotExistException("Teacher with PESEL=" + pesel + " does not exists");
+            }
             String path = $"{applicationPath}{teacher.LastName} {teacher.FirstName}-{date}.xls";
             setHeader($"{teacher.LastName} {teacher.FirstName}");
-            save(path);
+            save(path, fileType);
+
 
         }
 
-        public void SaveTimeTableForClassRoom(int classRoomId)
+        public void SaveTimeTableForClassRoom(int classRoomId, ExportFileType fileType)
         {
             prepareExcel();
 
@@ -95,26 +126,41 @@ namespace Timetable.Utilities
 
             var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
             var date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var classRoom = timetableDataSet.Classrooms.Where(c => c.Id == classRoomId).First();
-            //var teacher = timetableDataSet.Teachers.Where(t => t.Pesel == pesel).First();
-            //var schoolClass = timetableDataSet.Classes.Where(c => c.Id == classId).First();
+            var classRoom = timetableDataSet.Classrooms.Where(c => c.Id == classRoomId).FirstOrDefault();
+            if(classRoom == null)
+            {
+                throw new EntityDoesNotExistException("ClassRoom with id=" + classRoomId + " does not exists");
+            }
             String path = $"{applicationPath}Sala {classRoom.Name}-{date}.xls";
             setHeader($"Sala {classRoom.Name}");
-            save(path);
+            save(path, fileType);
 
         }
 
-        private void save(string path)
+        private void save(string path, ExportFileType fileType)
         {
             xlWorkSheet.Columns.AutoFit();
             double max = maxWidth();
-            for (int i = 1; i < 7; i++)
+            for (int i = 2; i < 7; i++)
             {
                 xlWorkSheet.Columns[i].ColumnWidth = max;
             }
 
-            xlWorkBook.SaveAs(path, Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
-            xlWorkBook.Close(true, misValue, misValue);
+            if (fileType.Equals(ExportFileType.XLS))
+            {
+                xlWorkBook.SaveAs(path, Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            }
+            if (fileType.Equals(ExportFileType.PDF))
+            {
+                xlWorkSheet.PageSetup.Orientation = Microsoft.Office.Interop.Excel.XlPageOrientation.xlLandscape;
+                xlWorkSheet.PageSetup.Zoom = false;
+                xlWorkSheet.PageSetup.FitToPagesTall = 1;
+                xlWorkSheet.PageSetup.FitToPagesWide = 1;
+                xlWorkSheet.PageSetup.PaperSize = Microsoft.Office.Interop.Excel.XlPaperSize.xlPaperA4;
+                xlWorkBook.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, path);
+            }
+
+            //xlWorkBook.Close(true, misValue, misValue);
             xlApp.Quit();
 
             releaseObject(xlWorkSheet);
@@ -122,25 +168,40 @@ namespace Timetable.Utilities
             releaseObject(xlApp);
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
         private void prepareTable()
         {
             Excel.Range range;
-            for (int i = 1; i <= 5; i++)
+            int dayID = 1; ;
+            try {
+                for (dayID = 1; dayID <= 5; dayID++)
+                {
+                    range = xlWorkSheet.Cells[3, 1 + dayID];
+                    xlWorkSheet.Cells[3, 1 + dayID] = timetableDataSet.Days.Where(d => d.Id == dayID).First().Name;
+                    range.BorderAround(Excel.XlLineStyle.xlContinuous);
+                    range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                }
+            } catch (Exception e1)
             {
-                range = xlWorkSheet.Cells[3, 1 + i];
-                xlWorkSheet.Cells[3, 1 + i] = timetableDataSet.Days.Where(d => d.Id == i).First().Name; //Database.GetDayById(i).Name;
-                range.BorderAround(Excel.XlLineStyle.xlContinuous);
-                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                throw new EntityDoesNotExistException("Day with id=" + dayID + " does not exist");
             }
-            for(int i = 1; i <= 8; i++)
+            int hourID = 1;
+            try {
+                for (hourID = 1; hourID <= 8; hourID++)
+                {
+                    range = xlWorkSheet.get_Range("A" + (1 + hourID * 3), "A" + (1 + hourID * 3 + 2));
+                    range.Merge();
+                    var beginHour = timetableDataSet.Hours.Where(h => h.Id == hourID).First().Hour;
+                    xlWorkSheet.Cells[1 + hourID * 3, 1] = beginHour.ToString(@"hh\:mm") + " - " + beginHour.Add(TimeSpan.FromMinutes(45)).ToString(@"hh\:mm");
+                    range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    range.BorderAround(Excel.XlLineStyle.xlContinuous);
+                }
+            } catch (Exception e2)
             {
-                range = xlWorkSheet.get_Range("A" + (1 + i * 3), "A" + (1 + i * 3 + 2));
-                range.Merge();
-                var beginHour = timetableDataSet.Hours.Where(h => h.Id == i).First().Hour;
-                xlWorkSheet.Cells[1 + i * 3, 1] = beginHour.ToString(@"hh\:mm") + " - " + beginHour.Add(TimeSpan.FromMinutes(45)).ToString(@"hh\:mm");
-                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range.BorderAround(Excel.XlLineStyle.xlContinuous);
+                throw new EntityDoesNotExistException("Hour with id=" + hourID + " does not exists");
             }
             range = xlWorkSheet.get_Range("B4", "F27");
             range.BorderAround(Excel.XlLineStyle.xlContinuous);
@@ -152,7 +213,6 @@ namespace Timetable.Utilities
             xlWorkSheet.Cells[1, 1] = header;
             range = xlWorkSheet.get_Range("A1", "F2");
             range.Merge();
-            //range.Text = header;
             range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             range.Font.Size = range.Font.Size + 5;
