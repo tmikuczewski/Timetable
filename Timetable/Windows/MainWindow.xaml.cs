@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+
 using Timetable.Controls;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
@@ -10,7 +13,7 @@ namespace Timetable.Windows
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : System.Windows.Window
+	public partial class MainWindow : Window
 	{
 		#region Constructors
 
@@ -34,10 +37,7 @@ namespace Timetable.Windows
 		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji.
 		/// </summary>
 		/// <returns></returns>
-		public ComboBoxContent GetCurrentCoboBoxContent()
-		{
-			return comboBoxContent;
-		}
+		public ComboBoxContent GetCurrentCoboBoxContent() => comboBoxContent;
 
 		/// <summary>
 		/// Metoda odświeżająca listę aktualnie wyświetlanych encji.
@@ -46,7 +46,6 @@ namespace Timetable.Windows
 		{
 			this.FillScrollViewer(comboBoxContent);
 		}
-
 
 		/// <summary>
 		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
@@ -60,7 +59,7 @@ namespace Timetable.Windows
 			{
 				if (personControl.IsChecked())
 				{
-					markedPesels.Add(personControl.GetPesel());
+					markedPesels.Add(personControl.Pesel.StringRepresentation);
 				}
 			}
 
@@ -113,6 +112,31 @@ namespace Timetable.Windows
 
 		#region Private methods
 
+		private void InitDatabaseObjects()
+		{
+			this.timetableDataSet = new TimetableDataSet();
+
+			this.classesTableAdapter = new ClassesTableAdapter();
+			this.classroomsTableAdapter = new ClassroomsTableAdapter();
+			this.daysTableAdapter = new DaysTableAdapter();
+			this.hoursTableAdapter = new HoursTableAdapter();
+			this.lessonsTableAdapter = new LessonsTableAdapter();
+			this.lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			this.studentsTableAdapter = new StudentsTableAdapter();
+			this.subjectsTableAdapter = new SubjectsTableAdapter();
+			this.teachersTableAdapter = new TeachersTableAdapter();
+
+			this.classesTableAdapter.Fill(this.timetableDataSet.Classes);
+			this.classroomsTableAdapter.Fill(this.timetableDataSet.Classrooms);
+			this.daysTableAdapter.Fill(this.timetableDataSet.Days);
+			this.hoursTableAdapter.Fill(this.timetableDataSet.Hours);
+			this.lessonsTableAdapter.Fill(this.timetableDataSet.Lessons);
+			this.lessonsPlacesTableAdapter.Fill(this.timetableDataSet.LessonsPlaces);
+			this.studentsTableAdapter.Fill(this.timetableDataSet.Students);
+			this.subjectsTableAdapter.Fill(this.timetableDataSet.Subjects);
+			this.teachersTableAdapter.Fill(this.timetableDataSet.Teachers);
+		}
+
 		private void FillScrollViewer(ComboBoxContent content = ComboBoxContent.Entities)
 		{
 			if (this.scrollViewersGrid.Children.Count > 0)
@@ -156,7 +180,7 @@ namespace Timetable.Windows
 
 		private void FillExpander(ExpanderContent content)
 		{
-			var stackPanel = new System.Windows.Controls.StackPanel();
+			var stackPanel = new StackPanel();
 			switch (content)
 			{
 				case ExpanderContent.Management:
@@ -188,14 +212,58 @@ namespace Timetable.Windows
 			this.comboBoxPlanning1.SelectedIndex = 0;
 
 			this.comboBoxContent = ComboBoxContent.Students;
+			this.comboBoxPlanningContent = ComboBoxContent.Teachers;
+		}
+
+		private void FillTimetableGrid()
+		{
+			for (int i = 1; i <= timetableDataSet.Days.Count; i++)
+			{
+				for (int j = 1; j <= timetableDataSet.Hours.Count; j++)
+				{
+					var cellControl = new CellControl(diffColor: (j % 2) != 0);
+					Grid.SetColumn(cellControl, i);
+					Grid.SetRow(cellControl, j);
+					this.gridPlanning.Children.Add(cellControl);
+				}
+			}
+		}
+
+		private void ClearTimetableGrids(TabType planning)
+		{
+			switch (planning)
+			{
+				case TabType.Planning:
+					var tilesToSkip = timetableDataSet.Days.Count + timetableDataSet.Hours.Count;
+					if (this.gridPlanning.Children.Count > tilesToSkip)
+					{
+						this.gridPlanning.Children.RemoveRange(tilesToSkip, this.gridPlanning.Children.Count - tilesToSkip);
+					}
+					if (this.gridPlanningRemainingLessons.Children.Count > 0)
+					{
+						this.gridPlanningRemainingLessons.Children.Clear();
+						this.gridPlanningRemainingLessons.RowDefinitions.Clear();
+					}
+					this.FillTimetableGrid();
+					break;
+				case TabType.Summary:
+					foreach (var children in this.gridSummary.Children)
+					{
+						if (children is CellControl)
+						{
+							this.gridSummary.Children.Remove(children as UIElement);
+						}
+					}
+					break;
+			}
 		}
 
 		private void AddPersonToGrid(TimetableDataSet.StudentsRow studentRow)
 		{
 			var personControl = new PersonControl(studentRow);
 
-			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(PersonControl.HEIGHT) });
-			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
+			Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
 
@@ -203,8 +271,8 @@ namespace Timetable.Windows
 		{
 			var personControl = new PersonControl(teacherRow);
 
-			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(PersonControl.HEIGHT) });
-			System.Windows.Controls.Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
+			Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(personControl);
 		}
 
@@ -212,8 +280,8 @@ namespace Timetable.Windows
 		{
 			var classControl = new ClassControl(classRow);
 
-			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
-			System.Windows.Controls.Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(ClassControl.HEIGHT) });
+			Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(classControl);
 		}
 
@@ -221,75 +289,102 @@ namespace Timetable.Windows
 		{
 			var subjectControl = new SubjectControl(subjectRow);
 
-			this.scrollViewersGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(ClassControl.HEIGHT) });
-			System.Windows.Controls.Grid.SetRow(subjectControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
+			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(ClassControl.HEIGHT) });
+			Grid.SetRow(subjectControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
 			this.scrollViewersGrid.Children.Add(subjectControl);
+		}
+
+		private void AddLessonToGrid(TimetableDataSet.LessonsRow lesson)
+		{
+			var cellControl = new CellControl(
+				lesson.SubjectsRow.Name,
+				(lesson.ClassesRow.Year.ToString()) + (string.IsNullOrEmpty(lesson.ClassesRow.CodeName)
+					? string.Empty
+					: $" ({lesson.ClassesRow.CodeName})"),
+				$"{lesson.TeachersRow.FirstName.First()}.{lesson.TeachersRow.LastName}",
+				diffColor: (this.gridPlanningRemainingLessons.RowDefinitions.Count % 2) != 0
+			);
+
+			this.gridPlanningRemainingLessons.RowDefinitions.Add(new RowDefinition());
+			Grid.SetRow(cellControl, this.gridPlanningRemainingLessons.RowDefinitions.Count - 1);
+			this.gridPlanningRemainingLessons.Children.Add(cellControl);
+		}
+
+		private void AddLessonPlaceToGrid(
+			TimetableDataSet.LessonsPlacesRow lessonPlace,
+			TabType tabType,
+			ComboBoxContent content)
+		{
+			var cellControl = new CellControl(
+				lessonPlace.LessonsRow.SubjectsRow.Name,
+				content == ComboBoxContent.Students
+					? $"{lessonPlace.LessonsRow.TeachersRow.FirstName.First()}.{lessonPlace.LessonsRow.TeachersRow.LastName}"
+					: ($"kl. {lessonPlace.LessonsRow.ClassesRow.Year}") +
+						(string.IsNullOrEmpty(lessonPlace.LessonsRow.ClassesRow.CodeName)
+							? string.Empty
+							: $" ({lessonPlace.LessonsRow.ClassesRow.CodeName})"),
+				$"s.{lessonPlace.ClassroomsRow.Name}",
+				diffColor: (lessonPlace.HoursRow.Id % 2) != 0
+			);
+			Grid.SetColumn(cellControl, lessonPlace.DaysRow.Id);
+			Grid.SetRow(cellControl, lessonPlace.HoursRow.Id);
+			switch (tabType)
+			{
+				case TabType.Planning:
+					this.gridPlanning.Children.Add(cellControl);
+					break;
+				case TabType.Summary:
+					this.gridSummary.Children.Add(cellControl);
+					break;
+			}
 		}
 
 		#endregion
 
 		#region Events
 
-		private void mainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			timetableDataSet = new TimetableDataSet();
-
-			classesTableAdapter = new ClassesTableAdapter();
-			classroomsTableAdapter = new ClassroomsTableAdapter();
-			daysTableAdapter = new DaysTableAdapter();
-			hoursTableAdapter = new HoursTableAdapter();
-			lessonsTableAdapter = new LessonsTableAdapter();
-			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			studentsTableAdapter = new StudentsTableAdapter();
-			subjectsTableAdapter = new SubjectsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
-
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
-			daysTableAdapter.Fill(timetableDataSet.Days);
-			hoursTableAdapter.Fill(timetableDataSet.Hours);
-			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-			studentsTableAdapter.Fill(timetableDataSet.Students);
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			this.InitDatabaseObjects();
 
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
+
+			this.FillTimetableGrid();
 		}
 
-		private void tabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			switch (this.tabControl.SelectedIndex)
+			switch ((TabType)this.tabControl.SelectedIndex)
 			{
-				case 0:
-					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Hidden;
-					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
-					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Visible;
-					this.expander.Visibility = System.Windows.Visibility.Visible;
+				case TabType.Management:
+					this.gridSummaryFilter.Visibility = Visibility.Hidden;
+					this.gridOperations.Visibility = Visibility.Visible;
+					this.gridOperationsComboBox.Visibility = Visibility.Visible;
+					this.expander.Visibility = Visibility.Visible;
 					this.FillExpander(ExpanderContent.Management);
 					break;
-				case 1:
-				case 2:
-					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Hidden;
-					this.gridOperations.Visibility = System.Windows.Visibility.Hidden;
+				case TabType.Mapping:
+				case TabType.Planning:
+					this.gridSummaryFilter.Visibility = Visibility.Hidden;
+					this.gridOperations.Visibility = Visibility.Hidden;
 					break;
-				case 3:
-					this.gridSummaryFilter.Visibility = System.Windows.Visibility.Visible;
-					this.gridOperations.Visibility = System.Windows.Visibility.Visible;
-					this.gridOperationsComboBox.Visibility = System.Windows.Visibility.Hidden;
-					this.expander.Visibility = System.Windows.Visibility.Visible;
+				case TabType.Summary:
+					this.gridSummaryFilter.Visibility = Visibility.Visible;
+					this.gridOperations.Visibility = Visibility.Visible;
+					this.gridOperationsComboBox.Visibility = Visibility.Hidden;
+					this.expander.Visibility = Visibility.Visible;
 					this.FillExpander(ExpanderContent.Summary);
 					break;
 			}
 		}
 
-		private void comboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 1);
+			this.comboBoxContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 1);
 			this.FillExpander(ExpanderContent.Management);
-			
+
 			switch (this.comboBoxContent)
 			{
 				case ComboBoxContent.Students:
@@ -309,55 +404,77 @@ namespace Timetable.Windows
 
 		#region TabPlanning
 
-		private void comboBoxPlanning1_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void comboBoxPlanning1_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.comboBoxContent = (ComboBoxContent)((sender as System.Windows.Controls.ComboBox).SelectedIndex + 2);
-			switch (comboBoxContent)
+			this.comboBoxPlanningContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 2);
+			switch (this.comboBoxPlanningContent)
 			{
 				case ComboBoxContent.Classes:
-					List<TimetableDataSet.ClassesRow> classesList = timetableDataSet.Classes
-						.OrderBy(c => c.Year)
-						.ToList();
-					this.comboBoxPlanning2.ItemsSource = classesList
-						.Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+					var classesList = timetableDataSet.Classes.
+						OrderBy(c => c.Year);
+					this.comboBoxPlanning2.ItemsSource = classesList.
+						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
-					this.currentClassId = classesList.ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
 					break;
 				case ComboBoxContent.Teachers:
-					this.comboBoxPlanning2.ItemsSource = timetableDataSet.Teachers
-						.OrderBy(t => t.Pesel)
-						.Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+					var teachersList = timetableDataSet.Teachers.
+						OrderBy(t => t.Pesel);
+					this.comboBoxPlanning2.ItemsSource = teachersList.
+						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
 			}
 		}
-		private void comboBoxPlanning2_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void comboBoxPlanning2_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			List<TimetableDataSet.ClassesRow> classesList = timetableDataSet.Classes
-				.OrderBy(c => c.Year)
-				.ToList();
-			int index = this.comboBoxPlanning2.Items.Count > 0 ? this.comboBoxPlanning2.SelectedIndex : -1;
-
-			if (index >= 0)
+			if (this.comboBoxPlanning2.SelectedIndex != -1)
 			{
-				this.currentClassId = classesList.ElementAt(index).Id;
-
-				foreach (TimetableDataSet.LessonsPlacesRow lp
-					in timetableDataSet.LessonsPlaces.Where(lp => lp.LessonsRow.ClassId == currentClassId))
+				switch (this.comboBoxPlanningContent)
 				{
-					MessageBox.Show(lp.LessonsRow.Id + " - "
-					                + lp.LessonsRow.SubjectsRow.Name + " - "
-					                + lp.LessonsRow.ClassesRow.Year + " "
-					                + lp.LessonsRow.ClassesRow.CodeName + " - "
-					                + lp.LessonsRow.TeachersRow.FirstName + " "
-					                + lp.LessonsRow.TeachersRow.LastName + " - "
-					                + lp.ClassroomsRow.Name + " - "
-					                + lp.DaysRow.Name + " - "
-					                + lp.HoursRow.Hour);
+					case ComboBoxContent.Teachers:
+						string currentPlanningTeacherPesel = timetableDataSet.Teachers.
+							OrderBy(t => t.Pesel).
+							ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
+
+						this.ClearTimetableGrids(TabType.Planning);
+
+						var teachersLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
+							Select(lp => lp.LessonId);
+						foreach (var lesson in timetableDataSet.Lessons.
+							Where(l => l.TeacherPesel == currentPlanningTeacherPesel).
+							Where(l => !teachersLessonsPlacesLessonsIds.Contains(l.Id)))
+						{
+							this.AddLessonToGrid(lesson);
+						}
+						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.TeacherPesel == currentPlanningTeacherPesel))
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Teachers);
+						}
+						break;
+					case ComboBoxContent.Classes:
+						int currentPlanningClassId = timetableDataSet.Classes.
+							OrderBy(c => c.Year).
+							ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
+
+						this.ClearTimetableGrids(TabType.Planning);
+
+						var studentsLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
+							Select(lp => lp.LessonId);
+						foreach (var lesson in timetableDataSet.Lessons.
+							Where(l => l.ClassId == currentPlanningClassId).
+							Where(l => !studentsLessonsPlacesLessonsIds.Contains(l.Id)))
+						{
+							this.AddLessonToGrid(lesson);
+						}
+						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.ClassId == currentPlanningClassId))
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Students);
+						}
+						break;
 				}
 			}
-
-			// TODO: Wyświetlić plan danej klasy / danego nauczyciela.
 		}
 
 		#endregion
@@ -370,14 +487,9 @@ namespace Timetable.Windows
 
 		#region Fields
 
-		private ComboBoxContent comboBoxContent = ComboBoxContent.Entities;
-
-		private int currentClassId;
-
-		private int currentTeacherId;
+		#region Database
 
 		private TimetableDataSet timetableDataSet;
-
 		private ClassesTableAdapter classesTableAdapter;
 		private ClassroomsTableAdapter classroomsTableAdapter;
 		private DaysTableAdapter daysTableAdapter;
@@ -387,6 +499,12 @@ namespace Timetable.Windows
 		private StudentsTableAdapter studentsTableAdapter;
 		private SubjectsTableAdapter subjectsTableAdapter;
 		private TeachersTableAdapter teachersTableAdapter;
+
+		#endregion
+
+		private ComboBoxContent
+			comboBoxContent,
+			comboBoxPlanningContent;
 
 		#endregion
 	}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 using Timetable.Windows;
@@ -28,23 +29,23 @@ namespace Timetable.Controls
 			switch (ect)
 			{
 				case ExpanderControlType.Add:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.add);
+					this.image.Source = Properties.Resources.add.ToBitmapImage();
 					this.button.Click += AddButton_Click;
 					break;
 				case ExpanderControlType.Change:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.manage);
+					this.image.Source = Properties.Resources.manage.ToBitmapImage();
 					this.button.Click += ChangeButton_Click;
 					break;
 				case ExpanderControlType.Remove:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.delete);
+					this.image.Source = Properties.Resources.delete.ToBitmapImage();
 					this.button.Click += RemoveButton_Click;
 					break;
 				case ExpanderControlType.XLSX:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.excel);
+					this.image.Source = Properties.Resources.excel.ToBitmapImage();
 					this.button.Click += RemoveButton_Click;
 					break;
 				case ExpanderControlType.PDF:
-					this.image.Source = Utilities.Utilities.ConvertBitmapToBitmapImage(Properties.Resources.pdf);
+					this.image.Source = Properties.Resources.pdf.ToBitmapImage();
 					this.button.Click += RemoveButton_Click;
 					break;
 			}
