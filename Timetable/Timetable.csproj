@@ -103,8 +103,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Utilities\Enums.cs" />
-    <Compile Include="Utilities\ExcelExport.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
+    <Compile Include="Utilities\Export.cs" />
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
