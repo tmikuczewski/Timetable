@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -211,11 +210,16 @@ namespace Timetable.Windows
 			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Classes.ToString());
 			this.comboBoxPlanning1.SelectedIndex = 0;
 
+			this.comboBoxSummary1.Items.Add(ComboBoxContent.Teachers.ToString());
+			this.comboBoxSummary1.Items.Add(ComboBoxContent.Classes.ToString());
+			this.comboBoxSummary1.SelectedIndex = 0;
+
 			this.comboBoxContent = ComboBoxContent.Students;
 			this.comboBoxPlanningContent = ComboBoxContent.Teachers;
+			this.comboBoxSummaryContent = ComboBoxContent.Students;
 		}
 
-		private void FillTimetableGrid()
+		private void FillTimetableGrid(TabType tabType)
 		{
 			for (int i = 1; i <= timetableDataSet.Days.Count; i++)
 			{
@@ -224,17 +228,25 @@ namespace Timetable.Windows
 					var cellControl = new CellControl(diffColor: (j % 2) != 0);
 					Grid.SetColumn(cellControl, i);
 					Grid.SetRow(cellControl, j);
-					this.gridPlanning.Children.Add(cellControl);
+					switch (tabType)
+					{
+						case TabType.Planning:
+							this.gridPlanning.Children.Add(cellControl);
+							break;
+						case TabType.Summary:
+							this.gridSummary.Children.Add(cellControl);
+							break;
+					}
 				}
 			}
 		}
 
-		private void ClearTimetableGrids(TabType planning)
+		private void ClearTimetableGrids(TabType tabType)
 		{
-			switch (planning)
+			var tilesToSkip = timetableDataSet.Days.Count + timetableDataSet.Hours.Count;
+			switch (tabType)
 			{
 				case TabType.Planning:
-					var tilesToSkip = timetableDataSet.Days.Count + timetableDataSet.Hours.Count;
 					if (this.gridPlanning.Children.Count > tilesToSkip)
 					{
 						this.gridPlanning.Children.RemoveRange(tilesToSkip, this.gridPlanning.Children.Count - tilesToSkip);
@@ -244,16 +256,14 @@ namespace Timetable.Windows
 						this.gridPlanningRemainingLessons.Children.Clear();
 						this.gridPlanningRemainingLessons.RowDefinitions.Clear();
 					}
-					this.FillTimetableGrid();
+					this.FillTimetableGrid(tabType);
 					break;
 				case TabType.Summary:
-					foreach (var children in this.gridSummary.Children)
+					if (this.gridSummary.Children.Count > tilesToSkip)
 					{
-						if (children is CellControl)
-						{
-							this.gridSummary.Children.Remove(children as UIElement);
-						}
+						this.gridSummary.Children.RemoveRange(tilesToSkip, this.gridSummary.Children.Count - tilesToSkip);
 					}
+					this.FillTimetableGrid(tabType);
 					break;
 			}
 		}
@@ -350,8 +360,6 @@ namespace Timetable.Windows
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
-
-			this.FillTimetableGrid();
 		}
 
 		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -479,6 +487,67 @@ namespace Timetable.Windows
 
 		#endregion
 
+		#region TabSummary
+
+		private void comboBoxSummary1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			this.comboBoxSummaryContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 2);
+			switch (this.comboBoxSummaryContent)
+			{
+				case ComboBoxContent.Classes:
+					var classesList = timetableDataSet.Classes.
+						OrderBy(c => c.Year);
+					this.comboBoxSummary2.ItemsSource = classesList.
+						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
+					break;
+				case ComboBoxContent.Teachers:
+					var teachersList = timetableDataSet.Teachers.
+						OrderBy(t => t.Pesel);
+					this.comboBoxSummary2.ItemsSource = teachersList.
+						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
+					break;
+			}
+		}
+		private void comboBoxSummary2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (this.comboBoxSummary2.SelectedIndex != -1)
+			{
+				switch (this.comboBoxSummaryContent)
+				{
+					case ComboBoxContent.Teachers:
+						string currentSummaryTeacherPesel = timetableDataSet.Teachers.
+							OrderBy(t => t.Pesel).
+							ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
+
+						this.ClearTimetableGrids(TabType.Summary);
+
+						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.TeacherPesel == currentSummaryTeacherPesel))
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Teachers);
+						}
+						break;
+					case ComboBoxContent.Classes:
+						int currentSummaryClassId = timetableDataSet.Classes.
+							OrderBy(c => c.Year).
+							ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
+
+						this.ClearTimetableGrids(TabType.Summary);
+
+						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.ClassId == currentSummaryClassId))
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Students);
+						}
+						break;
+				}
+			}
+		}
+
+		#endregion
+
 		#endregion
 
 		#region Constants and Statics
@@ -504,7 +573,9 @@ namespace Timetable.Windows
 
 		private ComboBoxContent
 			comboBoxContent,
-			comboBoxPlanningContent;
+			comboBoxPlanningContent,
+			comboBoxSummaryContent;
+
 
 		#endregion
 	}

@@ -121,7 +121,7 @@
 				</Grid>
 			</TabItem>
 			<TabItem x:Name="tabItemSummary" Header="Summary" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="17,0,-17,0" FontSize="14.667">
-				<Grid x:Name="gridSummary">
+				<Grid x:Name="gridSummary" Margin="0,0,10,5">
 					<Grid.RowDefinitions>
 						<RowDefinition/>
 						<RowDefinition Height="2*"/>
@@ -203,8 +203,8 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 			<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,18,0,20" Width="111"/>
-			<ComboBox x:Name="comboBoxSummary1" Height="24" Margin="5,0" SelectionChanged="comboBoxPlanning1_SelectionChanged" VerticalAlignment="Top"/>
-			<ComboBox x:Name="comboBoxSummary2" Margin="5,0" Height="24" SelectionChanged="comboBoxPlanning2_SelectionChanged" Grid.Column="1" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboBoxSummary1" Height="24" Margin="5,0" SelectionChanged="comboBoxSummary1_SelectionChanged" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboBoxSummary2" Margin="5,0" Height="24" SelectionChanged="comboBoxSummary2_SelectionChanged" Grid.Column="1" VerticalAlignment="Top"/>
 		</Grid>
 
 	</Grid>
