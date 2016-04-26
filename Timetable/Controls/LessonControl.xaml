@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Timetable.Controls.LessonControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Timetable.Controls"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="16.525" Height="30" MinWidth="550" MinHeight="30" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+	<Grid x:Name="gridMain">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="4*"/>
+			<ColumnDefinition Width="6*"/>
+			<ColumnDefinition Width="6*"/>
+			<ColumnDefinition Width="5*"/>
+		</Grid.ColumnDefinitions>
+		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="0">
+			<CheckBox x:Name="checkBox" Content="" Focusable="False" VerticalAlignment="Center" Margin="5,0,0,0"/>
+		</Border>
+		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="1">
+			<TextBlock x:Name="textBlockID" TextWrapping="Wrap" Text="ID" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		</Border>
+		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="2">
+			<TextBlock x:Name="textBlockTeacher" TextWrapping="Wrap" Text="Teacher" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		</Border>
+		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="3">
+			<TextBlock x:Name="textBlockClass" TextWrapping="Wrap" Text="Class" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		</Border>
+		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="4">
+			<TextBlock x:Name="textBlockSubject" TextWrapping="Wrap" Text="Subject" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		</Border>
+	</Grid>
+</UserControl>

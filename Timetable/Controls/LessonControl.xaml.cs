@@ -1,23 +1,25 @@
-﻿namespace Timetable.Controls
+﻿using System.Linq;
+
+namespace Timetable.Controls
 {
     /// <summary>
-    /// Interaction logic for ClassControl.xaml
+    /// Interaction logic for LessonControl.xaml
     /// </summary>
-    public partial class ClassControl : System.Windows.Controls.UserControl
+    public partial class LessonControl : System.Windows.Controls.UserControl
     {
         #region Constructors
 
         /// <summary>
-        /// Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-        /// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-        public ClassControl(TimetableDataSet.ClassesRow classRow)
+        /// Konstruktor tworzący obiekt typu <c>Controls.LessonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+        /// <param name="lessonRow">Obiekt typu <c>TimetableDataSet.LessonRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+        public LessonControl(TimetableDataSet.LessonsRow lessonRow)
         {
             InitializeComponent();
 
-            this.textBlockId.Text = classRow.Id.ToString();
-            this.textBlockYear.Text = classRow.Year.ToString();
-            this.textBlockCodeName.Text = classRow.CodeName ?? string.Empty;
-            this.textBlockTutorPesel.Text = classRow.TutorPesel ?? string.Empty;
+            this.textBlockID.Text = lessonRow.Id.ToString();
+            this.textBlockTeacher.Text = lessonRow.TeachersRow.FirstName[0] + ". " + lessonRow.TeachersRow.LastName;
+            this.textBlockClass.Text = lessonRow.ClassesRow.Year.ToString() + " " + lessonRow.ClassesRow.CodeName;
+            this.textBlockSubject.Text = lessonRow.SubjectsRow.Name;
         }
 
         #endregion
@@ -29,7 +31,7 @@
         #region Public methods
 
         /// <summary>
-        /// Sprawdza, czy wybrana klasa jest zaznaczona.
+        /// Sprawdza, czy wybrana osoba jest zaznaczona.
         /// </summary>
         /// <returns></returns>
         public bool IsChecked()
@@ -43,7 +45,7 @@
         /// <returns></returns>
         public string GetId()
         {
-            return this.textBlockId.Text;
+            return this.textBlockID.Text;
         }
 
         #endregion

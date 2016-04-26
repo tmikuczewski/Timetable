@@ -5,94 +5,94 @@ using Timetable.Utilities;
 
 namespace Timetable.Controls
 {
-	/// <summary>
-	/// Interaction logic for PersonControl.xaml</summary>
-	public partial class PersonControl : UserControl
-	{
-		#region Constructors
+    /// <summary>
+    /// Interaction logic for PersonControl.xaml</summary>
+    public partial class PersonControl : UserControl
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public PersonControl(TimetableDataSet.StudentsRow studentRow)
-		{
-			InitializeComponent();
+        /// <summary>
+        /// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+        /// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+        public PersonControl(TimetableDataSet.StudentsRow studentRow)
+        {
+            InitializeComponent();
 
-			this.Pesel = new Pesel(studentRow.Pesel);
-			this.textBlockFirstName.Text = studentRow.FirstName;
-			this.textBlockLastName.Text = studentRow.LastName;
-			this.textBlockInfo.Text = (studentRow.ClassesRow != null)
-				? studentRow.ClassesRow.Year + " " + studentRow.ClassesRow.CodeName
-				: string.Empty;
-		}
+            this.Pesel = new Pesel(studentRow.Pesel);
+            this.textBlockFirstName.Text = studentRow.FirstName;
+            this.textBlockLastName.Text = studentRow.LastName;
+            this.textBlockInfo.Text = (studentRow.ClassesRow != null)
+                ? studentRow.ClassesRow.Year + " " + studentRow.ClassesRow.CodeName
+                : string.Empty;
+        }
 
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public PersonControl(TimetableDataSet.TeachersRow teacherRow)
-		{
-			InitializeComponent();
+        /// <summary>
+        /// Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
+        /// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+        public PersonControl(TimetableDataSet.TeachersRow teacherRow)
+        {
+            InitializeComponent();
 
-			this.Pesel = new Pesel(teacherRow.Pesel);
-			this.textBlockFirstName.Text = teacherRow.FirstName;
-			this.textBlockLastName.Text = teacherRow.LastName;
-			this.textBlockInfo.Text = (teacherRow.GetClassesRows().Length > 0)
-				? teacherRow.GetClassesRows().First().Year + " " + teacherRow.GetClassesRows().First().CodeName
-				: string.Empty;
-		}
+            this.Pesel = new Pesel(teacherRow.Pesel);
+            this.textBlockFirstName.Text = teacherRow.FirstName;
+            this.textBlockLastName.Text = teacherRow.LastName;
+            this.textBlockInfo.Text = (teacherRow.GetClassesRows().Length > 0)
+                ? teacherRow.GetClassesRows().First().Year + " " + teacherRow.GetClassesRows().First().CodeName
+                : string.Empty;
+        }
 
-		#endregion
+        #endregion
 
-		#region Overridden methods
+        #region Overridden methods
 
-		#endregion
+        #endregion
 
-		#region Public methods
+        #region Public methods
 
-		/// <summary>
-		/// Sprawdza, czy wybrana osoba jest zaznaczona.
-		/// </summary>
-		/// <returns></returns>
-		public bool IsChecked() => (this.checkBox.IsChecked ?? false);
+        /// <summary>
+        /// Sprawdza, czy wybrana osoba jest zaznaczona.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsChecked() => (this.checkBox.IsChecked ?? false);
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
 
-		public Pesel Pesel
-		{
-			get { return new Pesel(this.textBlockPesel.Text); }
-			set { this.textBlockPesel.Text = value.StringRepresentation; }
-		}
-		public string FirstName { get; set; }
-		public string LastName { get; set; }
+        public Pesel Pesel
+        {
+            get { return new Pesel(this.textBlockPesel.Text); }
+            set { this.textBlockPesel.Text = value.StringRepresentation; }
+        }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Private methods
+        #region Private methods
 
-		#endregion
+        #endregion
 
-		#region Events
+        #region Events
 
-		private void UserControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			this.checkBox.IsChecked = !this.checkBox.IsChecked;
-		}
+        private void UserControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.checkBox.IsChecked = !this.checkBox.IsChecked;
+        }
 
-		#endregion
+        #endregion
 
-		#region Constants and Statics
+        #region Constants and Statics
 
-		/// <summary>
-		/// Wysokość kontrolki.</summary>
-		public const int HEIGHT = 30;
+        /// <summary>
+        /// Wysokość kontrolki.</summary>
+        public const int HEIGHT = 30;
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		#endregion
-	}
+        #endregion
+    }
 }

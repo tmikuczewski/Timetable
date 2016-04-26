@@ -88,6 +88,9 @@
     <Compile Include="Controls\CellControl.xaml.cs">
       <DependentUpon>CellControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LessonControl.xaml.cs">
+      <DependentUpon>LessonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SubjectControl.xaml.cs">
       <DependentUpon>SubjectControl.xaml</DependentUpon>
     </Compile>
@@ -104,7 +107,6 @@
     </Compile>
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
-    <Compile Include="Utilities\Export.cs" />
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
@@ -125,6 +127,10 @@
     <Page Include="Controls\CellControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LessonControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SubjectControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -196,7 +202,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -215,7 +223,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plus.png" />
@@ -275,7 +285,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DbSchema\2016_04_18_Migration_NullableFields.sql" />
-    <Content Include="DbSchema\2016_04_24_Seed_Lessons_LessonsPlaces.sql" />
     <Content Include="DbSchema\timetable-schema.sql" />
     <Content Include="DbSchema\timetable-seed.sql" />
   </ItemGroup>

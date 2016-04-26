@@ -29,24 +29,24 @@ namespace Timetable.Controls
 			switch (ect)
 			{
 				case ExpanderControlType.Add:
-					this.image.Source = Properties.Resources.add.ToBitmapImage();
-					this.button.Click += AddButton_Click;
+                    this.image.Source = Properties.Resources.add.ToBitmapImage();
+                    this.button.Click += AddButton_Click;
 					break;
 				case ExpanderControlType.Change:
-					this.image.Source = Properties.Resources.manage.ToBitmapImage();
-					this.button.Click += ChangeButton_Click;
+                    this.image.Source = Properties.Resources.manage.ToBitmapImage();
+                    this.button.Click += ChangeButton_Click;
 					break;
 				case ExpanderControlType.Remove:
-					this.image.Source = Properties.Resources.delete.ToBitmapImage();
-					this.button.Click += RemoveButton_Click;
+                    this.image.Source = Properties.Resources.delete.ToBitmapImage();
+                    this.button.Click += RemoveButton_Click;
 					break;
 				case ExpanderControlType.XLSX:
-					this.image.Source = Properties.Resources.excel.ToBitmapImage();
-					this.button.Click += RemoveButton_Click;
+                    this.image.Source = Properties.Resources.excel.ToBitmapImage();
+                    this.button.Click += RemoveButton_Click;
 					break;
 				case ExpanderControlType.PDF:
-					this.image.Source = Properties.Resources.pdf.ToBitmapImage();
-					this.button.Click += RemoveButton_Click;
+                    this.image.Source = Properties.Resources.pdf.ToBitmapImage();
+                    this.button.Click += RemoveButton_Click;
 					break;
 			}
 
@@ -55,12 +55,14 @@ namespace Timetable.Controls
 			classesTableAdapter = new ClassesTableAdapter();
 			studentsTableAdapter = new StudentsTableAdapter();
 			subjectsTableAdapter = new SubjectsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
+            teachersTableAdapter = new TeachersTableAdapter();
+            lessonsTableAdapter = new LessonsTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
+            classesTableAdapter.Fill(timetableDataSet.Classes);
 			studentsTableAdapter.Fill(timetableDataSet.Students);
 			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+            lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 		}
 
 		#endregion
@@ -85,7 +87,13 @@ namespace Timetable.Controls
 
 		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
+            if (callingWindow.tabControl.SelectedIndex == 1)
+            {
+                MappingWindow mappingWindow = new MappingWindow(callingWindow, ExpanderControlType.Add);
+                mappingWindow.Show();
+                return;
+            }
+            if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
 				|| callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 			{
 				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Add);
@@ -101,11 +109,17 @@ namespace Timetable.Controls
 				ManageSubjectWindow manageSubjectWindow = new ManageSubjectWindow(callingWindow, ExpanderControlType.Add);
 				manageSubjectWindow.Show();
 			}
-		}
+        }
 
 		private void ChangeButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
+            if (callingWindow.tabControl.SelectedIndex == 1)
+            {
+                MappingWindow mappingWindow = new MappingWindow(callingWindow, ExpanderControlType.Change);
+                mappingWindow.Show();
+                return;
+            }
+            if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
 			    || callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
 			{
 				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Change);
@@ -125,7 +139,19 @@ namespace Timetable.Controls
 
 		private void RemoveButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			try
+            if (callingWindow.tabControl.SelectedIndex == 1)
+            {
+                lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+
+                foreach (string id in callingWindow.GetIdNumbersOfMarkedLessons())
+                {
+                    timetableDataSet.Lessons.FindById(Int32.Parse(id)).Delete();
+                    lessonsTableAdapter.Update(timetableDataSet.Lessons);
+                }
+                this.callingWindow.RefreshMapping();
+                return;
+            }
+            try
 			{
 				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
 				{
@@ -196,8 +222,9 @@ namespace Timetable.Controls
 		private ClassesTableAdapter classesTableAdapter;
 		private StudentsTableAdapter studentsTableAdapter;
 		private SubjectsTableAdapter subjectsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+        private TeachersTableAdapter teachersTableAdapter;
+        private LessonsTableAdapter lessonsTableAdapter;
 
-		#endregion
-	}
+        #endregion
+    }
 }

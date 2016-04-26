@@ -57,8 +57,11 @@
 		Classes,
 		/// <summary>
 		/// Lista przedmiotów.</summary>
-		Subjects
-	}
+		Subjects,
+        /// <summary>
+        /// Mapping.</summary>
+        Mapping
+    }
 
 	/// <summary>
 	/// Zawartość kontrolki <c>Expander</c>.</summary>
