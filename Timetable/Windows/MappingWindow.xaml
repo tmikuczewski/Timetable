@@ -90,10 +90,12 @@
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Hours / week:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0.5,0,0.5" HorizontalAlignment="Left" Width="217" Grid.Row="3">
+					<xctk:IntegerUpDown x:Name="integerUpDownHours" Value="1" Increment="1" Minimum="1" VerticalAlignment="Center" Height="30" Margin="10,40,10,41"/>
 				</Border>
 			</Grid>
-		</GroupBox>
+        </GroupBox>
         <Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOkMap_Click"/>
         <Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancelMap_Click"/>
-	</Grid>
+    </Grid>
 </Window>
+    

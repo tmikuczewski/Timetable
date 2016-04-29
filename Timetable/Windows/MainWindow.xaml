@@ -36,8 +36,8 @@
 						<ColumnDefinition Width="4*"/>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
-                    <Border BorderBrush="Gray" BorderThickness="1,1,1,1" Margin="10,0,0,10" Grid.Row="1" RenderTransformOrigin="0.5,0.5">
-                        <Border.RenderTransform>
+					<Border BorderBrush="Gray" BorderThickness="1,1,1,1" Margin="10,0,0,10" Grid.Row="1" RenderTransformOrigin="0.5,0.5">
+						<Border.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform ScaleY="-1"/>
 								<SkewTransform/>
@@ -53,8 +53,8 @@
 						<ComboBox x:Name="comboBoxPlanning1" Width="120" Height="28" HorizontalAlignment="Left" Margin="116,4,0,5" SelectionChanged="comboBoxPlanning1_SelectionChanged"/>
 						<ComboBox x:Name="comboBoxPlanning2" Margin="241,4,0,5" Width="120" Height="28" HorizontalAlignment="Left" SelectionChanged="comboBoxPlanning2_SelectionChanged"/>
 					</Grid>
-                    <Grid x:Name="gridPlanning" Margin="15,10,10,15" Grid.Row="1">
-                        <Grid.RowDefinitions>
+					<Grid x:Name="gridPlanning" Margin="15,10,10,15" Grid.Row="1">
+						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition Height="2*"/>
 							<RowDefinition Height="2*"/>
@@ -73,31 +73,31 @@
 							<ColumnDefinition Width="3*"/>
 							<ColumnDefinition Width="3*"/>
 						</Grid.ColumnDefinitions>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="1" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="0" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="2" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="1" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="3" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="2" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="4" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="3" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="5" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="4" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="6" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="5" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="7" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="6" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="8" Margin="0">
-                            <TextBlock TextWrapping="Wrap" Text="7" VerticalAlignment="Center" TextAlignment="Center"/>
-                        </Border>
-                        <Border BorderBrush="{x:Null}" Grid.Column="1">
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="1" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="0" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="2" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="1" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="3" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="2" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="4" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="3" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="5" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="4" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="6" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="5" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="7" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="6" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="8" Margin="0">
+							<TextBlock TextWrapping="Wrap" Text="7" VerticalAlignment="Center" TextAlignment="Center"/>
+						</Border>
+						<Border BorderBrush="{x:Null}" Grid.Column="1">
 							<TextBlock TextWrapping="Wrap" Text="MO" VerticalAlignment="Center" TextAlignment="Center"/>
 						</Border>
 						<Border BorderBrush="{x:Null}" Grid.Column="2">
@@ -113,15 +113,20 @@
 							<TextBlock TextWrapping="Wrap" Text="FR" VerticalAlignment="Center" TextAlignment="Center"/>
 						</Border>
 					</Grid>
-					<ScrollViewer x:Name="scrollViewerPlanningRemainingLessons" Grid.Column="1" Grid.Row="1" Margin="0,0,10,10" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-					<Border BorderBrush="{x:Null}" Grid.Column="1" HorizontalAlignment="Left" Height="37" Margin="10,6,0,0" VerticalAlignment="Top" Width="133">
-						<TextBlock x:Name="textBlockPlanningRemainigLessons" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Text="TextBlock"/>
+					<!--<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="0,0,10,10" ScrollViewer.VerticalScrollBarVisibility="Auto">
+						<Grid x:Name="gridPlanningRemainingLessons" Height="420" Width="120"/>
+					</ScrollViewer>-->
+					<ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,10">
+						<Grid x:Name="gridPlanningRemainingLessons"/>
+					</ScrollViewer>
+					<Border BorderBrush="{x:Null}" Grid.Column="1" Height="37" Margin="10,6,10,0" VerticalAlignment="Top">
+						<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Remaining lessons"/>
 					</Border>
 				</Grid>
 			</TabItem>
 			<TabItem x:Name="tabItemSummary" Header="Summary" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="17,0,-17,0" FontSize="14.667">
-                <Grid x:Name="gridSummary" Margin="0,0,10,5">
-                    <Grid.RowDefinitions>
+				<Grid x:Name="gridSummary" Margin="0,0,10,5">
+					<Grid.RowDefinitions>
 						<RowDefinition/>
 						<RowDefinition Height="2*"/>
 						<RowDefinition Height="2*"/>
@@ -202,8 +207,8 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 			<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,18,0,20" Width="111"/>
-			<ComboBox x:Name="comboBoxSummary1" Height="24" Margin="5,0" SelectionChanged="comboBoxPlanning1_SelectionChanged" VerticalAlignment="Top"/>
-			<ComboBox x:Name="comboBoxSummary2" Margin="5,0" Height="24" SelectionChanged="comboBoxPlanning2_SelectionChanged" Grid.Column="1" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboBoxSummary1" Height="24" Margin="5,0" SelectionChanged="comboBoxSummary1_SelectionChanged" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboBoxSummary2" Margin="5,0" Height="24" SelectionChanged="comboBoxSummary2_SelectionChanged" Grid.Column="1" VerticalAlignment="Top"/>
 		</Grid>
 
 	</Grid>

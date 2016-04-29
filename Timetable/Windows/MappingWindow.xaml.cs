@@ -6,10 +6,10 @@ using Timetable.Utilities;
 
 namespace Timetable.Windows
 {
-	/// <summary>
-	/// Interaction logic for MappingWindow.xaml</summary>
-	public partial class MappingWindow : System.Windows.Window
-	{
+    /// <summary>
+    /// Interaction logic for MappingWindow.xaml</summary>
+    public partial class MappingWindow : System.Windows.Window
+    {
         #region Constructors
         /// <summary>
         /// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
@@ -68,13 +68,13 @@ namespace Timetable.Windows
             if (this.controlType == ExpanderControlType.Change)
             {
                 this.currentLessonID = Int32.Parse(this.callingWindow.GetIdNumbersOfMarkedLessons().FirstOrDefault());
-                
+
                 currentLessonRow = timetableDataSet.Lessons.FindById(this.currentLessonID);
 
                 if (currentLessonRow != null)
                 {
-                    this.comboBoxClasses.SelectedIndex = currentLessonRow.ClassId-1;
-                    this.comboBoxSubjects.SelectedIndex = currentLessonRow.SubjectId-1;
+                    this.comboBoxClasses.SelectedIndex = currentLessonRow.ClassId - 1;
+                    this.comboBoxSubjects.SelectedIndex = currentLessonRow.SubjectId - 1;
                     this.comboBoxTeachers.SelectedValue = currentLessonRow.TeacherPesel;
                 }
                 else

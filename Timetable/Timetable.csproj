@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
+    <Compile Include="Utilities\Export.cs" />
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
@@ -202,9 +203,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -223,9 +222,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plus.png" />
@@ -285,6 +282,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DbSchema\2016_04_18_Migration_NullableFields.sql" />
+    <Content Include="DbSchema\2016_04_24_Seed_Lessons_LessonsPlaces.sql" />
     <Content Include="DbSchema\timetable-schema.sql" />
     <Content Include="DbSchema\timetable-seed.sql" />
   </ItemGroup>

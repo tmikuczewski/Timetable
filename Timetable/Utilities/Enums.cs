@@ -55,9 +55,9 @@
 		/// <summary>
 		/// Lista klas.</summary>
 		Classes,
-		/// <summary>
-		/// Lista przedmiotów.</summary>
-		Subjects,
+        /// <summary>
+        /// Lista przedmiotów.</summary>
+        Subjects,
         /// <summary>
         /// Mapping.</summary>
         Mapping

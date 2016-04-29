@@ -1,66 +1,66 @@
 ﻿namespace Timetable.Utilities
 {
-    /// <summary>
-    /// Statyczna klasa przechowująca metody/klasy pomocniczne.</summary>
-    public static class Utilities
-    {
-        #region Constructors
+	/// <summary>
+	/// Statyczna klasa przechowująca metody/klasy pomocniczne.</summary>
+	public static class Utilities
+	{
+		#region Constructors
 
-        #endregion
+		#endregion
 
-        #region Overridden methods
+		#region Overridden methods
 
-        #endregion
+		#endregion
 
-        #region Public methods
+		#region Public methods
 
-        /// <summary>
-        /// Statyczna metoda konwertująca obiekt typu <c>System.Drawing.Bitmap</c> na obiekt 
-        /// typu <c>System.Windows.Media.Imaging.BitmapImage</c>.
-        /// </summary>
-        /// <param name="bitmap">Obiekt typu <c>System.Drawing.Bitmap</c> mający ulec konwersji.</param>
-        /// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Imaging.BitmapImage</c>.</returns>
-        public static System.Windows.Media.Imaging.BitmapImage ToBitmapImage(this System.Drawing.Bitmap bitmap)
-        {
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            ms.Position = 0;
+		/// <summary>
+		/// Statyczna metoda konwertująca obiekt typu <c>System.Drawing.Bitmap</c> na obiekt 
+		/// typu <c>System.Windows.Media.Imaging.BitmapImage</c>.
+		/// </summary>
+		/// <param name="bitmap">Obiekt typu <c>System.Drawing.Bitmap</c> mający ulec konwersji.</param>
+		/// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Imaging.BitmapImage</c>.</returns>
+		public static System.Windows.Media.Imaging.BitmapImage ToBitmapImage(this System.Drawing.Bitmap bitmap)
+		{
+			System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+			ms.Position = 0;
 
-            System.Windows.Media.Imaging.BitmapImage bitmapImg = new System.Windows.Media.Imaging.BitmapImage();
-            bitmapImg.BeginInit();
-            bitmapImg.StreamSource = ms;
-            bitmapImg.EndInit();
+			System.Windows.Media.Imaging.BitmapImage bitmapImg = new System.Windows.Media.Imaging.BitmapImage();
+			bitmapImg.BeginInit();
+			bitmapImg.StreamSource = ms;
+			bitmapImg.EndInit();
 
-            return bitmapImg;
-        }
+			return bitmapImg;
+		}
 
-        /// <summary>
-        /// Statyczna metoda konwertująca obiekt typu <c>System.Drawing.Color</c> na obiekt 
-        /// typu <c>System.Windows.Media.Color</c>.
-        /// </summary>
-        /// <param name="color">Obiekt typu <c>System.Drawing.Color</c> mający ulec konwersji.</param>
-        /// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Color</c>.</returns>
-        public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color color)
-        {
-            return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-        }
+		/// <summary>
+		/// Statyczna metoda konwertująca obiekt typu <c>System.Drawing.Color</c> na obiekt 
+		/// typu <c>System.Windows.Media.Color</c>.
+		/// </summary>
+		/// <param name="color">Obiekt typu <c>System.Drawing.Color</c> mający ulec konwersji.</param>
+		/// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Color</c>.</returns>
+		public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color color)
+		{
+			return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Private methods
 
-        #endregion
+		#endregion
 
-        #region Constants and Statics
+		#region Constants and Statics
 
-        #endregion
+		#endregion
 
-        #region Fields
+		#region Fields
 
-        #endregion
-    }
+		#endregion
+	}
 }

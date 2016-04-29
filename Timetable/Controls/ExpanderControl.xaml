@@ -5,8 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Timetable.Controls"
 			 mc:Ignorable="d" Height="27" Width="95" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-    <Grid x:Name="gridMain">
-        <Button x:Name="button" Content="Button" Margin="22,2,3,2" Width="70" Background="{x:Null}" BorderThickness="0"/>
-        <Image x:Name="image" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="20" Margin="2,2,0,0"/>
-    </Grid>
+	<Grid x:Name="gridMain">
+		<Button x:Name="button" Content="Button" Margin="22,2,3,2" Width="70" Background="{x:Null}" BorderThickness="0"/>
+		<Image x:Name="image" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="20" Margin="2,2,0,0"/>
+	</Grid>
 </UserControl>
