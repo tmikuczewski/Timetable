@@ -1,4 +1,8 @@
-﻿namespace Timetable.Utilities
+﻿using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Media.Imaging;
+
+namespace Timetable.Utilities
 {
 	/// <summary>
 	/// Statyczna klasa przechowująca metody/klasy pomocniczne.</summary>
@@ -20,13 +24,13 @@
 		/// </summary>
 		/// <param name="bitmap">Obiekt typu <c>System.Drawing.Bitmap</c> mający ulec konwersji.</param>
 		/// <returns>Obiekt przekonwertowany na typ <c>System.Windows.Media.Imaging.BitmapImage</c>.</returns>
-		public static System.Windows.Media.Imaging.BitmapImage ToBitmapImage(this System.Drawing.Bitmap bitmap)
+		public static BitmapImage ToBitmapImage(this System.Drawing.Bitmap bitmap)
 		{
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
-			bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+			MemoryStream ms = new MemoryStream();
+			bitmap.Save(ms, ImageFormat.Png);
 			ms.Position = 0;
 
-			System.Windows.Media.Imaging.BitmapImage bitmapImg = new System.Windows.Media.Imaging.BitmapImage();
+			BitmapImage bitmapImg = new BitmapImage();
 			bitmapImg.BeginInit();
 			bitmapImg.StreamSource = ms;
 			bitmapImg.EndInit();

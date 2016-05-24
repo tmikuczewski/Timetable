@@ -1,4 +1,7 @@
-﻿namespace Timetable.Utilities
+﻿using System;
+using System.Text.RegularExpressions;
+
+namespace Timetable.Utilities
 {
 	/// <summary>
 	/// Klasa przechowująca walidującac i przechowująca informację o jednym poprawnym kodzie PESEL.</summary>
@@ -54,32 +57,32 @@
 		/// Metoda zwracająca datę urodzenia osoby posiadającej podany numer PESEL.</summary>
 		/// <param name="pesel">Numer PESEL w postaci <c>System.String</c>, na podstawie którego ma zostać określona data urodzin.</param>
 		/// <returns>Obiekt typu <c>System.DateTime</c> z ustawioną datą urodzin osoby posiadającej podany numer PESEL.</returns>
-		public static System.DateTime GetBirthDate(string pesel)
+		public static DateTime GetBirthDate(string pesel)
 		{
 			if (IsValid(pesel))
 			{
 				int year = int.Parse(pesel.Trim().Substring(0, 2)),
 					month = int.Parse(pesel.Trim().Substring(2, 2)),
 					day = int.Parse(pesel.Trim().Substring(4, 2));
-				if ((month >= 1) && (month <= 12))
+				if (month.IsBetweenAnd(1, 12)) // ((month >= 1) && (month <= 12))
 				{
-					return new System.DateTime(1900 + year, month, day);
+					return new DateTime(1900 + year, month, day);
 				}
-				else if ((month >= 21) && (month <= 32))
+				else if (month.IsBetweenAnd(21, 32)) // ((month >= 21) && (month <= 32))
 				{
-					return new System.DateTime(2000 + year, (month - 20), day);
+					return new DateTime(2000 + year, (month - 20), day);
 				}
-				else if ((month >= 41) && (month <= 52))
+				else if (month.IsBetweenAnd(41, 52)) // ((month >= 41) && (month <= 52))
 				{
-					return new System.DateTime(2100 + year, (month - 40), day);
+					return new DateTime(2100 + year, (month - 40), day);
 				}
-				else if ((month >= 61) && (month <= 72))
+				else if (month.IsBetweenAnd(61, 72)) // ((month >= 61) && (month <= 72))
 				{
-					return new System.DateTime(2200 + year, (month - 60), day);
+					return new DateTime(2200 + year, (month - 60), day);
 				}
-				else if ((month >= 81) && (month <= 92))
+				else if (month.IsBetweenAnd(81, 92)) // ((month >= 81) && (month <= 92))
 				{
-					return new System.DateTime(1800 + year, (month - 80), day);
+					return new DateTime(1800 + year, (month - 80), day);
 				}
 				else
 				{
@@ -100,7 +103,7 @@
 			string tempPesel = pesel.Trim();
 
 			if ((tempPesel.Length == PESEL_VALID_LENGTH)
-				&& System.Text.RegularExpressions.Regex.Match(pesel, PESEL_REGEX).Success
+				&& Regex.Match(pesel, PESEL_REGEX).Success
 				&& IsCheckDigitValid(tempPesel))
 			{
 				return true;
@@ -135,7 +138,7 @@
 		public string StringRepresentation { get; }
 		/// <summary>
 		/// Data urodzin osoby posiadającej dany numer PESEL.</summary>
-		public System.DateTime BirthDate { get; }
+		public DateTime BirthDate { get; }
 		/// <summary>
 		/// Płeć osoby posiadającej dany numer PESEL.</summary>
 		public Sex Sex { get; }

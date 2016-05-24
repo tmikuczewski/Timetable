@@ -15,12 +15,14 @@ namespace Timetable.Windows
 	public partial class MainWindow : Window
 	{
 		#region Constructors
-
+		
 		/// <summary>
 		/// Konstruktor tworzący obiekt typu <c>MainWindow</c>.
 		/// </summary>
 		public MainWindow()
 		{
+			this.InitDatabaseObjects();
+
 			this.InitializeComponent();
 		}
 
@@ -44,97 +46,86 @@ namespace Timetable.Windows
 		public void RefreshCurrentView()
 		{
 			this.FillScrollViewer(comboBoxContent);
-        }
+		}
 
-        public void RefreshMapping()
-        {
-            this.FillScrollViewer(ComboBoxContent.Mapping);
-        }
-        /// <summary>
-        /// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
-        /// </summary>
-        /// <returns></returns>
-        public ICollection<string> GetPeselNumbersOfMarkedPeople()
+		public void RefreshMapping()
 		{
-			var markedPesels = new List<string>();
+			this.FillScrollViewer(ComboBoxContent.Mapping);
+		}
 
+		/// <summary>
+		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetPeselsOfMarkedPeople()
+		{
 			foreach (PersonControl personControl in this.scrollViewersGrid.Children)
 			{
 				if (personControl.IsChecked())
 				{
-					markedPesels.Add(personControl.Pesel.StringRepresentation);
+					yield return personControl.Pesel.StringRepresentation;
 				}
 			}
-
-			return markedPesels;
+			yield break;
 		}
 
 		/// <summary>
 		/// Metoda zwracająca listę numerów ID zaznaczonych klas.
 		/// </summary>
 		/// <returns></returns>
-		public ICollection<string> GetIdNumbersOfMarkedClasses()
+		public IEnumerable<string> GetIdNumbersOfMarkedClasses()
 		{
-			var markedIds = new List<string>();
-
 			foreach (ClassControl classControl in this.scrollViewersGrid.Children)
 			{
 				if (classControl.IsChecked())
 				{
-					markedIds.Add(classControl.GetId());
+					yield return classControl.GetId();
 				}
 			}
-
-			return markedIds;
+			yield break;
 		}
 
 		/// <summary>
 		/// Metoda zwracająca listę numerów ID zaznaczonych przedmiotów.
 		/// </summary>
 		/// <returns></returns>
-		public ICollection<string> GetIdNumbersOfMarkedSubjects()
+		public IEnumerable<string> GetIdNumbersOfMarkedSubjects()
 		{
-			var markedIds = new List<string>();
-
 			foreach (SubjectControl subjectControl in this.scrollViewersGrid.Children)
 			{
 				if (subjectControl.IsChecked())
 				{
-					markedIds.Add(subjectControl.GetId());
+					yield return subjectControl.GetId();
 				}
 			}
+			yield break;
+		}
 
-			return markedIds;
-        }
+		/// <summary>
+		/// Metoda zwracająca listę numerów ID zaznaczonych lekcji.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedLessons()
+		{
+			foreach (LessonControl lessonControl in this.scrollViewersMappingGrid.Children)
+			{
+				if (lessonControl.IsChecked())
+				{
+					yield return lessonControl.GetId();
+				}
+			}
+			yield break;
+		}
 
-        /// <summary>
-        /// Metoda zwracająca listę numerów ID zaznaczonych lekcji.
-        /// </summary>
-        /// <returns></returns>
-        public ICollection<string> GetIdNumbersOfMarkedLessons()
-        {
-            var markedIds = new List<string>();
+		#endregion
 
-            foreach (LessonControl lessonControl in this.scrollViewersMappingGrid.Children)
-            {
-                if (lessonControl.IsChecked())
-                {
-                    markedIds.Add(lessonControl.GetId());
-                }
-            }
+		#region Properties
 
-            return markedIds;
-        }
+		#endregion
 
-        #endregion
+		#region Private methods
 
-        #region Properties
-
-        #endregion
-
-        #region Private methods
-
-        private void InitDatabaseObjects()
+		private void InitDatabaseObjects()
 		{
 			this.timetableDataSet = new TimetableDataSet();
 
@@ -165,14 +156,14 @@ namespace Timetable.Windows
 			{
 				this.scrollViewersGrid.Children.Clear();
 				this.scrollViewersGrid.RowDefinitions.Clear();
-            }
-            if (this.scrollViewersMappingGrid.Children.Count > 0)
-            {
-                this.scrollViewersMappingGrid.Children.Clear();
-                this.scrollViewersMappingGrid.RowDefinitions.Clear();
-            }
+			}
+			if (this.scrollViewersMappingGrid.Children.Count > 0)
+			{
+				this.scrollViewersMappingGrid.Children.Clear();
+				this.scrollViewersMappingGrid.RowDefinitions.Clear();
+			}
 
-            switch (content)
+			switch (content)
 			{
 				case ComboBoxContent.Teachers:
 					teachersTableAdapter.Fill(timetableDataSet.Teachers);
@@ -195,14 +186,14 @@ namespace Timetable.Windows
 						this.AddSubjectToGrid(subjectRow);
 					}
 					break;
-                case ComboBoxContent.Mapping:
-                    lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-                    foreach (TimetableDataSet.LessonsRow lessonRow in timetableDataSet.Lessons.Rows)
-                    {
-                        this.AddLessonToGrid(lessonRow);
-                    }
-                    break;
-                default:
+				case ComboBoxContent.Mapping:
+					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+					foreach (TimetableDataSet.LessonsRow lessonRow in timetableDataSet.Lessons.Rows)
+					{
+						this.AddLessonToGrid(lessonRow);
+					}
+					break;
+				default:
 					studentsTableAdapter.Fill(timetableDataSet.Students);
 					foreach (TimetableDataSet.StudentsRow studentRow in timetableDataSet.Students.Rows)
 					{
@@ -339,16 +330,35 @@ namespace Timetable.Windows
 			this.scrollViewersGrid.Children.Add(subjectControl);
 		}
 
-        private void AddLessonToGrid(TimetableDataSet.LessonsRow lessonRow)
-        {
-            var lessonControl = new LessonControl(lessonRow);
+		private void AddLessonToGrid(TimetableDataSet.LessonsRow lessonRow)
+		{
+			var lessonControl = new LessonControl(lessonRow);
 
-            this.scrollViewersMappingGrid.RowDefinitions.Add(new System.Windows.Controls.RowDefinition() { Height = new System.Windows.GridLength(LessonControl.HEIGHT) });
-            System.Windows.Controls.Grid.SetRow(lessonControl, this.scrollViewersMappingGrid.RowDefinitions.Count - 1);
-            this.scrollViewersMappingGrid.Children.Add(lessonControl);
-        }
+			this.scrollViewersMappingGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(LessonControl.HEIGHT) });
+			Grid.SetRow(lessonControl, this.scrollViewersMappingGrid.RowDefinitions.Count - 1);
+			this.scrollViewersMappingGrid.Children.Add(lessonControl);
+		}
 
-        private void AddLessonPlaceToGrid(
+		private void AddLessonToGrid(
+			TimetableDataSet.LessonsRow lessonRow,
+			TabType tabType,
+			ComboBoxContent content)
+		{
+			var cellControl = new CellControl(
+				lessonRow.SubjectsRow.Name,
+				(lessonRow.ClassesRow.Year.ToString()) + (string.IsNullOrEmpty(lessonRow.ClassesRow.CodeName)
+					? string.Empty
+					: $" ({lessonRow.ClassesRow.CodeName})"),
+				$"{lessonRow.TeachersRow.FirstName.First()}.{lessonRow.TeachersRow.LastName}",
+				diffColor: (this.gridPlanningRemainingLessons.RowDefinitions.Count % 2) != 0
+			);
+
+			this.gridPlanningRemainingLessons.RowDefinitions.Add(new RowDefinition());
+			Grid.SetRow(cellControl, this.gridPlanningRemainingLessons.RowDefinitions.Count - 1);
+			this.gridPlanningRemainingLessons.Children.Add(cellControl);
+		}
+
+		private void AddLessonPlaceToGrid(
 			TimetableDataSet.LessonsPlacesRow lessonPlace,
 			TabType tabType,
 			ComboBoxContent content)
@@ -383,8 +393,6 @@ namespace Timetable.Windows
 
 		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.InitDatabaseObjects();
-
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
@@ -400,15 +408,18 @@ namespace Timetable.Windows
 					this.gridOperationsComboBox.Visibility = Visibility.Visible;
 					this.expander.Visibility = Visibility.Visible;
 					this.FillExpander(ExpanderContent.Management);
+					this.FillScrollViewer(ComboBoxContent.Students);
 					break;
-                case TabType.Mapping:
-                    this.gridSummaryFilter.Visibility =Visibility.Hidden;
-                    this.gridOperations.Visibility =Visibility.Visible;
-                    this.gridOperationsComboBox.Visibility = Visibility.Hidden;this.expander.Visibility =Visibility.Visible;
-                    this.FillExpander(ExpanderContent.Management);
-                    this.FillScrollViewer(ComboBoxContent.Mapping);
-                    break;
-                case TabType.Planning:
+				case TabType.Mapping:
+					this.comboBoxContent = ComboBoxContent.Mapping;
+					this.gridSummaryFilter.Visibility = Visibility.Hidden;
+					this.gridOperations.Visibility = Visibility.Visible;
+					this.gridOperationsComboBox.Visibility = Visibility.Hidden;
+					this.expander.Visibility = Visibility.Visible;
+					this.FillExpander(ExpanderContent.Management);
+					this.FillScrollViewer(ComboBoxContent.Mapping);
+					break;
+				case TabType.Planning:
 					this.gridSummaryFilter.Visibility = Visibility.Hidden;
 					this.gridOperations.Visibility = Visibility.Hidden;
 					break;
@@ -455,14 +466,14 @@ namespace Timetable.Windows
 					var classesList = timetableDataSet.Classes.
 						OrderBy(c => c.Year);
 					this.comboBoxPlanning2.ItemsSource = classesList.
-						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+						Select(c => c.ToFriendlyString());
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
 				case ComboBoxContent.Teachers:
 					var teachersList = timetableDataSet.Teachers.
 						OrderBy(t => t.Pesel);
 					this.comboBoxPlanning2.ItemsSource = teachersList.
-						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+						Select(t => t.ToFriendlyString(true));
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
 			}
@@ -486,7 +497,7 @@ namespace Timetable.Windows
 							Where(l => l.TeacherPesel == currentPlanningTeacherPesel).
 							Where(l => !teachersLessonsPlacesLessonsIds.Contains(l.Id)))
 						{
-							this.AddLessonToGrid(lesson);
+							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Teachers);
 						}
 						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
 							Where(lp => lp.LessonsRow.TeacherPesel == currentPlanningTeacherPesel))
@@ -507,7 +518,7 @@ namespace Timetable.Windows
 							Where(l => l.ClassId == currentPlanningClassId).
 							Where(l => !studentsLessonsPlacesLessonsIds.Contains(l.Id)))
 						{
-							this.AddLessonToGrid(lesson);
+							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Classes);
 						}
 						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
 							Where(lp => lp.LessonsRow.ClassId == currentPlanningClassId))
@@ -609,7 +620,6 @@ namespace Timetable.Windows
 			comboBoxContent,
 			comboBoxPlanningContent,
 			comboBoxSummaryContent;
-
 
 		#endregion
 	}

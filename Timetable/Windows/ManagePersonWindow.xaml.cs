@@ -83,7 +83,7 @@ namespace Timetable.Windows
 
 			if (this.controlType == ExpanderControlType.Change)
 			{
-				this.currentPesel = this.callingWindow.GetPeselNumbersOfMarkedPeople().FirstOrDefault();
+				this.currentPesel = this.callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
 
 				if (contentType == ComboBoxContent.Students)
 				{

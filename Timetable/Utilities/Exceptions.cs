@@ -92,34 +92,34 @@
 		{
 		}
 	}
-    /// <summary>
-    /// Klasa dziedzicząca po <c>System.Exception</c>, która reprezentuje błąd występujący przy próbie 
-    /// wyeksportowania danych do pliku XLS.</summary>
-    public class ExcelApplicationException : System.Exception
-    {
-        /// <summary>
-        /// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c>.</summary>
-        public ExcelApplicationException()
+	/// <summary>
+	/// Klasa dziedzicząca po <c>System.Exception</c>, która reprezentuje błąd występujący przy próbie 
+	/// wyeksportowania danych do pliku XLS.</summary>
+	public class ExcelApplicationException : System.Exception
+	{
+		/// <summary>
+		/// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c>.</summary>
+		public ExcelApplicationException()
 			: base()
 		{
-        }
+		}
 
-        /// <summary>
-        /// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c> ze zdefiniowaną informacją zwrotną.</summary>
-        /// <param name="message">Wiadomość opisująca wystąpiony wyjątek.</param>
-        public ExcelApplicationException(string message)
+		/// <summary>
+		/// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c> ze zdefiniowaną informacją zwrotną.</summary>
+		/// <param name="message">Wiadomość opisująca wystąpiony wyjątek.</param>
+		public ExcelApplicationException(string message)
 			: base(message)
 		{
-        }
+		}
 
-        /// <summary>
-        /// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c> ze zdefiniowaną informacją zwrotną 
-        /// oraz obiektem wyjątku, który wywołał wystąpienie tego wyjątku.</summary>
-        /// <param name="message">Wiadomość opisująca wystąpiony wyjątek.</param>
-        /// <param name="inner">Obiekt wyjątku, który wywołał wystąpienie tego wyjątku.</param>
-        public ExcelApplicationException(string message, System.Exception inner)
+		/// <summary>
+		/// Konstruktor tworzący nowy obiekt typu <c>Utilities.ExcelApplicationException</c> ze zdefiniowaną informacją zwrotną 
+		/// oraz obiektem wyjątku, który wywołał wystąpienie tego wyjątku.</summary>
+		/// <param name="message">Wiadomość opisująca wystąpiony wyjątek.</param>
+		/// <param name="inner">Obiekt wyjątku, który wywołał wystąpienie tego wyjątku.</param>
+		public ExcelApplicationException(string message, System.Exception inner)
 			: base(message, inner)
 		{
-        }
-    }
+		}
+	}
 }

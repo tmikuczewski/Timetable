@@ -64,7 +64,7 @@ namespace Timetable.Utilities
         /// </summary>
         private void prepareExcel()
         {
-            xlApp = new Microsoft.Office.Interop.Excel.Application();
+            xlApp = new Excel.Application();
 
             if (xlApp == null)
             {

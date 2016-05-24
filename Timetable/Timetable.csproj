@@ -108,6 +108,7 @@
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Export.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
@@ -214,8 +215,8 @@
     </None>
     <None Include="TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>TimetableDataSet1.Designer.cs</LastGenOutput>
     </None>
     <None Include="TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
