@@ -96,6 +96,7 @@ namespace Timetable.Windows
 					|| string.IsNullOrEmpty(codeName))
 				{
 					MessageBox.Show("All fields are required.", "Error");
+					return;
 				}
 				else
 				{

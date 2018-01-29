@@ -60,7 +60,10 @@
 		Subjects,
 		/// <summary>
 		/// Mapping.</summary>
-		Mapping
+		Mapping,
+		/// <summary>
+		/// Planning.</summary>
+		Planning,
 	}
 
 	/// <summary>

@@ -53,6 +53,11 @@ namespace Timetable.Windows
 			this.FillScrollViewer(ComboBoxContent.Mapping);
 		}
 
+		public void RefreshPlanning()
+		{
+			this.FillScrollViewer(ComboBoxContent.Planning);
+		}
+
 		/// <summary>
 		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
 		/// </summary>
@@ -192,6 +197,11 @@ namespace Timetable.Windows
 					{
 						this.AddLessonToGrid(lessonRow);
 					}
+					break;
+				case ComboBoxContent.Planning:
+					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+					comboBoxPlanning2_SelectionChanged(null, null);
+					comboBoxSummary2_SelectionChanged(null, null);
 					break;
 				default:
 					studentsTableAdapter.Fill(timetableDataSet.Students);
@@ -365,7 +375,7 @@ namespace Timetable.Windows
 				lessonRow.SubjectsRow.Name,
 				(lessonRow.ClassesRow.Year.ToString()) + (string.IsNullOrEmpty(lessonRow.ClassesRow.CodeName)
 					? string.Empty
-					: $" ({lessonRow.ClassesRow.CodeName})"),
+					: $" {lessonRow.ClassesRow.CodeName}"),
 				$"{lessonRow.TeachersRow.FirstName.First()}.{lessonRow.TeachersRow.LastName}",
 				this,
 				diffColor: (this.gridPlanningRemainingLessons.RowDefinitions.Count % 2) != 0
@@ -384,12 +394,12 @@ namespace Timetable.Windows
 			var cellControl = new CellControl(
 				lessonPlace.LessonsRow.SubjectsRow.Name,
 				content == ComboBoxContent.Students
-					? $"{lessonPlace.LessonsRow.TeachersRow.FirstName.First()}.{lessonPlace.LessonsRow.TeachersRow.LastName}"
+					? $"{lessonPlace.LessonsRow.TeachersRow.FirstName.First()}. {lessonPlace.LessonsRow.TeachersRow.LastName}"
 					: ($"kl. {lessonPlace.LessonsRow.ClassesRow.Year}") +
 						(string.IsNullOrEmpty(lessonPlace.LessonsRow.ClassesRow.CodeName)
 							? string.Empty
-							: $" ({lessonPlace.LessonsRow.ClassesRow.CodeName})"),
-				$"s.{lessonPlace.ClassroomsRow.Name}",
+							: $" {lessonPlace.LessonsRow.ClassesRow.CodeName}"),
+				$"s. {lessonPlace.ClassroomsRow.Name}",
 				this,
 				diffColor: (lessonPlace.HoursRow.Id % 2) != 0
 			);
@@ -415,7 +425,6 @@ namespace Timetable.Windows
 		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			this.tabControl.SelectedIndex = (int) TabType.Planning;
-
 
 			this.FillComboBoxes();
 
@@ -500,7 +509,7 @@ namespace Timetable.Windows
 					var teachersList = timetableDataSet.Teachers.
 						OrderBy(t => t.Pesel);
 					this.comboBoxPlanning2.ItemsSource = teachersList.
-						Select(t => t.ToFriendlyString(true));
+						Select(t => t.ToFriendlyString());
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
 			}
@@ -572,14 +581,14 @@ namespace Timetable.Windows
 						OrderBy(c => c.Year).
 						ThenBy(c => c.CodeName);
 					this.comboBoxSummary2.ItemsSource = classesList.
-						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
+						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" {c.CodeName}"));
 					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
 					break;
 				case ComboBoxContent.Teachers:
 					var teachersList = timetableDataSet.Teachers.
 						OrderBy(t => t.Pesel);
 					this.comboBoxSummary2.ItemsSource = teachersList.
-						Select(t => $"{t.FirstName[0]}.{t.LastName} ({t.Pesel})");
+						Select(t => $"{t.FirstName[0]}. {t.LastName} ({t.Pesel})");
 					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
 					break;
 			}

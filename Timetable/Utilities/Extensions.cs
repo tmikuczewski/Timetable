@@ -8,14 +8,14 @@ namespace Timetable.Utilities
 	{
 		public static bool IsBetweenAnd(this int value, int leftBoundary, int rightBoundary) => ((value >= leftBoundary) && (value <= rightBoundary));
 
-		public static string ToFriendlyString(this TeachersRow teacher, bool showPesel = false)
+		public static string ToFriendlyString(this TeachersRow teacher, bool showPesel = true)
 		{
-			return $"{teacher.FirstName.First()}.{teacher.LastName}{(showPesel ? (" (" + teacher.Pesel + ")") : string.Empty)}";
+			return $"{teacher.FirstName.First()}. {teacher.LastName}{(showPesel ? (" (" + teacher.Pesel + ")") : string.Empty)}";
 		}
 
-		public static string ToFriendlyString(this ClassesRow oClass, bool showCodeName = false)
+		public static string ToFriendlyString(this ClassesRow oClass, bool showCodeName = true)
 		{
-			return (oClass.Year.ToString()) + (string.IsNullOrEmpty(oClass.CodeName) ? string.Empty : $" ({oClass.CodeName})");
+			return (oClass.Year.ToString()) + (string.IsNullOrEmpty(oClass.CodeName) ? string.Empty : $" {oClass.CodeName}");
 		}
 	}
 }

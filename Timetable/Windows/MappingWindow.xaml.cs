@@ -98,14 +98,17 @@ namespace Timetable.Windows
 			}
 		}
 
-		private void buttonOkMap_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			try
 			{
 				if (this.comboBoxClasses.SelectedValue == null ||
-					this.comboBoxSubjects.SelectedValue == null ||
-					this.comboBoxTeachers.SelectedValue == null)
+				    this.comboBoxSubjects.SelectedValue == null ||
+				    this.comboBoxTeachers.SelectedValue == null)
+				{
 					MessageBox.Show("All fields are required.", "Error");
+					return;
+				}
 				else
 				{
 					currentLessonRow.TeacherPesel = this.comboBoxTeachers.SelectedValue.ToString();
@@ -132,7 +135,7 @@ namespace Timetable.Windows
 			}
 		}
 
-		private void buttonCancelMap_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void buttonCancel_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			this.Close();
 		}

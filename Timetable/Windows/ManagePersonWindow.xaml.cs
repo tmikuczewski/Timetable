@@ -137,6 +137,7 @@ namespace Timetable.Windows
 						|| string.IsNullOrEmpty(lastName))
 					{
 						MessageBox.Show("All fields are required.", "Error");
+						return;
 					}
 					else
 					{
@@ -179,6 +180,7 @@ namespace Timetable.Windows
 						|| string.IsNullOrEmpty(lastName))
 					{
 						MessageBox.Show("All fields are required.", "Error");
+						return;
 					}
 					else
 					{
