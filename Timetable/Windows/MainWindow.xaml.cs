@@ -251,13 +251,29 @@ namespace Timetable.Windows
 			{
 				for (int j = 1; j <= timetableDataSet.Hours.Count; j++)
 				{
-					var cellControl = new CellControl(diffColor: (j % 2) != 0);
+					var cellControl = new CellControl(this, diffColor: (j % 2) != 0);
 					Grid.SetColumn(cellControl, i);
 					Grid.SetRow(cellControl, j);
 					switch (tabType)
 					{
 						case TabType.Planning:
-							cellControl.SetLessonData(null, null, i, j);
+							if (comboBoxPlanningContent == ComboBoxContent.Teachers)
+							{
+								string currentPlanningTeacherPesel = timetableDataSet.Teachers.
+									OrderBy(t => t.Pesel).
+									ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
+
+								cellControl.SetLessonData(ExpanderControlType.Add, ComboBoxContent.Teachers, currentPlanningTeacherPesel, null, i, j);
+							}
+							else if (comboBoxPlanningContent == ComboBoxContent.Classes)
+							{
+								int currentPlanningClassId = timetableDataSet.Classes.
+									OrderBy(c => c.Year).
+									ThenBy(c => c.CodeName).
+									ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
+
+								cellControl.SetLessonData(ExpanderControlType.Add, ComboBoxContent.Classes, null, currentPlanningClassId, i, j);
+							}
 							this.gridPlanning.Children.Add(cellControl);
 							break;
 						case TabType.Summary:
@@ -351,6 +367,7 @@ namespace Timetable.Windows
 					? string.Empty
 					: $" ({lessonRow.ClassesRow.CodeName})"),
 				$"{lessonRow.TeachersRow.FirstName.First()}.{lessonRow.TeachersRow.LastName}",
+				this,
 				diffColor: (this.gridPlanningRemainingLessons.RowDefinitions.Count % 2) != 0
 			);
 
@@ -373,6 +390,7 @@ namespace Timetable.Windows
 							? string.Empty
 							: $" ({lessonPlace.LessonsRow.ClassesRow.CodeName})"),
 				$"s.{lessonPlace.ClassroomsRow.Name}",
+				this,
 				diffColor: (lessonPlace.HoursRow.Id % 2) != 0
 			);
 			Grid.SetColumn(cellControl, lessonPlace.DaysRow.Id);
@@ -380,7 +398,8 @@ namespace Timetable.Windows
 			switch (tabType)
 			{
 				case TabType.Planning:
-					cellControl.SetLessonData(lessonPlace.LessonId, lessonPlace.ClassroomId, lessonPlace.DayId, lessonPlace.HourId);
+					cellControl.SetLessonData(ExpanderControlType.Change, comboBoxPlanningContent,
+						lessonPlace.LessonsRow.TeacherPesel, lessonPlace.LessonsRow.ClassId, lessonPlace.DayId, lessonPlace.HourId);
 					this.gridPlanning.Children.Add(cellControl);
 					break;
 				case TabType.Summary:

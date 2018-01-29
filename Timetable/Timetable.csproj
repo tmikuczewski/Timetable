@@ -126,6 +126,9 @@
     <Compile Include="Windows\ManagePersonWindow.xaml.cs">
       <DependentUpon>ManagePersonWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\PlanningWindow.xaml.cs">
+      <DependentUpon>PlanningWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\CellControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -182,6 +185,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\ManagePersonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\PlanningWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

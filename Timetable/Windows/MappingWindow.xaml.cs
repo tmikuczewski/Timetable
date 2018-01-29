@@ -15,7 +15,7 @@ namespace Timetable.Windows
 	{
 		#region Constructors
 		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
+		/// Konstruktor tworzący obiekt typu <c>MappingWindow</c>.
 		/// </summary>
 		public MappingWindow(MainWindow window, ExpanderControlType type)
 		{

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 using Timetable.Utilities;
+using Timetable.Windows;
 using SystemColors = System.Drawing.SystemColors;
 
 namespace Timetable.Controls
@@ -18,9 +19,11 @@ namespace Timetable.Controls
 		/// <summary>
 		/// Konstruktor tworzący obiekt typu <c>CellControl</c>.</summary>
 		/// <param name="diffColor">Parametr sterujący zmianą koloru kontrolki.</param>
-		public CellControl(bool diffColor = false)
+		public CellControl(MainWindow window, bool diffColor = false)
 		{
 			InitializeComponent();
+			this.callingWindow = window;
+
 			if (diffColor)
 			{
 				this.Background = new SolidColorBrush(SystemColors.InactiveBorder.ToMediaColor());
@@ -36,8 +39,8 @@ namespace Timetable.Controls
 		/// <param name="secondRow">Tekst wypełniający drugi rząd.</param>
 		/// <param name="thirdRow">Tekst wypełniający pierwszy rząd.</param>
 		/// <param name="diffColor">Parametr sterujący zmianą koloru kontrolki.</param>
-		public CellControl(string firstRow, string secondRow, string thirdRow, bool diffColor = false)
-			: this(diffColor)
+		public CellControl(string firstRow, string secondRow, string thirdRow, MainWindow window, bool diffColor = false)
+			: this(window, diffColor)
 		{
 			this.FirstRow = this.OriginalFirstRow = firstRow;
 			this.SecondRow = this.OriginalSecondRow = secondRow;
@@ -52,13 +55,14 @@ namespace Timetable.Controls
 
 		#region Public methods
 
-		public void SetLessonData(int? lessonId, int? classroomId, int? dateId, int? hourId)
+		public void SetLessonData(ExpanderControlType controlType, ComboBoxContent contentType, string teacherPesel, int? classId, int dayId, int hourId)
 		{
-			this.LessonId = lessonId;
-			this.ClassroomId = classroomId;
-			this.DateId = dateId;
-			this.HourId = hourId;
-			this.InteractiveMode = true;
+			this.controlType = controlType;
+			this.contentType = contentType;
+			this.teacherPesel = teacherPesel;
+			this.classId = classId;
+			this.dayId = dayId;
+			this.hourId = hourId;
 		}
 
 		#endregion
@@ -119,13 +123,11 @@ namespace Timetable.Controls
 
 		private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			if (InteractiveMode)
+			if (contentType == ComboBoxContent.Teachers || contentType == ComboBoxContent.Classes)
 			{
-				MessageBoxResult result = MessageBox.Show(
-					$"Lesson: {this.LessonId}\n" +
-					$"Classroom: {this.ClassroomId}\n" +
-					$"Date: {this.DateId}\n" +
-					$"Hour: {this.HourId}", "Information");
+				PlanningWindow planningWindow = new PlanningWindow(callingWindow, controlType,
+					contentType, teacherPesel, classId, dayId, hourId);
+				planningWindow.Show();
 			}
 		}
 
@@ -134,23 +136,29 @@ namespace Timetable.Controls
 		#region Constants and Statics
 
 		private static readonly int PIXELS_PER_LETTER = 7;
-		
+
 		#endregion
 
 		#region Fields
+
+		private readonly MainWindow callingWindow;
 
 		private string
 			OriginalFirstRow,
 			OriginalSecondRow,
 			OriginalThirdRow;
 
-		private Boolean InteractiveMode = false;
+		private ExpanderControlType controlType;
 
-		private int?
-			LessonId,
-			ClassroomId,
-			DateId,
-			HourId;
+		private ComboBoxContent contentType;
+
+		private string teacherPesel;
+
+		private int? classId;
+
+		private int
+			dayId,
+			hourId;
 
 		#endregion
 	}
