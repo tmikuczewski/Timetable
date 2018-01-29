@@ -17,7 +17,7 @@
 			<RowDefinition Height="9*"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<GroupBox x:Name="groupBoxClassData" Header="Class Data" Margin="10,0,10,10" FontSize="16" Grid.ColumnSpan="2">
+		<GroupBox x:Name="groupBoxClassData" Header="Subject Data" Margin="10,0,10,10" FontSize="16" Grid.ColumnSpan="2">
 			<Grid Margin="10">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="2*"/>

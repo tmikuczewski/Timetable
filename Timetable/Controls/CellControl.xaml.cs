@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Drawing;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 using Timetable.Utilities;
+using SystemColors = System.Drawing.SystemColors;
 
 namespace Timetable.Controls
 {
@@ -50,6 +51,15 @@ namespace Timetable.Controls
 		#endregion
 
 		#region Public methods
+
+		public void SetLessonData(int? lessonId, int? classroomId, int? dateId, int? hourId)
+		{
+			this.LessonId = lessonId;
+			this.ClassroomId = classroomId;
+			this.DateId = dateId;
+			this.HourId = hourId;
+			this.InteractiveMode = true;
+		}
 
 		#endregion
 
@@ -107,6 +117,18 @@ namespace Timetable.Controls
 			}
 		}
 
+		private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (InteractiveMode)
+			{
+				MessageBoxResult result = MessageBox.Show(
+					$"Lesson: {this.LessonId}\n" +
+					$"Classroom: {this.ClassroomId}\n" +
+					$"Date: {this.DateId}\n" +
+					$"Hour: {this.HourId}", "Information");
+			}
+		}
+
 		#endregion
 
 		#region Constants and Statics
@@ -121,6 +143,14 @@ namespace Timetable.Controls
 			OriginalFirstRow,
 			OriginalSecondRow,
 			OriginalThirdRow;
+
+		private Boolean InteractiveMode = false;
+
+		private int?
+			LessonId,
+			ClassroomId,
+			DateId,
+			HourId;
 
 		#endregion
 	}

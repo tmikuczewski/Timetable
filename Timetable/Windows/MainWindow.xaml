@@ -20,12 +20,12 @@
 				</Grid>
 			</TabItem>
 			<TabItem x:Name="tabItemMapping" Header="Mapping" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="19,0,-19,0" FontSize="14.667" d:IsLocked="True">
-                <Grid x:Name="gridTabMapping">
-                    <ScrollViewer x:Name="scrollViewerMapping" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1" VerticalScrollBarVisibility="Auto">
-                        <Grid x:Name="scrollViewersMappingGrid"/>
-                    </ScrollViewer>
-                </Grid>
-            </TabItem>
+				<Grid x:Name="gridTabMapping">
+					<ScrollViewer x:Name="scrollViewerMapping" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1" VerticalScrollBarVisibility="Auto">
+						<Grid x:Name="scrollViewersMappingGrid"/>
+					</ScrollViewer>
+				</Grid>
+			</TabItem>
 			<TabItem x:Name="tabItemPlanning" Header="Planning" HorizontalAlignment="Left" Margin="18,0,-18,0" FontSize="14.667">
 				<Grid Margin="0">
 					<Grid.RowDefinitions>

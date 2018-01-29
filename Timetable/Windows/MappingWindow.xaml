@@ -7,7 +7,7 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d"
-        Loaded="managementWindow_Loaded"
+		Loaded="managementWindow_Loaded"
 		Title="Mapping - Timetable" Height="600" Width="500" MinWidth="500" MinHeight="600" WindowStartupLocation="CenterScreen" MaxWidth="800" MaxHeight="600" WindowStyle="ToolWindow">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -34,68 +34,68 @@
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Classes:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" Width="217">
-                    <ComboBox x:Name="comboBoxClasses" Margin="0,40,10,40">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} {1}">
-                                            <Binding Path="Year" FallbackValue="" />
-                                            <Binding Path="CodeName" FallbackValue="" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Border>
+					<ComboBox x:Name="comboBoxClasses" Margin="0,40,10,40">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} {1}">
+											<Binding Path="Year" FallbackValue="" />
+											<Binding Path="CodeName" FallbackValue="" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2">
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Teachers:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" Width="217" Grid.Row="2">
-                    <ComboBox x:Name="comboBoxTeachers" Margin="0,40,10,40">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} {1}">
-                                            <Binding Path="FirstName" FallbackValue="" />
-                                            <Binding Path="LastName" FallbackValue="" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Border>
+					<ComboBox x:Name="comboBoxTeachers" Margin="0,40,10,40">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} {1}">
+											<Binding Path="FirstName" FallbackValue="" />
+											<Binding Path="LastName" FallbackValue="" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</Border>
 				<Border BorderBrush="{x:Null}" Margin="0,0,0,113" Grid.Row="1" Grid.RowSpan="2">
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Subjects:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Margin="10,0,0,113" HorizontalAlignment="Left" Width="217" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
-                    <ComboBox x:Name="comboBoxSubjects" Margin="0,40,10,40">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0}">
-                                            <Binding Path="Name" FallbackValue="" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Border>
-				<Border BorderBrush="{x:Null}" Grid.Row="3" Margin="0,0.5">
+					<ComboBox x:Name="comboBoxSubjects" Margin="0,40,10,40">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0}">
+											<Binding Path="Name" FallbackValue="" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</Border>
+				<!--<Border BorderBrush="{x:Null}" Grid.Row="3" Margin="0,0.5">
 					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Hours / week:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0.5,0,0.5" HorizontalAlignment="Left" Width="217" Grid.Row="3">
 					<xctk:IntegerUpDown x:Name="integerUpDownHours" Value="1" Increment="1" Minimum="1" VerticalAlignment="Center" Height="30" Margin="10,40,10,41"/>
-				</Border>
+				</Border>-->
 			</Grid>
-        </GroupBox>
-        <Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOkMap_Click"/>
-        <Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancelMap_Click"/>
-    </Grid>
+		</GroupBox>
+		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOkMap_Click"/>
+		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancelMap_Click"/>
+	</Grid>
 </Window>
-    
+	

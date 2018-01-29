@@ -1,149 +1,162 @@
 ﻿using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows
 {
-    /// <summary>
-    /// Interaction logic for MappingWindow.xaml</summary>
-    public partial class MappingWindow : System.Windows.Window
-    {
-        #region Constructors
-        /// <summary>
-        /// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
-        /// </summary>
-        public MappingWindow(MainWindow window, ExpanderControlType type)
-        {
-            this.InitializeComponent();
-            this.callingWindow = window;
-            this.controlType = type;
-        }
-        #endregion
+	/// <summary>
+	/// Interaction logic for MappingWindow.xaml</summary>
+	public partial class MappingWindow : System.Windows.Window
+	{
+		#region Constructors
+		/// <summary>
+		/// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
+		/// </summary>
+		public MappingWindow(MainWindow window, ExpanderControlType type)
+		{
+			this.InitializeComponent();
+			this.callingWindow = window;
+			this.controlType = type;
+		}
+		#endregion
 
-        #region Overridden methods
+		#region Overridden methods
 
-        #endregion
+		#endregion
 
-        #region Public methods
+		#region Public methods
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Private methods
 
-        #endregion
+		void ItemsSourceSort(IEnumerable itemsSource, string sortBy, ListSortDirection direction)
+		{
+			ICollectionView dataView = CollectionViewSource.GetDefaultView(itemsSource);
+			dataView.SortDescriptions.Clear();
+			SortDescription sd = new SortDescription(sortBy, direction);
+			dataView.SortDescriptions.Add(sd);
+			dataView.Refresh();
+		}
 
-        #region Events
-        private void managementWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            timetableDataSet = new TimetableDataSet();
+		#endregion
 
-            classesTableAdapter = new ClassesTableAdapter();
-            subjectsTableAdapter = new SubjectsTableAdapter();
-            teachersTableAdapter = new TeachersTableAdapter();
-            lessonsTableAdapter = new LessonsTableAdapter();
+		#region Events
+		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			timetableDataSet = new TimetableDataSet();
 
-            classesTableAdapter.Fill(timetableDataSet.Classes);
-            subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-            teachersTableAdapter.Fill(timetableDataSet.Teachers);
-            lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+			classesTableAdapter = new ClassesTableAdapter();
+			subjectsTableAdapter = new SubjectsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+			lessonsTableAdapter = new LessonsTableAdapter();
 
-            comboBoxTeachers.ItemsSource = timetableDataSet.Teachers.DefaultView;
-            comboBoxTeachers.SelectedValuePath = "Pesel";
-            comboBoxClasses.ItemsSource = timetableDataSet.Classes.DefaultView;
-            comboBoxClasses.SelectedValuePath = "Id";
-            comboBoxSubjects.ItemsSource = timetableDataSet.Subjects.DefaultView;
-            comboBoxSubjects.SelectedValuePath = "Id";
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 
-            if (this.controlType == ExpanderControlType.Add)
-            {
-                currentLessonRow = timetableDataSet.Lessons.NewLessonsRow();
-            }
+			comboBoxTeachers.ItemsSource = timetableDataSet.Teachers.DefaultView;
+			comboBoxTeachers.SelectedValuePath = "Pesel";
+			comboBoxClasses.ItemsSource = timetableDataSet.Classes.DefaultView;
+			ItemsSourceSort(comboBoxClasses.ItemsSource, "Id", ListSortDirection.Ascending);
+			comboBoxClasses.SelectedValuePath = "Id";
+			comboBoxSubjects.ItemsSource = timetableDataSet.Subjects.DefaultView;
+			comboBoxSubjects.SelectedValuePath = "Id";
 
-            if (this.controlType == ExpanderControlType.Change)
-            {
-                this.currentLessonID = Int32.Parse(this.callingWindow.GetIdNumbersOfMarkedLessons().FirstOrDefault());
+			if (this.controlType == ExpanderControlType.Add)
+			{
+				currentLessonRow = timetableDataSet.Lessons.NewLessonsRow();
+			}
 
-                currentLessonRow = timetableDataSet.Lessons.FindById(this.currentLessonID);
+			if (this.controlType == ExpanderControlType.Change)
+			{
+				this.currentLessonID = Int32.Parse(this.callingWindow.GetIdNumbersOfMarkedLessons().FirstOrDefault());
 
-                if (currentLessonRow != null)
-                {
-                    this.comboBoxClasses.SelectedIndex = currentLessonRow.ClassId - 1;
-                    this.comboBoxSubjects.SelectedIndex = currentLessonRow.SubjectId - 1;
-                    this.comboBoxTeachers.SelectedValue = currentLessonRow.TeacherPesel;
-                }
-                else
-                {
-                    MessageBox.Show("ID does not exist.", "Error");
-                    this.Close();
-                }
-            }
-        }
+				currentLessonRow = timetableDataSet.Lessons.FindById(this.currentLessonID);
 
-        private void buttonOkMap_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            try
-            {
-                if (this.comboBoxClasses.SelectedValue == null ||
-                    this.comboBoxSubjects.SelectedValue == null ||
-                    this.comboBoxTeachers.SelectedValue == null)
-                    MessageBox.Show("All fields are required.", "Error");
-                else
-                {
-                    currentLessonRow.TeacherPesel = this.comboBoxTeachers.SelectedValue.ToString();
-                    currentLessonRow.SubjectId = int.Parse(this.comboBoxSubjects.SelectedValue.ToString());
-                    currentLessonRow.ClassId = int.Parse(this.comboBoxClasses.SelectedValue.ToString());
+				if (currentLessonRow != null)
+				{
+					this.comboBoxClasses.SelectedIndex = currentLessonRow.ClassId - 1;
+					this.comboBoxSubjects.SelectedIndex = currentLessonRow.SubjectId - 1;
+					this.comboBoxTeachers.SelectedValue = currentLessonRow.TeacherPesel;
+				}
+				else
+				{
+					MessageBox.Show("ID does not exist.", "Error");
+					this.Close();
+				}
+			}
+		}
 
-                    if (this.controlType == ExpanderControlType.Add)
-                    {
-                        timetableDataSet.Lessons.Rows.Add(currentLessonRow);
-                    }
-                    lessonsTableAdapter.Update(timetableDataSet.Lessons);
+		private void buttonOkMap_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			try
+			{
+				if (this.comboBoxClasses.SelectedValue == null ||
+					this.comboBoxSubjects.SelectedValue == null ||
+					this.comboBoxTeachers.SelectedValue == null)
+					MessageBox.Show("All fields are required.", "Error");
+				else
+				{
+					currentLessonRow.TeacherPesel = this.comboBoxTeachers.SelectedValue.ToString();
+					currentLessonRow.SubjectId = int.Parse(this.comboBoxSubjects.SelectedValue.ToString());
+					currentLessonRow.ClassId = int.Parse(this.comboBoxClasses.SelectedValue.ToString());
 
-                    this.callingWindow.RefreshMapping();
-                    this.Close();
-                }
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Year is invalid.", "Error");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Error");
-            }
-        }
+					if (this.controlType == ExpanderControlType.Add)
+					{
+						timetableDataSet.Lessons.Rows.Add(currentLessonRow);
+					}
+					lessonsTableAdapter.Update(timetableDataSet.Lessons);
 
-        private void buttonCancelMap_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            this.Close();
-        }
-        #endregion
+					this.callingWindow.RefreshMapping();
+					this.Close();
+				}
+			}
+			catch (FormatException)
+			{
+				MessageBox.Show("Year is invalid.", "Error");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString(), "Error");
+			}
+		}
 
-        #region Constants and Statics
+		private void buttonCancelMap_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			this.Close();
+		}
+		#endregion
 
-        #endregion
+		#region Constants and Statics
 
-        #region Fields
-        private readonly MainWindow callingWindow;
+		#endregion
 
-        private int currentLessonID;
+		#region Fields
+		private readonly MainWindow callingWindow;
 
-        private readonly ExpanderControlType controlType;
+		private int currentLessonID;
 
-        private TimetableDataSet timetableDataSet;
+		private readonly ExpanderControlType controlType;
 
-        private ClassesTableAdapter classesTableAdapter;
-        private TeachersTableAdapter teachersTableAdapter;
-        private SubjectsTableAdapter subjectsTableAdapter;
-        private LessonsTableAdapter lessonsTableAdapter;
+		private TimetableDataSet timetableDataSet;
 
-        private TimetableDataSet.LessonsRow currentLessonRow;
-        #endregion
-    }
+		private ClassesTableAdapter classesTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
+		private SubjectsTableAdapter subjectsTableAdapter;
+		private LessonsTableAdapter lessonsTableAdapter;
+
+		private TimetableDataSet.LessonsRow currentLessonRow;
+		#endregion
+	}
 }

@@ -257,6 +257,7 @@ namespace Timetable.Windows
 					switch (tabType)
 					{
 						case TabType.Planning:
+							cellControl.SetLessonData(null, null, i, j);
 							this.gridPlanning.Children.Add(cellControl);
 							break;
 						case TabType.Summary:
@@ -379,6 +380,7 @@ namespace Timetable.Windows
 			switch (tabType)
 			{
 				case TabType.Planning:
+					cellControl.SetLessonData(lessonPlace.LessonId, lessonPlace.ClassroomId, lessonPlace.DayId, lessonPlace.HourId);
 					this.gridPlanning.Children.Add(cellControl);
 					break;
 				case TabType.Summary:
@@ -393,9 +395,14 @@ namespace Timetable.Windows
 
 		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			this.tabControl.SelectedIndex = (int) TabType.Planning;
+
+
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
+
+			this.comboBoxPlanning1.SelectedIndex = (int) ComboBoxContent.Classes - 2;
 		}
 
 		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -464,7 +471,8 @@ namespace Timetable.Windows
 			{
 				case ComboBoxContent.Classes:
 					var classesList = timetableDataSet.Classes.
-						OrderBy(c => c.Year);
+						OrderBy(c => c.Year).
+						ThenBy(c => c.CodeName);
 					this.comboBoxPlanning2.ItemsSource = classesList.
 						Select(c => c.ToFriendlyString());
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
@@ -508,6 +516,7 @@ namespace Timetable.Windows
 					case ComboBoxContent.Classes:
 						int currentPlanningClassId = timetableDataSet.Classes.
 							OrderBy(c => c.Year).
+							ThenBy(c => c.CodeName).
 							ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
 
 						this.ClearTimetableGrids(TabType.Planning);
@@ -541,7 +550,8 @@ namespace Timetable.Windows
 			{
 				case ComboBoxContent.Classes:
 					var classesList = timetableDataSet.Classes.
-						OrderBy(c => c.Year);
+						OrderBy(c => c.Year).
+						ThenBy(c => c.CodeName);
 					this.comboBoxSummary2.ItemsSource = classesList.
 						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" ({c.CodeName})"));
 					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
@@ -577,6 +587,7 @@ namespace Timetable.Windows
 					case ComboBoxContent.Classes:
 						int currentSummaryClassId = timetableDataSet.Classes.
 							OrderBy(c => c.Year).
+							ThenBy(c => c.CodeName).
 							ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
 
 						this.ClearTimetableGrids(TabType.Summary);
