@@ -14,11 +14,26 @@
 		/// Rodzaj 'usuń' kontrolki <c>ExpanderControl</c>.</summary>
 		Remove,
 		/// <summary>
-		/// Rodzaj 'XLSX' kontrolki <c>ExpanderControl</c>.</summary>
-		XLSX,
+		/// Rodzaj 'XLS' kontrolki <c>ExpanderControl</c>.</summary>
+		XLS,
 		/// <summary>
 		/// Rodzaj 'PDF' kontrolki <c>ExpanderControl</c>.</summary>
-		PDF
+		PDF,
+	}
+
+	/// <summary>
+	/// Typ pliku do jakiego eksportowany jest plan
+	/// </summary>
+	public enum ExportFileType
+	{
+		/// <summary>
+		/// XLS (Excel)
+		/// </summary>
+		XLS,
+		/// <summary>
+		/// PDF
+		/// </summary>
+		PDF,
 	}
 
 	/// <summary>
@@ -36,7 +51,7 @@
 		Planning,
 		/// <summary>
 		/// Zakładka 'Podsumowanie'.</summary>
-		Summary
+		Summary,
 	}
 
 	/// <summary>
@@ -55,6 +70,9 @@
 		/// <summary>
 		/// Lista klas.</summary>
 		Classes,
+		/// <summary>
+		/// Lista sal.</summary>
+		Classrooms,
 		/// <summary>
 		/// Lista przedmiotów.</summary>
 		Subjects,
@@ -75,7 +93,7 @@
 		Management,
 		/// <summary>
 		/// Zawartość dla zakładki 'Podsumowanie'.</summary>
-		Summary
+		Summary,
 	}
 
 	/// <summary>
@@ -87,6 +105,6 @@
 		Female,
 		/// <summary>
 		/// Mężczyzna.</summary>
-		Male
+		Male,
 	}
 }

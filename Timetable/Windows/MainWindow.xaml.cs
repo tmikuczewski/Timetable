@@ -35,10 +35,22 @@ namespace Timetable.Windows
 		#region Public methods
 
 		/// <summary>
-		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji.
+		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku zarządzania.
 		/// </summary>
 		/// <returns></returns>
-		public ComboBoxContent GetCurrentCoboBoxContent() => comboBoxContent;
+		public ComboBoxContent GetCurrentContentType() => comboBoxContent;
+
+		/// <summary>
+		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku planowania.
+		/// </summary>
+		/// <returns></returns>
+		public ComboBoxContent GetPlanningContentType() => comboBoxPlanningContent;
+
+		/// <summary>
+		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public ComboBoxContent GetSummaryContentType() => comboBoxSummaryContent;
 
 		/// <summary>
 		/// Metoda odświeżająca listę aktualnie wyświetlanych encji.
@@ -48,11 +60,17 @@ namespace Timetable.Windows
 			this.FillScrollViewer(comboBoxContent);
 		}
 
+		/// <summary>
+		/// Metoda odświeżająca listę aktualnie wyświetlanych encji w widoku mapowania.
+		/// </summary>
 		public void RefreshMapping()
 		{
 			this.FillScrollViewer(ComboBoxContent.Mapping);
 		}
 
+		/// <summary>
+		/// Metoda odświeżająca listę aktualnie wyświetlanych encji w widoku planowania.
+		/// </summary>
 		public void RefreshPlanning()
 		{
 			this.FillScrollViewer(ComboBoxContent.Planning);
@@ -71,7 +89,6 @@ namespace Timetable.Windows
 					yield return personControl.Pesel.StringRepresentation;
 				}
 			}
-			yield break;
 		}
 
 		/// <summary>
@@ -87,7 +104,6 @@ namespace Timetable.Windows
 					yield return classControl.GetId();
 				}
 			}
-			yield break;
 		}
 
 		/// <summary>
@@ -103,7 +119,6 @@ namespace Timetable.Windows
 					yield return subjectControl.GetId();
 				}
 			}
-			yield break;
 		}
 
 		/// <summary>
@@ -119,7 +134,45 @@ namespace Timetable.Windows
 					yield return lessonControl.GetId();
 				}
 			}
-			yield break;
+		}
+
+		/// <summary>
+		/// Metoda zwracająca Pesel nauczyciela wyświetlanego w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public string GetSummaryTeacherPesel()
+		{
+			string currentSummaryTeacherPesel = null;
+
+			if (this.comboBoxSummaryContent == ComboBoxContent.Teachers
+				&& this.comboBoxSummary2.SelectedIndex != -1)
+			{
+				currentSummaryTeacherPesel = timetableDataSet.Teachers.
+					OrderBy(t => t.Pesel).
+					ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
+			}
+
+			return currentSummaryTeacherPesel;
+		}
+
+		/// <summary>
+		/// Metoda zwracająca ID klasy wyświetlanego w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public int? GetSummaryClassId()
+		{
+			int? currentSummaryClassId = null;
+
+			if (this.comboBoxSummaryContent == ComboBoxContent.Classes
+				&& this.comboBoxSummary2.SelectedIndex != -1)
+			{
+				currentSummaryClassId = timetableDataSet.Classes.
+					OrderBy(c => c.Year).
+					ThenBy(c => c.CodeName).
+					ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
+			}
+
+			return currentSummaryClassId;
 		}
 
 		#endregion
@@ -170,6 +223,13 @@ namespace Timetable.Windows
 
 			switch (content)
 			{
+				case ComboBoxContent.Students:
+					studentsTableAdapter.Fill(timetableDataSet.Students);
+					foreach (TimetableDataSet.StudentsRow studentRow in timetableDataSet.Students.Rows)
+					{
+						this.AddPersonToGrid(studentRow);
+					}
+					break;
 				case ComboBoxContent.Teachers:
 					teachersTableAdapter.Fill(timetableDataSet.Teachers);
 					foreach (TimetableDataSet.TeachersRow teacherRow in timetableDataSet.Teachers.Rows)
@@ -200,15 +260,10 @@ namespace Timetable.Windows
 					break;
 				case ComboBoxContent.Planning:
 					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-					comboBoxPlanning2_SelectionChanged(null, null);
-					comboBoxSummary2_SelectionChanged(null, null);
+					comboBoxPlanning2_SelectionChanged(this.comboBoxPlanning2, null);
+					comboBoxSummary2_SelectionChanged(this.comboBoxSummary2, null);
 					break;
 				default:
-					studentsTableAdapter.Fill(timetableDataSet.Students);
-					foreach (TimetableDataSet.StudentsRow studentRow in timetableDataSet.Students.Rows)
-					{
-						this.AddPersonToGrid(studentRow);
-					}
 					break;
 			}
 		}
@@ -226,7 +281,7 @@ namespace Timetable.Windows
 					this.expander.Header = "Operation";
 					break;
 				case ExpanderContent.Summary:
-					stackPanel.Children.Add(new ExpanderControl("Excel", ExpanderControlType.XLSX, this));
+					stackPanel.Children.Add(new ExpanderControl("Excel", ExpanderControlType.XLS, this));
 					stackPanel.Children.Add(new ExpanderControl("PDF", ExpanderControlType.PDF, this));
 					this.expander.Content = stackPanel;
 					this.expander.Header = "Export";
@@ -242,17 +297,17 @@ namespace Timetable.Windows
 			this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
 			this.comboBox.SelectedIndex = 0;
 
-			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Classes.ToString());
+			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBoxPlanning1.SelectedIndex = 0;
 
-			this.comboBoxSummary1.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBoxSummary1.Items.Add(ComboBoxContent.Classes.ToString());
+			this.comboBoxSummary1.Items.Add(ComboBoxContent.Teachers.ToString());
 			this.comboBoxSummary1.SelectedIndex = 0;
 
 			this.comboBoxContent = ComboBoxContent.Students;
-			this.comboBoxPlanningContent = ComboBoxContent.Teachers;
-			this.comboBoxSummaryContent = ComboBoxContent.Students;
+			this.comboBoxPlanningContent = ComboBoxContent.Classes;
+			this.comboBoxSummaryContent = ComboBoxContent.Classes;
 		}
 
 		private void FillTimetableGrid(TabType tabType)
@@ -429,8 +484,6 @@ namespace Timetable.Windows
 			this.FillComboBoxes();
 
 			this.FillExpander(ExpanderContent.Management);
-
-			this.comboBoxPlanning1.SelectedIndex = (int) ComboBoxContent.Classes - 2;
 		}
 
 		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -470,7 +523,29 @@ namespace Timetable.Windows
 
 		private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.comboBoxContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 1);
+			if (sender == null)
+			{
+				return;
+			}
+
+			int contentType = ((ComboBox) sender).SelectedIndex;
+
+			switch (contentType)
+			{
+				case 0:
+					this.comboBoxContent = ComboBoxContent.Students;
+					break;
+				case 1:
+					this.comboBoxContent = ComboBoxContent.Teachers;
+					break;
+				case 2:
+					this.comboBoxContent = ComboBoxContent.Classes;
+					break;
+				case 3:
+					this.comboBoxContent = ComboBoxContent.Subjects;
+					break;
+			}
+
 			this.FillExpander(ExpanderContent.Management);
 
 			switch (this.comboBoxContent)
@@ -494,7 +569,23 @@ namespace Timetable.Windows
 
 		private void comboBoxPlanning1_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.comboBoxPlanningContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 2);
+			if (sender == null)
+			{
+				return;
+			}
+
+			int contentType = ((ComboBox) sender).SelectedIndex;
+
+			switch (contentType)
+			{
+				case 0:
+					this.comboBoxPlanningContent = ComboBoxContent.Classes;
+					break;
+				case 1:
+					this.comboBoxPlanningContent = ComboBoxContent.Teachers;
+					break;
+			}
+
 			switch (this.comboBoxPlanningContent)
 			{
 				case ComboBoxContent.Classes:
@@ -505,6 +596,7 @@ namespace Timetable.Windows
 						Select(c => c.ToFriendlyString());
 					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
 					break;
+
 				case ComboBoxContent.Teachers:
 					var teachersList = timetableDataSet.Teachers.
 						OrderBy(t => t.Pesel);
@@ -520,47 +612,60 @@ namespace Timetable.Windows
 			{
 				switch (this.comboBoxPlanningContent)
 				{
-					case ComboBoxContent.Teachers:
-						string currentPlanningTeacherPesel = timetableDataSet.Teachers.
-							OrderBy(t => t.Pesel).
-							ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
-
+					case ComboBoxContent.Classes:
 						this.ClearTimetableGrids(TabType.Planning);
 
-						var teachersLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
-							Select(lp => lp.LessonId);
-						foreach (var lesson in timetableDataSet.Lessons.
-							Where(l => l.TeacherPesel == currentPlanningTeacherPesel).
-							Where(l => !teachersLessonsPlacesLessonsIds.Contains(l.Id)))
-						{
-							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Teachers);
-						}
-						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.TeacherPesel == currentPlanningTeacherPesel))
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Teachers);
-						}
-						break;
-					case ComboBoxContent.Classes:
 						int currentPlanningClassId = timetableDataSet.Classes.
 							OrderBy(c => c.Year).
 							ThenBy(c => c.CodeName).
 							ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
 
-						this.ClearTimetableGrids(TabType.Planning);
-
 						var studentsLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
 							Select(lp => lp.LessonId);
-						foreach (var lesson in timetableDataSet.Lessons.
+
+						var classRemainingLessons = timetableDataSet.Lessons.
 							Where(l => l.ClassId == currentPlanningClassId).
-							Where(l => !studentsLessonsPlacesLessonsIds.Contains(l.Id)))
+							Where(l => !studentsLessonsPlacesLessonsIds.Contains(l.Id));
+
+						foreach (var lesson in classRemainingLessons)
 						{
 							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Classes);
 						}
-						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.ClassId == currentPlanningClassId))
+
+						var classLessonsPlaces = timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.ClassId == currentPlanningClassId);
+
+						foreach (var lessonPlace in classLessonsPlaces)
 						{
 							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Students);
+						}
+						break;
+
+					case ComboBoxContent.Teachers:
+						this.ClearTimetableGrids(TabType.Planning);
+
+						string currentPlanningTeacherPesel = timetableDataSet.Teachers.
+							OrderBy(t => t.Pesel).
+							ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
+
+						var teachersLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
+							Select(lp => lp.LessonId);
+
+						var teacherRemainingLessons = timetableDataSet.Lessons.
+							Where(l => l.TeacherPesel == currentPlanningTeacherPesel).
+							Where(l => !teachersLessonsPlacesLessonsIds.Contains(l.Id));
+
+						foreach (var lesson in teacherRemainingLessons)
+						{
+							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Teachers);
+						}
+
+						var teacherLessonsPlaces = timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.TeacherPesel == currentPlanningTeacherPesel);
+
+						foreach (var lessonPlace in teacherLessonsPlaces)
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Teachers);
 						}
 						break;
 				}
@@ -573,7 +678,23 @@ namespace Timetable.Windows
 
 		private void comboBoxSummary1_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.comboBoxSummaryContent = (ComboBoxContent)((sender as ComboBox).SelectedIndex + 2);
+			if (sender == null)
+			{
+				return;
+			}
+
+			int contentType = ((ComboBox) sender).SelectedIndex;
+
+			switch (contentType)
+			{
+				case 0:
+					this.comboBoxSummaryContent = ComboBoxContent.Classes;
+					break;
+				case 1:
+					this.comboBoxSummaryContent = ComboBoxContent.Teachers;
+					break;
+			}
+
 			switch (this.comboBoxSummaryContent)
 			{
 				case ComboBoxContent.Classes:
@@ -584,6 +705,7 @@ namespace Timetable.Windows
 						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" {c.CodeName}"));
 					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
 					break;
+
 				case ComboBoxContent.Teachers:
 					var teachersList = timetableDataSet.Teachers.
 						OrderBy(t => t.Pesel);
@@ -599,31 +721,36 @@ namespace Timetable.Windows
 			{
 				switch (this.comboBoxSummaryContent)
 				{
-					case ComboBoxContent.Teachers:
-						string currentSummaryTeacherPesel = timetableDataSet.Teachers.
-							OrderBy(t => t.Pesel).
-							ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
-
+					case ComboBoxContent.Classes:
 						this.ClearTimetableGrids(TabType.Summary);
 
-						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.TeacherPesel == currentSummaryTeacherPesel))
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Teachers);
-						}
-						break;
-					case ComboBoxContent.Classes:
 						int currentSummaryClassId = timetableDataSet.Classes.
 							OrderBy(c => c.Year).
 							ThenBy(c => c.CodeName).
 							ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
 
-						this.ClearTimetableGrids(TabType.Summary);
+						var classLessonsPlaces = timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.ClassId == currentSummaryClassId);
 
-						foreach (var lessonPlace in timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.ClassId == currentSummaryClassId))
+						foreach (var lessonPlace in classLessonsPlaces)
 						{
 							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Students);
+						}
+						break;
+
+					case ComboBoxContent.Teachers:
+						this.ClearTimetableGrids(TabType.Summary);
+
+						string currentSummaryTeacherPesel = timetableDataSet.Teachers.
+							OrderBy(t => t.Pesel).
+							ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
+
+						var teacherLessonsPlaces = timetableDataSet.LessonsPlaces.
+							Where(lp => lp.LessonsRow.TeacherPesel == currentSummaryTeacherPesel);
+
+						foreach (var lessonPlace in teacherLessonsPlaces)
+						{
+							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Teachers);
 						}
 						break;
 				}

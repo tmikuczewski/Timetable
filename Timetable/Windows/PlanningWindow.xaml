@@ -47,7 +47,7 @@
 					<ComboBox x:Name="comboBoxLessons" Margin="0,40,10,40" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="3">
-					<TextBlock x:Name="labelClassrooms" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="ClassIdrooms:" Margin="10,35"/>
+					<TextBlock x:Name="labelClassrooms" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Classrooms:" Margin="10,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" Width="217" Grid.Column="1" Grid.Row="3">
 					<ComboBox x:Name="comboBoxClassrooms" Margin="0,40,10,40" />

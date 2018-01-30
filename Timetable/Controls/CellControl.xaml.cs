@@ -127,6 +127,7 @@ namespace Timetable.Controls
 			{
 				PlanningWindow planningWindow = new PlanningWindow(callingWindow, controlType,
 					contentType, teacherPesel, classId, dayId, hourId);
+				planningWindow.Owner = callingWindow;
 				planningWindow.Show();
 			}
 		}

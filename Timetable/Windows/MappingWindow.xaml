@@ -31,7 +31,7 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Classes:" Margin="0,35"/>
+					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Class:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" Width="217">
 					<ComboBox x:Name="comboBoxClasses" Margin="0,40,10,40">
@@ -50,7 +50,7 @@
 					</ComboBox>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Teachers:" Margin="0,35"/>
+					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Teacher:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" Width="217" Grid.Row="2">
 					<ComboBox x:Name="comboBoxTeachers" Margin="0,40,10,40">
@@ -69,7 +69,7 @@
 					</ComboBox>
 				</Border>
 				<Border BorderBrush="{x:Null}" Margin="0,0,0,113" Grid.Row="1" Grid.RowSpan="2">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Subjects:" Margin="0,35"/>
+					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Subject:" Margin="0,35"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Margin="10,0,0,113" HorizontalAlignment="Left" Width="217" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
 					<ComboBox x:Name="comboBoxSubjects" Margin="0,40,10,40">

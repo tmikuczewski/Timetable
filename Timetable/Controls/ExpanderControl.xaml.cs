@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 using Timetable.Windows;
@@ -25,6 +30,8 @@ namespace Timetable.Controls
 
 			this.button.Content = text;
 			this.callingWindow = window;
+			this.exportEngine = new Export();
+			exportEngine.ExportFinishedEvent += ExportFinishedConfirmation;
 
 			switch (ect)
 			{
@@ -40,9 +47,9 @@ namespace Timetable.Controls
 					this.image.Source = Properties.Resources.delete.ToBitmapImage();
 					this.button.Click += RemoveButton_Click;
 					break;
-				case ExpanderControlType.XLSX:
+				case ExpanderControlType.XLS:
 					this.image.Source = Properties.Resources.excel.ToBitmapImage();
-					this.button.Click += XlsxButton_Click;
+					this.button.Click += XlsButton_Click;
 					break;
 				case ExpanderControlType.PDF:
 					this.image.Source = Properties.Resources.pdf.ToBitmapImage();
@@ -81,56 +88,72 @@ namespace Timetable.Controls
 
 		#region Private methods
 
+		private void ExportFinishedConfirmation()
+		{
+			Dispatcher.Invoke(() =>
+			{
+				MessageBox.Show(callingWindow, "Timetable exported successfully.", "Confirmation", MessageBoxButton.OK, MessageBoxImage.Information);
+			});
+		}
+
 		#endregion
 
 		#region Events
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
-				|| callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Students
+				|| callingWindow.GetCurrentContentType() == ComboBoxContent.Teachers)
 			{
 				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Add);
+				manageWindow.Owner = callingWindow;
 				manageWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Classes)
 			{
 				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Add);
+				manageClassWindow.Owner = callingWindow;
 				manageClassWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Subjects)
 			{
 				ManageSubjectWindow manageSubjectWindow = new ManageSubjectWindow(callingWindow, ExpanderControlType.Add);
+				manageSubjectWindow.Owner = callingWindow;
 				manageSubjectWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Mapping)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Mapping)
 			{
 				MappingWindow mappingWindow = new MappingWindow(callingWindow, ExpanderControlType.Add);
+				mappingWindow.Owner = callingWindow;
 				mappingWindow.Show();
 			}
 		}
 
 		private void ChangeButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students
-				|| callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Students
+				|| callingWindow.GetCurrentContentType() == ComboBoxContent.Teachers)
 			{
 				ManagePersonWindow manageWindow = new ManagePersonWindow(callingWindow, ExpanderControlType.Change);
+				manageWindow.Owner = callingWindow;
 				manageWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Classes)
 			{
 				ManageClassWindow manageClassWindow = new ManageClassWindow(callingWindow, ExpanderControlType.Change);
+				manageClassWindow.Owner = callingWindow;
 				manageClassWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Subjects)
 			{
 				ManageSubjectWindow manageSubjectWindow = new ManageSubjectWindow(callingWindow, ExpanderControlType.Change);
+				manageSubjectWindow.Owner = callingWindow;
 				manageSubjectWindow.Show();
 			}
-			if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Mapping)
+			if (callingWindow.GetCurrentContentType() == ComboBoxContent.Mapping)
 			{
 				MappingWindow mappingWindow = new MappingWindow(callingWindow, ExpanderControlType.Change);
+				mappingWindow.Owner = callingWindow;
 				mappingWindow.Show();
 			}
 		}
@@ -139,7 +162,7 @@ namespace Timetable.Controls
 		{
 			try
 			{
-				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Students)
+				if (callingWindow.GetCurrentContentType() == ComboBoxContent.Students)
 				{
 					studentsTableAdapter.Fill(timetableDataSet.Students);
 
@@ -149,7 +172,7 @@ namespace Timetable.Controls
 						studentsTableAdapter.Update(timetableDataSet.Students);
 					}
 				}
-				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Teachers)
+				if (callingWindow.GetCurrentContentType() == ComboBoxContent.Teachers)
 				{
 					teachersTableAdapter.Fill(timetableDataSet.Teachers);
 
@@ -159,7 +182,7 @@ namespace Timetable.Controls
 						teachersTableAdapter.Update(timetableDataSet.Teachers);
 					}
 				}
-				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Classes)
+				if (callingWindow.GetCurrentContentType() == ComboBoxContent.Classes)
 				{
 					classesTableAdapter.Fill(timetableDataSet.Classes);
 
@@ -171,7 +194,7 @@ namespace Timetable.Controls
 						classesTableAdapter.Update(timetableDataSet.Classes);
 					}
 				}
-				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Subjects)
+				if (callingWindow.GetCurrentContentType() == ComboBoxContent.Subjects)
 				{
 					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
 
@@ -183,7 +206,7 @@ namespace Timetable.Controls
 						subjectsTableAdapter.Update(timetableDataSet.Subjects);
 					}
 				}
-				if (callingWindow.GetCurrentCoboBoxContent() == ComboBoxContent.Mapping)
+				if (callingWindow.GetCurrentContentType() == ComboBoxContent.Mapping)
 				{
 					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 
@@ -206,12 +229,112 @@ namespace Timetable.Controls
 
 		private void PdfButton_Click(object sender, RoutedEventArgs e)
 		{
-			return;
+			ExportToFile(ExportFileType.PDF);
 		}
 
-		private void XlsxButton_Click(object sender, RoutedEventArgs e)
+		private void XlsButton_Click(object sender, RoutedEventArgs e)
 		{
-			return;
+			ExportToFile(ExportFileType.XLS);
+		}
+
+		private async void ExportToFile(ExportFileType fileType)
+		{
+			this.callingWindow.expander.IsExpanded = false;
+
+			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+			var date = DateTime.Now.ToString("yyyyMMddTHHmmss");
+			ComboBoxContent contentType = callingWindow.GetSummaryContentType();
+			int? classId = null;
+			string teacherPesel = null;
+			int? classroomId = null;
+
+			switch (contentType)
+			{
+				case ComboBoxContent.Classes:
+					classId = callingWindow.GetSummaryClassId();
+
+					if (classId == null)
+					{
+						return;
+					}
+
+					var schoolClass = timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
+
+					if (schoolClass == null)
+					{
+						throw new EntityDoesNotExistException("Class with id=" + classId.Value + " does not exists");
+					}
+
+					saveFileDialog.FileName = $"Klasa {schoolClass.ToFriendlyString()} ({date})";
+					break;
+
+				case ComboBoxContent.Teachers:
+					teacherPesel = callingWindow.GetSummaryTeacherPesel();
+
+					if (string.IsNullOrEmpty(teacherPesel))
+					{
+						return;
+					}
+
+					var teacher = timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
+
+					if (teacher == null)
+					{
+						throw new EntityDoesNotExistException("Teacher with PESEL=" + teacherPesel + " does not exists");
+					}
+
+					saveFileDialog.FileName = $"{teacher.LastName} {teacher.FirstName} ({date})";
+					break;
+
+				/*case ComboBoxContent.Classrooms:
+					classroomId = callingWindow.GetSummaryClassroomId();
+
+					if (classroomId == null)
+					{
+						return;
+					}
+
+					var classroom = timetableDataSet.Classrooms.FirstOrDefault(cr => cr.Id == classroomId.Value);
+
+					if (classroom == null)
+					{
+						throw new EntityDoesNotExistException("Classroom with id=" + classroomId.Value + " does not exists");
+					}
+
+					saveFileDialog.FileName = $"Sala {classroom.Name} ({date})";
+					break;*/
+
+				default:
+					return;
+			}
+
+			switch (fileType)
+			{
+				case ExportFileType.XLS:
+					saveFileDialog.Filter = "Excel Files|*.xls";
+					break;
+				case ExportFileType.PDF:
+					saveFileDialog.Filter = "PDF Files|*.pdf";
+					break;
+				default:
+					return;
+			}
+
+			if (saveFileDialog.ShowDialog() == true
+				&& !string.IsNullOrEmpty(saveFileDialog.FileName))
+			{
+				switch (contentType)
+				{
+					case ComboBoxContent.Classes:
+						await Task.Factory.StartNew(() => exportEngine.SaveTimeTableForClass(classId.Value, saveFileDialog.FileName, fileType));
+						break;
+					case ComboBoxContent.Teachers:
+						await Task.Factory.StartNew(() => exportEngine.SaveTimeTableForTeacher(teacherPesel, saveFileDialog.FileName, fileType));
+						break;
+				}
+			}
 		}
 
 		#endregion
@@ -223,6 +346,8 @@ namespace Timetable.Controls
 		#region Fields
 
 		private readonly MainWindow callingWindow;
+
+		private Export exportEngine;
 
 		private TimetableDataSet timetableDataSet;
 

@@ -21,7 +21,7 @@ namespace Timetable.Windows
 			this.InitializeComponent();
 			this.callingWindow = window;
 			this.controlType = type;
-			this.contentType = window.GetCurrentCoboBoxContent();
+			this.contentType = window.GetCurrentContentType();
 		}
 
 		#endregion
