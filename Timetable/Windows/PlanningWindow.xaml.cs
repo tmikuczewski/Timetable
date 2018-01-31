@@ -1,239 +1,23 @@
-﻿using System.Collections;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for PlanningWindow.xaml
+	///     Interaction logic for PlanningWindow.xaml
 	/// </summary>
-	public partial class PlanningWindow : System.Windows.Window
+	public partial class PlanningWindow : Window
 	{
-		#region Constructors
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>PlanningWindow</c>.
-		/// </summary>
-		public PlanningWindow(MainWindow window, ExpanderControlType controlType,
-			ComboBoxContent contentType, string teacherPesel, int? classId, int dayId, int hourId)
-		{
-			this.InitializeComponent();
-			this.callingWindow = window;
-			this.controlType = controlType;
-			this.contentType = contentType;
-			this.teacherPesel = teacherPesel;
-			this.classId = classId;
-			this.dayId = dayId;
-			this.hourId = hourId;
-		}
-		#endregion
-
-		#region Overridden methods
-
-		#endregion
-
-		#region Public methods
-
-		#endregion
-
-		#region Properties
-
-		#endregion
-
-		#region Private methods
-
-		#endregion
-
-		#region Events
-		private void planningWindow_Loaded(object sender, RoutedEventArgs e)
-		{
-			this.timetableDataSet = new TimetableDataSet();
-
-			this.classesTableAdapter = new ClassesTableAdapter();
-			this.classroomsTableAdapter = new ClassroomsTableAdapter();
-			this.daysTableAdapter = new DaysTableAdapter();
-			this.hoursTableAdapter = new HoursTableAdapter();
-			this.lessonsTableAdapter = new LessonsTableAdapter();
-			this.lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			this.studentsTableAdapter = new StudentsTableAdapter();
-			this.subjectsTableAdapter = new SubjectsTableAdapter();
-			this.teachersTableAdapter = new TeachersTableAdapter();
-
-			this.classesTableAdapter.Fill(this.timetableDataSet.Classes);
-			this.classroomsTableAdapter.Fill(this.timetableDataSet.Classrooms);
-			this.daysTableAdapter.Fill(this.timetableDataSet.Days);
-			this.hoursTableAdapter.Fill(this.timetableDataSet.Hours);
-			this.lessonsTableAdapter.Fill(this.timetableDataSet.Lessons);
-			this.lessonsPlacesTableAdapter.Fill(this.timetableDataSet.LessonsPlaces);
-			this.studentsTableAdapter.Fill(this.timetableDataSet.Students);
-			this.subjectsTableAdapter.Fill(this.timetableDataSet.Subjects);
-			this.teachersTableAdapter.Fill(this.timetableDataSet.Teachers);
-
-			this.dayRow = timetableDataSet.Days.FindById(this.dayId);
-			this.hourRow = timetableDataSet.Hours.FindById(this.hourId);
-			this.textBoxDayHour.Text = dayRow.Name + ", " + hourRow.Hour;
-
-			var lessons = from l in this.timetableDataSet.Lessons
-						  join s in this.timetableDataSet.Subjects on l.SubjectId equals s.Id into grp
-						  join c in this.timetableDataSet.Classes on l.ClassId equals c.Id
-						  join t in this.timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
-						  orderby l.Id
-						  from s in grp.DefaultIfEmpty()
-						  select new PlannedLesson
-						  {
-							  Id = l.Id,
-							  TeacherPesel = l.TeacherPesel,
-							  TeacherName = t?.ToFriendlyString(false),
-							  SubjectId = l.SubjectId,
-							  SubjectName = s?.Name,
-							  ClassId = l.ClassId,
-							  ClassName = c?.ToFriendlyString(),
-						  };
-
-			var availableLessons = lessons;
-
-			switch (contentType)
-			{
-				case ComboBoxContent.Teachers:
-					this.labelContentType.Text = "Teacher:";
-					this.teacherRow = timetableDataSet.Teachers.FindByPesel(this.teacherPesel);
-					this.textBoxContentType.Text = $"{teacherRow.FirstName} {teacherRow.LastName}";
-					availableLessons = lessons.Where(l => l.TeacherPesel == this.teacherPesel);
-					break;
-
-				case ComboBoxContent.Classes:
-					this.labelContentType.Text = "Class:";
-					this.classRow = timetableDataSet.Classes.FindById(this.classId ?? -1);
-					this.textBoxContentType.Text = classRow.ToFriendlyString();
-					availableLessons = lessons.Where(l => l.ClassId == this.classId);
-					break;
-			}
-
-			if (this.controlType == ExpanderControlType.Add)
-			{
-				currentLessonPlaceRow = timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
-			}
-			else if (this.controlType == ExpanderControlType.Change)
-			{
-				currentLessonPlaceRow = timetableDataSet.LessonsPlaces
-					.Where(lp => lp.DayId == dayId && lp.HourId == hourId)
-					.FirstOrDefault(lp => availableLessons.Select(l => l.Id).Contains(lp.LessonId));
-			}
-
-			var unavailableLessonsPlaces = timetableDataSet.LessonsPlaces
-				.Where(lp => lp.DayId == dayId && lp.HourId == hourId)
-				.Where(lp => lp.LessonId != currentLessonPlaceRow.LessonsRow?.Id);
-
-			switch (contentType)
-			{
-				case ComboBoxContent.Teachers:
-					var unavailableClasses = unavailableLessonsPlaces.Select(lp => lp.LessonsRow.ClassId);
-
-					availableLessons = availableLessons.Where(l => !unavailableClasses.Contains(l.ClassId))
-						.OrderBy(l => l.SubjectName)
-						.ThenBy(l => l.ClassName);
-
-					this.comboBoxLessons.ItemsSource = availableLessons;
-					this.comboBoxLessons.DisplayMemberPath = "SubjectClass";
-					this.comboBoxLessons.SelectedValuePath = "Id";
-					break;
-
-				case ComboBoxContent.Classes:
-					var unavailableTeachers = unavailableLessonsPlaces.Select(lp => lp.LessonsRow.TeacherPesel);
-
-					availableLessons = availableLessons.Where(l => !unavailableTeachers.Contains(l.TeacherPesel))
-						.OrderBy(l => l.SubjectName);
-
-					this.comboBoxLessons.ItemsSource = availableLessons;
-					this.comboBoxLessons.DisplayMemberPath = "SubjectTeacher";
-					this.comboBoxLessons.SelectedValuePath = "Id";
-					break;
-			}
-
-			var availableClassrooms = timetableDataSet.Classrooms
-				.Where(cr => !unavailableLessonsPlaces.Select(lp => lp.ClassroomId).Contains(cr.Id));
-
-			this.comboBoxClassrooms.ItemsSource = availableClassrooms;
-			this.comboBoxClassrooms.DisplayMemberPath = "Name";
-			this.comboBoxClassrooms.SelectedValuePath = "Id";
-
-			if (this.controlType == ExpanderControlType.Change && currentLessonPlaceRow != null)
-			{
-				var currentLessonIndex = availableLessons.ToList().FindIndex(l => l.Id == currentLessonPlaceRow.LessonId);
-				this.comboBoxLessons.SelectedIndex = currentLessonIndex;
-
-				var currentClassroomIndex = availableClassrooms.ToList().FindIndex(cr => cr.Id == currentLessonPlaceRow.ClassroomId);
-				this.comboBoxClassrooms.SelectedIndex = currentClassroomIndex;
-			}
-		}
-
-		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			if (this.comboBoxLessons.SelectedValue == null
-				|| this.comboBoxClassrooms.SelectedValue == null)
-			{
-				MessageBox.Show("All fields are required.", "Error");
-				return;
-			}
-
-			if (this.comboBoxLessons.SelectedValue != null)
-			{
-				int lessonId;
-
-				if (int.TryParse(this.comboBoxLessons.SelectedValue.ToString(), out lessonId))
-				{
-					currentLessonPlaceRow.LessonId = lessonId;
-				}
-			}
-
-			if (this.comboBoxClassrooms.SelectedValue != null)
-			{
-				int classroomId;
-
-				if (int.TryParse(this.comboBoxClassrooms.SelectedValue.ToString(), out classroomId))
-				{
-					currentLessonPlaceRow.ClassroomId = classroomId;
-				}
-			}
-
-			if (this.controlType == ExpanderControlType.Add)
-			{
-				currentLessonPlaceRow.DayId = this.dayId;
-				currentLessonPlaceRow.HourId = this.hourId;
-				timetableDataSet.LessonsPlaces.Rows.Add(currentLessonPlaceRow);
-			}
-
-			lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
-
-			this.callingWindow.RefreshPlanning();
-			this.Close();
-		}
-
-		private void buttonCancel_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			this.Close();
-		}
-		#endregion
-
 		#region Constants and Statics
 
 		#endregion
 
+
 		#region Fields
-
-		private readonly MainWindow callingWindow;
-
-		private readonly ExpanderControlType controlType;
-
-		private readonly ComboBoxContent contentType;
-
-		private readonly string teacherPesel;
-		private readonly int? classId;
-		private readonly int dayId;
-		private readonly int hourId;
 
 		private TimetableDataSet timetableDataSet;
 		private ClassesTableAdapter classesTableAdapter;
@@ -242,16 +26,352 @@ namespace Timetable.Windows
 		private HoursTableAdapter hoursTableAdapter;
 		private LessonsTableAdapter lessonsTableAdapter;
 		private LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
-		private StudentsTableAdapter studentsTableAdapter;
 		private SubjectsTableAdapter subjectsTableAdapter;
 		private TeachersTableAdapter teachersTableAdapter;
 
-		private TimetableDataSet.LessonsRow currentLessonRow;
-		private TimetableDataSet.LessonsPlacesRow currentLessonPlaceRow;
-		private TimetableDataSet.TeachersRow teacherRow;
-		private TimetableDataSet.ClassesRow classRow;
-		private TimetableDataSet.DaysRow dayRow;
-		private TimetableDataSet.HoursRow hourRow;
+		private readonly MainWindow _callingWindow;
+		private readonly ExpanderControlType _controlType;
+		private readonly ComboBoxContentType _contentType;
+
+		private readonly int? _classId;
+		private readonly string _teacherPesel;
+		private readonly int _dayId;
+		private readonly int _hourId;
+		private int _currentLessonId;
+		private int _currentClassroomId;
+		private TimetableDataSet.LessonsPlacesRow _currentLessonPlaceRow;
+		private TimetableDataSet.TeachersRow _teacherRow;
+		private TimetableDataSet.ClassesRow _classRow;
+		private TimetableDataSet.DaysRow _dayRow;
+		private TimetableDataSet.HoursRow _hourRow;
+
+		private IEnumerable<PlannedLesson> _plannedLessons;
+		private IEnumerable<PlannedLesson> _availableLessons;
+		private IEnumerable<TimetableDataSet.LessonsPlacesRow> _unavailableLessonsPlaces;
+		private IEnumerable<TimetableDataSet.ClassroomsRow> _availableClassrooms;
+
+		#endregion
+
+
+		#region Properties
+
+		#endregion
+
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>PlanningWindow</c>.
+		/// </summary>
+		public PlanningWindow(MainWindow mainWindow, ExpanderControlType controlType, ComboBoxContentType contentType,
+			int? classId, string teacherPesel, int dayId, int hourId)
+		{
+			InitDatabaseObjects();
+
+			InitializeComponent();
+
+			_callingWindow = mainWindow;
+			_controlType = controlType;
+			_contentType = contentType;
+			_classId = classId;
+			_teacherPesel = teacherPesel;
+			_dayId = dayId;
+			_hourId = hourId;
+		}
+
+		#endregion
+
+		#region Events
+
+		private void planningWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			PreparePlannedLessons();
+			PrepareAvailableLessons();
+			PrepareEntity();
+			FillControls();
+
+			PrepareUnavailableLessonsPlaces();
+			UpdateAvailableLessons();
+			FillLessonComboBox();
+
+			PrepareAvailableClassrooms();
+			FillClassroomComboBox();
+			SetComboBoxes();
+		}
+
+		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		{
+			SaveEntity();
+		}
+
+		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		private void InitDatabaseObjects()
+		{
+			timetableDataSet = new TimetableDataSet();
+			classesTableAdapter = new ClassesTableAdapter();
+			classroomsTableAdapter = new ClassroomsTableAdapter();
+			daysTableAdapter = new DaysTableAdapter();
+			hoursTableAdapter = new HoursTableAdapter();
+			lessonsTableAdapter = new LessonsTableAdapter();
+			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			subjectsTableAdapter = new SubjectsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+			daysTableAdapter.Fill(timetableDataSet.Days);
+			hoursTableAdapter.Fill(timetableDataSet.Hours);
+			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+		}
+
+		private void PreparePlannedLessons()
+		{
+			_plannedLessons = from l in timetableDataSet.Lessons
+							  join s in timetableDataSet.Subjects on l.SubjectId equals s.Id into grp
+							  join c in timetableDataSet.Classes on l.ClassId equals c.Id
+							  join t in timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
+							  orderby l.Id
+							  from s in grp.DefaultIfEmpty()
+							  select new PlannedLesson
+							  {
+								  Id = l.Id,
+								  TeacherPesel = l.TeacherPesel,
+								  TeacherName = t?.ToFriendlyString(),
+								  SubjectId = l.SubjectId,
+								  SubjectName = s?.Name,
+								  ClassId = l.ClassId,
+								  ClassName = c?.ToFriendlyString()
+							  };
+		}
+
+		private void PrepareAvailableLessons()
+		{
+			_availableLessons = _plannedLessons;
+
+			switch (_contentType)
+			{
+				case ComboBoxContentType.Classes:
+					_classRow = timetableDataSet.Classes.FindById(_classId ?? -1);
+					_availableLessons = _plannedLessons.Where(l => l.ClassId == _classId);
+					break;
+				case ComboBoxContentType.Teachers:
+					_teacherRow = timetableDataSet.Teachers.FindByPesel(_teacherPesel);
+					_availableLessons = _plannedLessons.Where(l => l.TeacherPesel == _teacherPesel);
+					break;
+			}
+		}
+
+		private void PrepareEntity()
+		{
+			try
+			{
+				switch (_controlType)
+				{
+					case ExpanderControlType.Add:
+						_currentLessonPlaceRow = timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
+						break;
+					case ExpanderControlType.Change:
+						_currentLessonPlaceRow = PrepareLessonPlace();
+						break;
+				}
+			}
+			catch (EntityDoesNotExistException)
+			{
+				MessageBox.Show(this, "Lesson with given date, time and other data does not exist.", "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
+			}
+		}
+
+		private TimetableDataSet.LessonsPlacesRow PrepareLessonPlace()
+		{
+			var lessonsPlaceRow = timetableDataSet.LessonsPlaces
+				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
+				.FirstOrDefault(lp => _availableLessons.Select(l => l.Id).Contains(lp.LessonId));
+
+			if (lessonsPlaceRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return lessonsPlaceRow;
+		}
+
+		private void FillControls()
+		{
+			_dayRow = timetableDataSet.Days.FindById(_dayId);
+			_hourRow = timetableDataSet.Hours.FindById(_hourId);
+			textBoxDayHour.Text = _dayRow.Name + ", " + _hourRow.Hour;
+
+			switch (_contentType)
+			{
+				case ComboBoxContentType.Classes:
+					labelContentType.Text = "Class:";
+					textBoxContentType.Text = _classRow.ToFriendlyString();
+					break;
+				case ComboBoxContentType.Teachers:
+					labelContentType.Text = "Teacher:";
+					textBoxContentType.Text = $"{_teacherRow.FirstName} {_teacherRow.LastName}";
+					break;
+			}
+		}
+
+		private void PrepareUnavailableLessonsPlaces()
+		{
+			_unavailableLessonsPlaces = timetableDataSet.LessonsPlaces
+				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
+				.Where(lp => lp.LessonId != _currentLessonPlaceRow.LessonsRow?.Id);
+		}
+
+		private void UpdateAvailableLessons()
+		{
+			switch (_contentType)
+			{
+				case ComboBoxContentType.Classes:
+					var unavailableTeachers = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.TeacherPesel);
+
+					_availableLessons = _availableLessons.Where(l => !unavailableTeachers.Contains(l.TeacherPesel))
+						.OrderBy(l => l.SubjectName);
+
+					break;
+				case ComboBoxContentType.Teachers:
+					var unavailableClasses = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.ClassId);
+
+					_availableLessons = _availableLessons.Where(l => !unavailableClasses.Contains(l.ClassId))
+						.OrderBy(l => l.SubjectName)
+						.ThenBy(l => l.ClassName);
+
+					break;
+			}
+		}
+
+		private void FillLessonComboBox()
+		{
+			switch (_contentType)
+			{
+				case ComboBoxContentType.Classes:
+					comboBoxLessons.ItemsSource = _availableLessons;
+					comboBoxLessons.DisplayMemberPath = "SubjectTeacher";
+					comboBoxLessons.SelectedValuePath = "Id";
+					break;
+				case ComboBoxContentType.Teachers:
+					comboBoxLessons.ItemsSource = _availableLessons;
+					comboBoxLessons.DisplayMemberPath = "SubjectClass";
+					comboBoxLessons.SelectedValuePath = "Id";
+					break;
+			}
+		}
+
+		private void PrepareAvailableClassrooms()
+		{
+			_availableClassrooms = timetableDataSet.Classrooms
+				.Where(cr => !_unavailableLessonsPlaces.Select(lp => lp.ClassroomId).Contains(cr.Id));
+		}
+
+		private void FillClassroomComboBox()
+		{
+			comboBoxClassrooms.ItemsSource = _availableClassrooms;
+			comboBoxClassrooms.DisplayMemberPath = "Name";
+			comboBoxClassrooms.SelectedValuePath = "Id";
+		}
+
+		private void SetComboBoxes()
+		{
+			switch (_controlType)
+			{
+				case ExpanderControlType.Change:
+					var currentLessonIndex = _availableLessons.ToList().FindIndex(l => l.Id == _currentLessonPlaceRow.LessonId);
+					comboBoxLessons.SelectedIndex = currentLessonIndex;
+
+					comboBoxClassrooms.SelectedValue = _currentLessonPlaceRow.ClassroomId;
+					break;
+			}
+		}
+
+		private void SaveEntity()
+		{
+			try
+			{
+				SaveLessonPlace();
+			}
+			catch (FieldsNotFilledException)
+			{
+				MessageBox.Show(this, "All fields are required.", "Warning",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private void SaveLessonPlace()
+		{
+			if (comboBoxLessons.SelectedValue == null
+				|| comboBoxClassrooms.SelectedValue == null)
+			{
+				throw new FieldsNotFilledException();
+			}
+
+			if (int.TryParse(comboBoxLessons.SelectedValue.ToString(), out _currentLessonId)
+				&& int.TryParse(comboBoxClassrooms.SelectedValue.ToString(), out _currentClassroomId))
+			{
+				_currentLessonPlaceRow.LessonId = _currentLessonId;
+				_currentLessonPlaceRow.ClassroomId = _currentClassroomId;
+			}
+			else
+			{
+				throw new FieldsNotFilledException();
+			}
+
+
+			if (_controlType == ExpanderControlType.Add)
+			{
+				_currentLessonPlaceRow.DayId = _dayId;
+				_currentLessonPlaceRow.HourId = _hourId;
+				timetableDataSet.LessonsPlaces.Rows.Add(_currentLessonPlaceRow);
+			}
+
+			lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
+
+			_callingWindow.RefreshCurrentView(ComboBoxContentType.LessonsPlaces);
+
+			Close();
+		}
+
+		#endregion
+
+
+		#region Claases
 
 		private class PlannedLesson
 		{

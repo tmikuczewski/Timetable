@@ -1,29 +1,132 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Microsoft.Office.Interop.Excel;
 using Timetable.TimetableDataSetTableAdapters;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Timetable.Utilities
 {
 	//http://csharp.net-informations.com/excel/csharp-format-excel.htm
-	class Export
+	public class Export
 	{
+		#region Constants and Statics
+
+		#endregion
+
+
+		#region Fields
+
+		private static TimetableDataSet timetableDataSet;
+		private static ClassesTableAdapter classesTableAdapter;
+		private static ClassroomsTableAdapter classroomsTableAdapter;
+		private static DaysTableAdapter daysTableAdapter;
+		private static HoursTableAdapter hoursTableAdapter;
+		private static LessonsTableAdapter lessonsTableAdapter;
+		private static LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
+		private static StudentsTableAdapter studentsTableAdapter;
+		private static SubjectsTableAdapter subjectsTableAdapter;
+		private static TeachersTableAdapter teachersTableAdapter;
+
+		private Application xlApp;
+		private Workbook xlWorkBook;
+		private Worksheet xlWorkSheet;
+		private readonly object misValue = Missing.Value;
+
+		#endregion
+
+
+		#region Properties
+
+		#endregion
+
+
+		#region Delegates
+
 		public delegate void ExportFinishedDelegate();
 
 		public event ExportFinishedDelegate ExportFinishedEvent;
 
-		private Excel.Application xlApp;
-		private Excel.Workbook xlWorkBook;
-		private Excel.Worksheet xlWorkSheet;
-		private readonly object misValue = System.Reflection.Missing.Value;
+		#endregion
+
+
+		#region Constructors
 
 		/// <summary>
-		/// Klasa eksportująca plan z bazy do Excelowego formatu XLS
+		///     Klasa eksportująca plan z bazy do Excelowego formatu XLS
 		/// </summary>
 		public Export()
+		{
+			InitDatabaseObjects();
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		/// <summary>
+		///     Metoda zapisująca plan lekcji dla danej klasy.
+		/// </summary>
+		/// <param name="classId">Idetyfikator klasy.</param>
+		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
+		/// <param name="fileType">Typ zapisywanego pliku.</param>
+		public void SaveTimeTableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ExportFileType fileType)
+		{
+			PrepareExcel();
+
+			WriteTimeTableForClass(classRow);
+
+			SetHeader($"Klasa {classRow.ToFriendlyString()}");
+
+			Save(filePath, fileType);
+		}
+
+		/// <summary>
+		///     Metoda zapisująca plan lekcji dla danego nauczyciela.
+		/// </summary>
+		/// <param name="pesel">Pesel nauczyciela.</param>
+		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
+		/// <param name="fileType">Typ zapisywanego pliku.</param>
+		public void SaveTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ExportFileType fileType)
+		{
+			PrepareExcel();
+
+			WriteTimeTableForTeacher(teacherRow);
+
+			SetHeader($"{teacherRow.LastName} {teacherRow.FirstName}");
+
+			Save(filePath, fileType);
+		}
+
+		/// <summary>
+		///     Metoda zapisująca plan lekcji dla danej sali.
+		/// </summary>
+		/// <param name="classroomId">Idetyfikator sali.</param>
+		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
+		/// <param name="fileType">Typ zapisywanego pliku.</param>
+		public void SaveTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
+		{
+			PrepareExcel();
+
+			WriteTimeTableForClassroom(classroomRow);
+
+			SetHeader($"Sala {classroomRow.Name}");
+
+			Save(filePath, fileType);
+		}
+
+		#endregion
+
+
+		#region Private methods
+
+		private void InitDatabaseObjects()
 		{
 			timetableDataSet = new TimetableDataSet();
 
@@ -48,201 +151,110 @@ namespace Timetable.Utilities
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
 		}
 
-		/// <summary>
-		/// Przygotowanie nowego dokumentu
-		/// </summary>
-		private void prepareExcel()
+		private void PrepareExcel()
 		{
-			xlApp = new Excel.Application();
+			xlApp = new Application();
 
 			if (xlApp == null)
 			{
-				throw new ExcelApplicationException("Cannot initialize Microsoft.Office.Interop.Excel.Application");
+				throw new ExcelApplicationException("Cannot initialize Microsoft.Office.Interop.Excel.Application.");
 			}
 
 			xlWorkBook = xlApp.Workbooks.Add(misValue);
-			xlWorkSheet = (Excel.Worksheet) xlWorkBook.Worksheets.Item[1];
+			xlWorkSheet = (Worksheet) xlWorkBook.Worksheets.Item[1];
 
-			prepareTable();
+			PrepareTable();
 		}
 
-		/// <summary>
-		/// Zapisuje
-		/// </summary>
-		/// <param name="classId"></param>
-		public void SaveTimeTableForClass(int classId, string filePath, ExportFileType fileType)
+		private void PrepareTable()
 		{
-			prepareExcel();
+			Range range;
 
-			writeTimeTableForClass(classId);
+			var dayId = 1;
 
-			var schoolClass = timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId);
-
-			if (schoolClass == null)
-			{
-				throw new EntityDoesNotExistException("Class with id=" + classId + " does not exists");
-			}
-
-			setHeader($"Klasa {schoolClass.ToFriendlyString()}");
-
-			save(filePath, fileType);
-		}
-
-		public void SaveTimeTableForTeacher(string pesel, string filePath, ExportFileType fileType)
-		{
-			prepareExcel();
-
-			writeTimeTableForTeacher(pesel);
-
-			var teacher = timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == pesel);
-
-			if (teacher == null)
-			{
-				throw new EntityDoesNotExistException("Teacher with PESEL=" + pesel + " does not exists");
-			}
-
-			setHeader($"{teacher.LastName} {teacher.FirstName}");
-
-			save(filePath, fileType);
-		}
-
-		public void SaveTimeTableForClassRoom(int classRoomId, string filePath, ExportFileType fileType)
-		{
-			prepareExcel();
-
-			writeTimeTableForClassRoom(classRoomId);
-
-			var classRoom = timetableDataSet.Classrooms.FirstOrDefault(c => c.Id == classRoomId);
-
-			if (classRoom == null)
-			{
-				throw new EntityDoesNotExistException("Classroom with id=" + classRoomId + " does not exists");
-			}
-
-			setHeader($"Sala {classRoom.Name}");
-
-			save(filePath, fileType);
-		}
-
-		private void save(string path, ExportFileType fileType)
-		{
-			xlWorkSheet.Columns.AutoFit();
-			double max = maxWidth();
-			for (int i = 2; i < 7; i++)
-			{
-				xlWorkSheet.Columns[i].ColumnWidth = max;
-			}
-
-			if (fileType.Equals(ExportFileType.XLS))
-			{
-				xlWorkBook.SaveAs(path, Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue,
-					Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
-			}
-			if (fileType.Equals(ExportFileType.PDF))
-			{
-				xlWorkSheet.PageSetup.Orientation = Microsoft.Office.Interop.Excel.XlPageOrientation.xlLandscape;
-				xlWorkSheet.PageSetup.Zoom = false;
-				xlWorkSheet.PageSetup.FitToPagesTall = 1;
-				xlWorkSheet.PageSetup.FitToPagesWide = 1;
-				xlWorkSheet.PageSetup.PaperSize = Microsoft.Office.Interop.Excel.XlPaperSize.xlPaperA4;
-				xlWorkBook.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, path);
-			}
-
-			//xlWorkBook.Close(true, misValue, misValue);
-			xlApp.Quit();
-
-			releaseObject(xlWorkSheet);
-			releaseObject(xlWorkBook);
-			releaseObject(xlApp);
-
-			ExportFinishedEvent?.Invoke();
-
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		private void prepareTable()
-		{
-			Excel.Range range;
-			int dayID = 1; ;
 			try
 			{
-				for (dayID = 1; dayID <= 5; dayID++)
+				for (dayId = 1; dayId <= timetableDataSet.Days.Count; dayId++)
 				{
-					range = xlWorkSheet.Cells[3, 1 + dayID];
-					xlWorkSheet.Cells[3, 1 + dayID] = timetableDataSet.Days.FirstOrDefault(d => d.Id == dayID)?.Name;
-					range.BorderAround(Excel.XlLineStyle.xlContinuous);
-					range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+					range = xlWorkSheet.Cells[3, 1 + dayId];
+					xlWorkSheet.Cells[3, 1 + dayId] = timetableDataSet.Days.FirstOrDefault(d => d.Id == dayId)?.Name;
+					range.BorderAround(XlLineStyle.xlContinuous);
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 				}
 			}
 			catch (Exception e1)
 			{
-				throw new EntityDoesNotExistException("Day with id=" + dayID + " does not exist");
+				throw new EntityDoesNotExistException("Day with id=" + dayId + " does not exist.");
 			}
-			int hourID = 1;
+
+			var hourId = 1;
+
 			try
 			{
-				for (hourID = 1; hourID <= 8; hourID++)
+				for (hourId = 1; hourId <= timetableDataSet.Hours.Count; hourId++)
 				{
-					range = xlWorkSheet.Range["A" + (1 + hourID * 3), "A" + (1 + hourID * 3 + 2)];
+					range = xlWorkSheet.Range["A" + (1 + hourId * 3), "A" + (1 + hourId * 3 + 2)];
 					range.Merge();
-					var beginHour = timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourID)?.Hour;
-					xlWorkSheet.Cells[1 + hourID * 3, 1] = beginHour.Value.ToString(@"hh\:mm") + " - " + beginHour.Value.Add(TimeSpan.FromMinutes(45)).ToString(@"hh\:mm");
-					range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-					range.BorderAround(Excel.XlLineStyle.xlContinuous);
+					var beginHour = timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.Hour;
+					xlWorkSheet.Cells[1 + hourId * 3, 1] = beginHour.Value.ToString(@"hh\:mm") + " - " +
+														   beginHour.Value.Add(TimeSpan.FromMinutes(45)).ToString(@"hh\:mm");
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
 			catch (Exception e2)
 			{
-				throw new EntityDoesNotExistException("Hour with id=" + hourID + " does not exists");
+				throw new EntityDoesNotExistException("Hour with id=" + hourId + " does not exist.");
 			}
+
 			range = xlWorkSheet.Range["B4", "F27"];
-			range.BorderAround(Excel.XlLineStyle.xlContinuous);
+			range.BorderAround(XlLineStyle.xlContinuous);
 		}
 
-		private void setHeader(string header)
+		private void SetHeader(string header)
 		{
 			xlWorkSheet.Cells[1, 1] = header;
-			Excel.Range range = xlWorkSheet.Range["A1", "F2"];
+			var range = xlWorkSheet.Range["A1", "F2"];
 			range.Merge();
-			range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-			range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+			range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+			range.VerticalAlignment = XlVAlign.xlVAlignCenter;
 			range.Font.Size = range.Font.Size + 5;
 		}
 
-		private void writeTimeTableForClass(int classId)
+		private void WriteTimeTableForClass(TimetableDataSet.ClassesRow classRow)
 		{
-			for (int day = 0; day < 5; day++)
+			for (var day = 0; day < timetableDataSet.Days.Count; day++)
 			{
-				for (int hour = 0; hour < 8; hour++)
+				for (var hour = 0; hour < timetableDataSet.Hours.Count; hour++)
 				{
 					var lessonPlace = timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.ClassId == classId);
+						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.ClassId == classRow.Id);
 
 					if (lessonPlace == null)
 						continue;
 
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString(false);
+					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonPlace.ClassroomsRow?.Name;
 
-					Excel.Range range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3), "" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-					range.BorderAround(Excel.XlLineStyle.xlContinuous);
+					var range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
+						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
 		}
 
-		private void writeTimeTableForTeacher(string pesel)
+		private void WriteTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow)
 		{
-			for (int day = 0; day < 5; day++)
+			for (var day = 0; day < timetableDataSet.Days.Count; day++)
 			{
-				for (int hour = 0; hour < 8; hour++)
+				for (var hour = 0; hour < timetableDataSet.Hours.Count; hour++)
 				{
 					var lessonPlace = timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.TeacherPesel == pesel);
+						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.TeacherPesel == teacherRow.Pesel);
 
 					if (lessonPlace == null)
 						continue;
@@ -251,58 +263,92 @@ namespace Timetable.Utilities
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonPlace.ClassroomsRow?.Name;
 
-					Excel.Range range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3), "" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-					range.BorderAround(Excel.XlLineStyle.xlContinuous);
+					var range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
+						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
 		}
 
 
-		private void writeTimeTableForClassRoom(int classRoomId)
+		private void WriteTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow)
 		{
-			for (int day = 0; day < 5; day++)
+			for (var day = 0; day < timetableDataSet.Days.Count; day++)
 			{
-				for (int hour = 0; hour < 8; hour++)
+				for (var hour = 0; hour < timetableDataSet.Hours.Count; hour++)
 				{
 					var lessonPlace = timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.ClassroomId == classRoomId);
+						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.ClassroomId == classroomRow.Id);
 
 					if (lessonPlace == null)
 						continue;
 
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString(false);
+					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
 
-					Excel.Range range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3), "" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-					range.BorderAround(Excel.XlLineStyle.xlContinuous);
+					var range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
+						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
 		}
 
-		private double maxWidth()
+		private double MaxWidth()
 		{
 			double max = 0;
-			for (int i = 1; i < 10; i++)
+
+			for (var i = 1; i < 10; i++)
 			{
-				Excel.Range column = xlWorkSheet.Columns[i];
-				//Console.WriteLine("column width " + column.ColumnWidth);
-				//Console.WriteLine("width " + column.Width);
-				//Console.WriteLine("max " + max);
+				Range column = xlWorkSheet.Columns[i];
 				max = column.ColumnWidth > max ? column.ColumnWidth : max;
 			}
+
 			return max;
 		}
 
-		private void releaseObject(object obj)
+		private void Save(string path, ExportFileType fileType)
+		{
+			xlWorkSheet.Columns.AutoFit();
+
+			var max = MaxWidth();
+
+			for (var i = 2; i < 7; i++)
+				xlWorkSheet.Columns[i].ColumnWidth = max;
+
+			if (fileType.Equals(ExportFileType.XLS))
+				xlWorkBook.SaveAs(path, XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue,
+					XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+
+			if (fileType.Equals(ExportFileType.PDF))
+			{
+				xlWorkSheet.PageSetup.Orientation = XlPageOrientation.xlLandscape;
+				xlWorkSheet.PageSetup.Zoom = false;
+				xlWorkSheet.PageSetup.FitToPagesTall = 1;
+				xlWorkSheet.PageSetup.FitToPagesWide = 1;
+				xlWorkSheet.PageSetup.PaperSize = XlPaperSize.xlPaperA4;
+				xlWorkBook.ExportAsFixedFormat(XlFixedFormatType.xlTypePDF, path);
+			}
+
+			xlWorkBook.Close(false, misValue, misValue);
+			xlApp.Quit();
+
+			ReleaseObject(xlWorkSheet);
+			ReleaseObject(xlWorkBook);
+			ReleaseObject(xlApp);
+
+			ExportFinishedEvent?.Invoke();
+		}
+
+		private void ReleaseObject(object obj)
 		{
 			try
 			{
-				System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+				Marshal.ReleaseComObject(obj);
 				obj = null;
 			}
 			catch (Exception ex)
@@ -314,20 +360,6 @@ namespace Timetable.Utilities
 				GC.Collect();
 			}
 		}
-
-		#region Fields
-
-		private TimetableDataSet timetableDataSet;
-
-		private static ClassesTableAdapter classesTableAdapter;
-		private static ClassroomsTableAdapter classroomsTableAdapter;
-		private static DaysTableAdapter daysTableAdapter;
-		private static HoursTableAdapter hoursTableAdapter;
-		private static LessonsTableAdapter lessonsTableAdapter;
-		private static LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
-		private static StudentsTableAdapter studentsTableAdapter;
-		private static SubjectsTableAdapter subjectsTableAdapter;
-		private static TeachersTableAdapter teachersTableAdapter;
 
 		#endregion
 	}

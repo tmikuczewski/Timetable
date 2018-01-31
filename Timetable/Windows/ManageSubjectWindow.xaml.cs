@@ -7,132 +7,190 @@ using Timetable.Utilities;
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManageSubjectWindow.xaml
+	///     Interaction logic for ManageSubjectWindow.xaml
 	/// </summary>
-	public partial class ManageSubjectWindow : System.Windows.Window
+	public partial class ManageSubjectWindow : Window
 	{
-		#region Constructors
-
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
-		/// </summary>
-		public ManageSubjectWindow(MainWindow window, ExpanderControlType type)
-		{
-			this.InitializeComponent();
-			this.callingWindow = window;
-			this.controlType = type;
-		}
+		#region Constants and Statics
 
 		#endregion
 
-		#region Overridden methods
+
+		#region Fields
+
+		private TimetableDataSet timetableDataSet;
+		private SubjectsTableAdapter subjectsTableAdapter;
+
+		private readonly MainWindow _callingWindow;
+		private readonly ExpanderControlType _controlType;
+
+		private int _currentSubjectId;
+		private TimetableDataSet.SubjectsRow _currentSubjectRow;
 
 		#endregion
 
-		#region Public methods
-
-		#endregion
 
 		#region Properties
 
 		#endregion
 
-		#region Private methods
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
+		/// </summary>
+		public ManageSubjectWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		{
+			InitDatabaseObjects();
+
+			InitializeComponent();
+
+			_callingWindow = mainWindow;
+			_controlType = controlType;
+		}
 
 		#endregion
+
 
 		#region Events
 
 		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			timetableDataSet = new TimetableDataSet();
+			PrepareEntity();
 
+			FillControls();
+		}
+
+		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		{
+			SaveEntity();
+		}
+
+		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		private void InitDatabaseObjects()
+		{
+			timetableDataSet = new TimetableDataSet();
 			subjectsTableAdapter = new SubjectsTableAdapter();
 
 			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-
-			if (this.controlType == ExpanderControlType.Add)
-			{
-				currentSubjectRow = timetableDataSet.Subjects.NewSubjectsRow();
-			}
-
-			if (this.controlType == ExpanderControlType.Change)
-			{
-				string currentSubject = this.callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault();
-
-				int.TryParse(currentSubject, out this.currentSubjectId);
-
-				currentSubjectRow = timetableDataSet.Subjects.FindById(this.currentSubjectId);
-
-				if (currentSubjectRow != null)
-				{
-					this.textBoxId.Text = currentSubjectRow.Id.ToString();
-					this.textBoxName.Text = currentSubjectRow.Name;
-				}
-				else
-				{
-					MessageBox.Show("Subject with given ID number does not existed.", "Error");
-					this.Close();
-				}
-			}
 		}
 
-		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void PrepareEntity()
 		{
-			string name = this.textBoxName.Text.Trim();
-
 			try
 			{
-				if (string.IsNullOrEmpty(name))
+				switch (_controlType)
 				{
-					MessageBox.Show("All fields are required.", "Error");
-					return;
+					case ExpanderControlType.Add:
+						_currentSubjectRow = timetableDataSet.Subjects.NewSubjectsRow();
+						break;
+					case ExpanderControlType.Change:
+						_currentSubjectRow = PrepareSubject();
+						break;
 				}
-				else
-				{
-					currentSubjectRow.Name = name;
-
-					if (this.controlType == ExpanderControlType.Add)
-					{
-						timetableDataSet.Subjects.Rows.Add(currentSubjectRow);
-					}
-
-					subjectsTableAdapter.Update(timetableDataSet.Subjects);
-
-					this.callingWindow.RefreshCurrentView();
-					this.Close();
-				}
+			}
+			catch (EntityDoesNotExistException)
+			{
+				MessageBox.Show(this, "Subject with given ID number does not exist.", "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error");
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
 			}
 		}
 
-		private void buttonCancel_Click(object sender, System.Windows.RoutedEventArgs e)
+		private TimetableDataSet.SubjectsRow PrepareSubject()
 		{
-			this.Close();
+			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault(), out _currentSubjectId))
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			var subjectRowe = timetableDataSet.Subjects.FindById(_currentSubjectId);
+
+			if (subjectRowe == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return subjectRowe;
 		}
 
-		#endregion
+		private void FillControls()
+		{
+			switch (_controlType)
+			{
+				case ExpanderControlType.Change:
+					textBoxId.Text = _currentSubjectRow.Id.ToString();
+					textBoxName.Text = _currentSubjectRow.Name;
+					break;
+			}
+		}
 
-		#region Constants and Statics
+		private void SaveEntity()
+		{
+			var name = textBoxName.Text.Trim();
 
-		#endregion
+			try
+			{
+				SaveSubject(name);
+			}
+			catch (FieldsNotFilledException)
+			{
+				MessageBox.Show(this, "All fields are required.", "Warning",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
 
-		#region Fields
+		private void SaveSubject(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				throw new FieldsNotFilledException();
+			}
 
-		private readonly MainWindow callingWindow;
+			_currentSubjectRow.Name = name;
 
-		private readonly ExpanderControlType controlType;
+			if (_controlType == ExpanderControlType.Add)
+			{
+				timetableDataSet.Subjects.Rows.Add(_currentSubjectRow);
+			}
 
-		private int currentSubjectId;
+			subjectsTableAdapter.Update(timetableDataSet.Subjects);
 
-		private TimetableDataSet timetableDataSet;
+			_callingWindow.RefreshCurrentView(ComboBoxContentType.Subjects);
 
-		private SubjectsTableAdapter subjectsTableAdapter;
-
-		private TimetableDataSet.SubjectsRow currentSubjectRow;
+			Close();
+		}
 
 		#endregion
 	}

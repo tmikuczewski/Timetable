@@ -1,79 +1,91 @@
-﻿namespace Timetable.Controls
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace Timetable.Controls
 {
 	/// <summary>
-	/// Interaction logic for ClassControl.xaml
+	///     Interaction logic for ClassControl.xaml
 	/// </summary>
-	public partial class ClassControl : System.Windows.Controls.UserControl
+	public partial class ClassControl : UserControl
 	{
-		#region Constructors
+		#region Constants and Statics
 
 		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.</summary>
-		/// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public ClassControl(TimetableDataSet.ClassesRow classRow)
-		{
-			InitializeComponent();
-
-			this.textBlockId.Text = classRow.Id.ToString();
-			this.textBlockYear.Text = classRow.Year.ToString();
-			this.textBlockCodeName.Text = classRow.CodeName ?? string.Empty;
-			this.textBlockTutorPesel.Text = classRow.TutorPesel ?? string.Empty;
-		}
-
-		#endregion
-
-		#region Overridden methods
-
-		#endregion
-
-		#region Public methods
-
-		/// <summary>
-		/// Sprawdza, czy wybrana klasa jest zaznaczona.
+		///     Wysokość kontrolki.
 		/// </summary>
-		/// <returns></returns>
-		public bool IsChecked()
-		{
-			return this.checkBox.IsChecked ?? false;
-		}
-
-		/// <summary>
-		/// Zwraca numer id klasy w kontrolce.
-		/// </summary>
-		/// <returns></returns>
-		public string GetId()
-		{
-			return this.textBlockId.Text;
-		}
+		public const int HEIGHT = 30;
 
 		#endregion
+
+
+		#region Fields
+
+		#endregion
+
 
 		#region Properties
 
 		#endregion
 
-		#region Private methods
 
-		#endregion
+		#region Constructors
 
-		#region Events
-
-		private void UserControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.
+		/// </summary>
+		/// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public ClassControl(TimetableDataSet.ClassesRow classRow)
 		{
-			this.checkBox.IsChecked = !this.checkBox.IsChecked;
+			InitializeComponent();
+
+			textBlockId.Text = classRow.Id.ToString();
+			textBlockYear.Text = classRow.Year.ToString();
+			textBlockCodeName.Text = classRow.CodeName ?? string.Empty;
+			textBlockTutorPesel.Text = classRow.TutorPesel ?? string.Empty;
 		}
 
 		#endregion
 
-		#region Constants and Statics
 
-		/// <summary>
-		/// Wysokość kontrolki.</summary>
-		public const int HEIGHT = 30;
+		#region Events
+
+		private void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			checkBox.IsChecked = !checkBox.IsChecked;
+		}
 
 		#endregion
 
-		#region Fields
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		/// <summary>
+		///     Sprawdza, czy wybrana klasa jest zaznaczona.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsChecked()
+		{
+			return checkBox.IsChecked ?? false;
+		}
+
+		/// <summary>
+		///     Zwraca numer id klasy w kontrolce.
+		/// </summary>
+		/// <returns></returns>
+		public string GetId()
+		{
+			return textBlockId.Text;
+		}
+
+		#endregion
+
+
+		#region Private methods
 
 		#endregion
 	}

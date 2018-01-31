@@ -1,0 +1,5 @@
+﻿<CodeCloneSettings>
+	<Exclusions>
+		<File>TimetableDataSet.Designer.cs</File>
+	</Exclusions>
+</CodeCloneSettings>

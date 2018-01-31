@@ -7,47 +7,97 @@ using Timetable.Utilities;
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ManagePersonWindow.xaml
+	///     Interaction logic for ManagePersonWindow.xaml
 	/// </summary>
-	public partial class ManagePersonWindow : System.Windows.Window
+	public partial class ManagePersonWindow : Window
 	{
-		#region Constructors
-
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
-		/// </summary>
-		public ManagePersonWindow(MainWindow window, ExpanderControlType type)
-		{
-			this.InitializeComponent();
-			this.callingWindow = window;
-			this.controlType = type;
-			this.contentType = window.GetCurrentContentType();
-		}
+		#region Constants and Statics
 
 		#endregion
 
-		#region Overridden methods
+
+		#region Fields
+
+		private TimetableDataSet timetableDataSet;
+		private ClassesTableAdapter classesTableAdapter;
+		private StudentsTableAdapter studentsTableAdapter;
+		private TeachersTableAdapter teachersTableAdapter;
+
+		private readonly MainWindow _callingWindow;
+		private readonly ExpanderControlType _controlType;
+		private readonly ComboBoxContentType _contentType;
+
+		private int _currentClassId;
+		private string _currentPesel;
+		private TimetableDataSet.StudentsRow _currentStudentRow;
+		private TimetableDataSet.TeachersRow _currentTeacherRow;
 
 		#endregion
 
-		#region Public methods
-
-		#endregion
 
 		#region Properties
 
 		#endregion
 
-		#region Private methods
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
+		/// </summary>
+		public ManagePersonWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		{
+			InitDatabaseObjects();
+
+			InitializeComponent();
+
+			_callingWindow = mainWindow;
+			_controlType = controlType;
+			_contentType = _callingWindow.GetCurrentContentType();
+		}
 
 		#endregion
+
 
 		#region Events
 
 		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			timetableDataSet = new TimetableDataSet();
+			FillComboBoxes();
 
+			PrepareEntity();
+
+			FillControls();
+		}
+
+		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		{
+			SaveEntity();
+		}
+
+		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		private void InitDatabaseObjects()
+		{
+			timetableDataSet = new TimetableDataSet();
 			classesTableAdapter = new ClassesTableAdapter();
 			studentsTableAdapter = new StudentsTableAdapter();
 			teachersTableAdapter = new TeachersTableAdapter();
@@ -55,201 +105,233 @@ namespace Timetable.Windows
 			classesTableAdapter.Fill(timetableDataSet.Classes);
 			studentsTableAdapter.Fill(timetableDataSet.Students);
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+		}
 
-			if (contentType == ComboBoxContent.Students)
+		private void FillComboBoxes()
+		{
+			switch (_contentType)
 			{
-				comboBoxClass.ItemsSource = timetableDataSet.Classes.DefaultView;
-				comboBoxClass.SelectedValuePath = "Id";
-			}
-
-			if (contentType == ComboBoxContent.Teachers)
-			{
-				comboBoxClassLabel.Visibility = Visibility.Hidden;
-				comboBoxClass.Visibility = Visibility.Hidden;
-			}
-
-			if (this.controlType == ExpanderControlType.Add)
-			{
-				if (contentType == ComboBoxContent.Students)
-				{
-					currentStudentRow = timetableDataSet.Students.NewStudentsRow();
-				}
-
-				if (contentType == ComboBoxContent.Teachers)
-				{
-					currentTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
-				}
-			}
-
-			if (this.controlType == ExpanderControlType.Change)
-			{
-				this.currentPesel = this.callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
-
-				if (contentType == ComboBoxContent.Students)
-				{
-					currentStudentRow = timetableDataSet.Students.FindByPesel(this.currentPesel);
-
-					if (currentStudentRow != null)
-					{
-						this.maskedTextBoxPesel.Text = currentStudentRow.Pesel;
-						this.textBoxFirstName.Text = currentStudentRow.FirstName;
-						this.textBoxLastName.Text = currentStudentRow.LastName;
-						this.comboBoxClass.SelectedValue = currentStudentRow.ClassId;
-					}
-					else
-					{
-						MessageBox.Show("Student with given PESEL number does not existed.", "Error");
-						this.Close();
-					}
-				}
-
-				if (contentType == ComboBoxContent.Teachers)
-				{
-					currentTeacherRow = timetableDataSet.Teachers.FindByPesel(this.currentPesel);
-
-					if (currentTeacherRow != null)
-					{
-						this.maskedTextBoxPesel.Text = currentTeacherRow.Pesel;
-						this.textBoxFirstName.Text = currentTeacherRow.FirstName;
-						this.textBoxLastName.Text = currentTeacherRow.LastName;
-					}
-					else
-					{
-						MessageBox.Show("Teacher with given PESEL number does not existed.", "Error");
-						this.Close();
-					}
-				}
+				case ComboBoxContentType.Students:
+					comboBoxClass.ItemsSource = timetableDataSet.Classes.OrderBy(c => c.Year).ThenBy(c => c.CodeName);
+					comboBoxClass.SelectedValuePath = "Id";
+					break;
+				case ComboBoxContentType.Teachers:
+					comboBoxClassLabel.Visibility = Visibility.Hidden;
+					comboBoxClass.Visibility = Visibility.Hidden;
+					break;
 			}
 		}
 
-		private void buttonOk_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void PrepareEntity()
 		{
-			string peselString = this.maskedTextBoxPesel.Text;
-			string firstName = this.textBoxFirstName.Text.Trim();
-			string lastName = this.textBoxLastName.Text.Trim();
-
 			try
 			{
-				if (contentType == ComboBoxContent.Students)
+				switch (_controlType)
 				{
-					if (this.comboBoxClass.SelectedValue == null
-						|| string.IsNullOrEmpty(firstName)
-						|| string.IsNullOrEmpty(lastName))
-					{
-						MessageBox.Show("All fields are required.", "Error");
-						return;
-					}
-					else
-					{
-						currentStudentRow.FirstName = firstName;
-						currentStudentRow.LastName = lastName;
-
-						if (this.comboBoxClass.SelectedValue != null)
+					case ExpanderControlType.Add:
+						if (_contentType == ComboBoxContentType.Students)
 						{
-							int classId;
-
-							if (int.TryParse(this.comboBoxClass.SelectedValue.ToString(), out classId))
-							{
-								currentStudentRow.ClassId = classId;
-							}
+							_currentStudentRow = timetableDataSet.Students.NewStudentsRow();
 						}
-
-						if (this.controlType == ExpanderControlType.Add)
+						else if (_contentType == ComboBoxContentType.Teachers)
 						{
-							Pesel pesel = new Pesel(peselString);
-							currentStudentRow.Pesel = pesel.StringRepresentation;
-
-							if (timetableDataSet.Students.FindByPesel(currentStudentRow.Pesel) != null)
-							{
-								throw new Utilities.DuplicateEntityException();
-							}
-
-							timetableDataSet.Students.Rows.Add(currentStudentRow);
+							_currentTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
 						}
-
-						studentsTableAdapter.Update(timetableDataSet.Students);
-
-						this.callingWindow.RefreshCurrentView();
-						this.Close();
-					}
-				}
-
-				if (contentType == ComboBoxContent.Teachers)
-				{
-					if (string.IsNullOrEmpty(firstName)
-						|| string.IsNullOrEmpty(lastName))
-					{
-						MessageBox.Show("All fields are required.", "Error");
-						return;
-					}
-					else
-					{
-						currentTeacherRow.FirstName = firstName;
-						currentTeacherRow.LastName = lastName;
-
-						if (this.controlType == ExpanderControlType.Add)
+						break;
+					case ExpanderControlType.Change:
+						if (_contentType == ComboBoxContentType.Students)
 						{
-							Pesel pesel = new Pesel(peselString);
-							currentTeacherRow.Pesel = pesel.StringRepresentation;
-
-							if (timetableDataSet.Teachers.FindByPesel(currentTeacherRow.Pesel) != null)
-							{
-								throw new Utilities.DuplicateEntityException();
-							}
-
-							timetableDataSet.Teachers.Rows.Add(currentTeacherRow);
+							_currentStudentRow = PrepareStudent();
 						}
-
-						teachersTableAdapter.Update(timetableDataSet.Teachers);
-
-						this.callingWindow.RefreshCurrentView();
-						this.Close();
-					}
+						else if (_contentType == ComboBoxContentType.Teachers)
+						{
+							_currentTeacherRow = PrepareTeachert();
+						}
+						break;
 				}
 			}
-			catch (Utilities.InvalidPeselException)
+			catch (EntityDoesNotExistException)
 			{
-				MessageBox.Show("PESEL number is invalid.", "Error");
-			}
-			catch (Utilities.DuplicateEntityException)
-			{
-				MessageBox.Show("Person with given PESEL number has already existed.", "Error");
+				MessageBox.Show(this, "Student with given PESEL number does not exist.", "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error");
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
 			}
 		}
 
-		private void buttonCancel_Click(object sender, System.Windows.RoutedEventArgs e)
+		private TimetableDataSet.StudentsRow PrepareStudent()
 		{
-			this.Close();
+			_currentPesel = _callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
+
+			if (string.IsNullOrEmpty(_currentPesel))
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			var studentRow = timetableDataSet.Students.FindByPesel(_currentPesel);
+
+			if (studentRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
+
+			return studentRow;
 		}
 
-		#endregion
+		private TimetableDataSet.TeachersRow PrepareTeachert()
+		{
+			_currentPesel = _callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
 
-		#region Constants and Statics
+			if (string.IsNullOrEmpty(_currentPesel))
+			{
+				throw new EntityDoesNotExistException();
+			}
 
-		#endregion
+			var teacherRow = timetableDataSet.Teachers.FindByPesel(_currentPesel);
 
-		#region Fields
+			if (teacherRow == null)
+			{
+				throw new EntityDoesNotExistException();
+			}
 
-		private readonly MainWindow callingWindow;
+			return teacherRow;
+		}
 
-		private readonly ExpanderControlType controlType;
+		private void FillControls()
+		{
+			switch (_controlType)
+			{
+				case ExpanderControlType.Change:
+					if (_contentType == ComboBoxContentType.Students)
+					{
+						maskedTextBoxPesel.Text = _currentStudentRow.Pesel;
+						textBoxFirstName.Text = _currentStudentRow.FirstName;
+						textBoxLastName.Text = _currentStudentRow.LastName;
+						comboBoxClass.SelectedValue = _currentStudentRow.ClassId;
+					}
+					else if (_contentType == ComboBoxContentType.Teachers)
+					{
+						maskedTextBoxPesel.Text = _currentTeacherRow.Pesel;
+						textBoxFirstName.Text = _currentTeacherRow.FirstName;
+						textBoxLastName.Text = _currentTeacherRow.LastName;
+					}
+					break;
+			}
+		}
 
-		private readonly ComboBoxContent contentType;
+		private void SaveEntity()
+		{
+			var peselString = maskedTextBoxPesel.Text;
+			var firstName = textBoxFirstName.Text.Trim();
+			var lastName = textBoxLastName.Text.Trim();
 
-		private string currentPesel;
+			try
+			{
+				if (_contentType == ComboBoxContentType.Students)
+				{
+					SaveStudent(firstName, lastName, peselString);
+				}
+				else if (_contentType == ComboBoxContentType.Teachers)
+				{
+					SaveTeacher(firstName, lastName, peselString);
+				}
+			}
+			catch (FieldsNotFilledException)
+			{
+				MessageBox.Show(this, "All fields are required.", "Warning",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
+			catch (InvalidPeselException)
+			{
+				MessageBox.Show(this, "PESEL number is invalid.", "Warning",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
+			catch (DuplicateEntityException)
+			{
+				MessageBox.Show(this, "Person with given PESEL number has already existed.", "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.ToString(), "Error",
+					MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
 
-		private TimetableDataSet timetableDataSet;
+		private void SaveStudent(string firstName, string lastName, string peselString)
+		{
+			if (comboBoxClass.SelectedValue == null
+				|| string.IsNullOrEmpty(firstName)
+				|| string.IsNullOrEmpty(lastName))
+			{
+				throw new FieldsNotFilledException();
+			}
 
-		private ClassesTableAdapter classesTableAdapter;
-		private StudentsTableAdapter studentsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+			_currentStudentRow.FirstName = firstName;
+			_currentStudentRow.LastName = lastName;
 
-		private TimetableDataSet.StudentsRow currentStudentRow;
-		private TimetableDataSet.TeachersRow currentTeacherRow;
+			if (int.TryParse(comboBoxClass.SelectedValue.ToString(), out _currentClassId))
+			{
+				_currentStudentRow.ClassId = _currentClassId;
+			}
+			else
+			{
+				throw new FieldsNotFilledException();
+			}
+
+			if (_controlType == ExpanderControlType.Add)
+			{
+				_currentStudentRow.Pesel = new Pesel(peselString).StringRepresentation;
+
+				if (timetableDataSet.Students.FindByPesel(_currentStudentRow.Pesel) != null)
+				{
+					throw new DuplicateEntityException();
+				}
+
+				timetableDataSet.Students.Rows.Add(_currentStudentRow);
+			}
+
+			studentsTableAdapter.Update(timetableDataSet.Students);
+
+			_callingWindow.RefreshCurrentView(ComboBoxContentType.Students);
+
+			Close();
+		}
+
+		private void SaveTeacher(string firstName, string lastName, string peselString)
+		{
+			if (string.IsNullOrEmpty(firstName)
+				|| string.IsNullOrEmpty(lastName))
+			{
+				throw new FieldsNotFilledException();
+			}
+
+			_currentTeacherRow.FirstName = firstName;
+			_currentTeacherRow.LastName = lastName;
+
+			if (_controlType == ExpanderControlType.Add)
+			{
+				_currentTeacherRow.Pesel = new Pesel(peselString).StringRepresentation;
+
+				if (timetableDataSet.Teachers.FindByPesel(_currentTeacherRow.Pesel) != null)
+				{
+					throw new DuplicateEntityException();
+				}
+
+				timetableDataSet.Teachers.Rows.Add(_currentTeacherRow);
+			}
+
+			teachersTableAdapter.Update(timetableDataSet.Teachers);
+
+			_callingWindow.RefreshCurrentView(ComboBoxContentType.Teachers);
+
+			Close();
+		}
 
 		#endregion
 	}

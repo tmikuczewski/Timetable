@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
 using Timetable.Controls;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
@@ -10,764 +10,16 @@ using Timetable.Utilities;
 namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	///     Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		#region Constructors
-		
-		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>MainWindow</c>.
-		/// </summary>
-		public MainWindow()
-		{
-			this.InitDatabaseObjects();
-
-			this.InitializeComponent();
-		}
-
-		#endregion
-
-		#region Overridden methods
-
-		#endregion
-
-		#region Public methods
-
-		/// <summary>
-		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku zarządzania.
-		/// </summary>
-		/// <returns></returns>
-		public ComboBoxContent GetCurrentContentType() => comboBoxContent;
-
-		/// <summary>
-		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku planowania.
-		/// </summary>
-		/// <returns></returns>
-		public ComboBoxContent GetPlanningContentType() => comboBoxPlanningContent;
-
-		/// <summary>
-		/// Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku podsumowania.
-		/// </summary>
-		/// <returns></returns>
-		public ComboBoxContent GetSummaryContentType() => comboBoxSummaryContent;
-
-		/// <summary>
-		/// Metoda odświeżająca listę aktualnie wyświetlanych encji.
-		/// </summary>
-		public void RefreshCurrentView()
-		{
-			this.FillScrollViewer(comboBoxContent);
-		}
-
-		/// <summary>
-		/// Metoda odświeżająca listę aktualnie wyświetlanych encji w widoku mapowania.
-		/// </summary>
-		public void RefreshMapping()
-		{
-			this.FillScrollViewer(ComboBoxContent.Mapping);
-		}
-
-		/// <summary>
-		/// Metoda odświeżająca listę aktualnie wyświetlanych encji w widoku planowania.
-		/// </summary>
-		public void RefreshPlanning()
-		{
-			this.FillScrollViewer(ComboBoxContent.Planning);
-		}
-
-		/// <summary>
-		/// Metoda zwracająca listę numerów PESEL zaznaczonych osób.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<string> GetPeselsOfMarkedPeople()
-		{
-			foreach (PersonControl personControl in this.scrollViewersGrid.Children)
-			{
-				if (personControl.IsChecked())
-				{
-					yield return personControl.Pesel.StringRepresentation;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Metoda zwracająca listę numerów ID zaznaczonych klas.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<string> GetIdNumbersOfMarkedClasses()
-		{
-			foreach (ClassControl classControl in this.scrollViewersGrid.Children)
-			{
-				if (classControl.IsChecked())
-				{
-					yield return classControl.GetId();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Metoda zwracająca listę numerów ID zaznaczonych przedmiotów.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<string> GetIdNumbersOfMarkedSubjects()
-		{
-			foreach (SubjectControl subjectControl in this.scrollViewersGrid.Children)
-			{
-				if (subjectControl.IsChecked())
-				{
-					yield return subjectControl.GetId();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Metoda zwracająca listę numerów ID zaznaczonych lekcji.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<string> GetIdNumbersOfMarkedLessons()
-		{
-			foreach (LessonControl lessonControl in this.scrollViewersMappingGrid.Children)
-			{
-				if (lessonControl.IsChecked())
-				{
-					yield return lessonControl.GetId();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Metoda zwracająca Pesel nauczyciela wyświetlanego w widoku podsumowania.
-		/// </summary>
-		/// <returns></returns>
-		public string GetSummaryTeacherPesel()
-		{
-			string currentSummaryTeacherPesel = null;
-
-			if (this.comboBoxSummaryContent == ComboBoxContent.Teachers
-				&& this.comboBoxSummary2.SelectedIndex != -1)
-			{
-				currentSummaryTeacherPesel = timetableDataSet.Teachers.
-					OrderBy(t => t.Pesel).
-					ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
-			}
-
-			return currentSummaryTeacherPesel;
-		}
-
-		/// <summary>
-		/// Metoda zwracająca ID klasy wyświetlanego w widoku podsumowania.
-		/// </summary>
-		/// <returns></returns>
-		public int? GetSummaryClassId()
-		{
-			int? currentSummaryClassId = null;
-
-			if (this.comboBoxSummaryContent == ComboBoxContent.Classes
-				&& this.comboBoxSummary2.SelectedIndex != -1)
-			{
-				currentSummaryClassId = timetableDataSet.Classes.
-					OrderBy(c => c.Year).
-					ThenBy(c => c.CodeName).
-					ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
-			}
-
-			return currentSummaryClassId;
-		}
-
-		#endregion
-
-		#region Properties
-
-		#endregion
-
-		#region Private methods
-
-		private void InitDatabaseObjects()
-		{
-			this.timetableDataSet = new TimetableDataSet();
-
-			this.classesTableAdapter = new ClassesTableAdapter();
-			this.classroomsTableAdapter = new ClassroomsTableAdapter();
-			this.daysTableAdapter = new DaysTableAdapter();
-			this.hoursTableAdapter = new HoursTableAdapter();
-			this.lessonsTableAdapter = new LessonsTableAdapter();
-			this.lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			this.studentsTableAdapter = new StudentsTableAdapter();
-			this.subjectsTableAdapter = new SubjectsTableAdapter();
-			this.teachersTableAdapter = new TeachersTableAdapter();
-
-			this.classesTableAdapter.Fill(this.timetableDataSet.Classes);
-			this.classroomsTableAdapter.Fill(this.timetableDataSet.Classrooms);
-			this.daysTableAdapter.Fill(this.timetableDataSet.Days);
-			this.hoursTableAdapter.Fill(this.timetableDataSet.Hours);
-			this.lessonsTableAdapter.Fill(this.timetableDataSet.Lessons);
-			this.lessonsPlacesTableAdapter.Fill(this.timetableDataSet.LessonsPlaces);
-			this.studentsTableAdapter.Fill(this.timetableDataSet.Students);
-			this.subjectsTableAdapter.Fill(this.timetableDataSet.Subjects);
-			this.teachersTableAdapter.Fill(this.timetableDataSet.Teachers);
-		}
-
-		private void FillScrollViewer(ComboBoxContent content = ComboBoxContent.Entities)
-		{
-			if (this.scrollViewersGrid.Children.Count > 0)
-			{
-				this.scrollViewersGrid.Children.Clear();
-				this.scrollViewersGrid.RowDefinitions.Clear();
-			}
-			if (this.scrollViewersMappingGrid.Children.Count > 0)
-			{
-				this.scrollViewersMappingGrid.Children.Clear();
-				this.scrollViewersMappingGrid.RowDefinitions.Clear();
-			}
-
-			switch (content)
-			{
-				case ComboBoxContent.Students:
-					studentsTableAdapter.Fill(timetableDataSet.Students);
-					foreach (TimetableDataSet.StudentsRow studentRow in timetableDataSet.Students.Rows)
-					{
-						this.AddPersonToGrid(studentRow);
-					}
-					break;
-				case ComboBoxContent.Teachers:
-					teachersTableAdapter.Fill(timetableDataSet.Teachers);
-					foreach (TimetableDataSet.TeachersRow teacherRow in timetableDataSet.Teachers.Rows)
-					{
-						this.AddPersonToGrid(teacherRow);
-					}
-					break;
-				case ComboBoxContent.Classes:
-					classesTableAdapter.Fill(timetableDataSet.Classes);
-					foreach (TimetableDataSet.ClassesRow classRow in timetableDataSet.Classes.Rows)
-					{
-						this.AddClassToGrid(classRow);
-					}
-					break;
-				case ComboBoxContent.Subjects:
-					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-					foreach (TimetableDataSet.SubjectsRow subjectRow in timetableDataSet.Subjects.Rows)
-					{
-						this.AddSubjectToGrid(subjectRow);
-					}
-					break;
-				case ComboBoxContent.Mapping:
-					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-					foreach (TimetableDataSet.LessonsRow lessonRow in timetableDataSet.Lessons.Rows)
-					{
-						this.AddLessonToGrid(lessonRow);
-					}
-					break;
-				case ComboBoxContent.Planning:
-					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-					comboBoxPlanning2_SelectionChanged(this.comboBoxPlanning2, null);
-					comboBoxSummary2_SelectionChanged(this.comboBoxSummary2, null);
-					break;
-				default:
-					break;
-			}
-		}
-
-		private void FillExpander(ExpanderContent content)
-		{
-			var stackPanel = new StackPanel();
-			switch (content)
-			{
-				case ExpanderContent.Management:
-					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Add.ToString(), ExpanderControlType.Add, this));
-					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Change.ToString(), ExpanderControlType.Change, this));
-					stackPanel.Children.Add(new ExpanderControl(ExpanderControlType.Remove.ToString(), ExpanderControlType.Remove, this));
-					this.expander.Content = stackPanel;
-					this.expander.Header = "Operation";
-					break;
-				case ExpanderContent.Summary:
-					stackPanel.Children.Add(new ExpanderControl("Excel", ExpanderControlType.XLS, this));
-					stackPanel.Children.Add(new ExpanderControl("PDF", ExpanderControlType.PDF, this));
-					this.expander.Content = stackPanel;
-					this.expander.Header = "Export";
-					break;
-			}
-		}
-
-		private void FillComboBoxes()
-		{
-			this.comboBox.Items.Add(ComboBoxContent.Students.ToString());
-			this.comboBox.Items.Add(ComboBoxContent.Teachers.ToString());
-			this.comboBox.Items.Add(ComboBoxContent.Classes.ToString());
-			this.comboBox.Items.Add(ComboBoxContent.Subjects.ToString());
-			this.comboBox.SelectedIndex = 0;
-
-			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Classes.ToString());
-			this.comboBoxPlanning1.Items.Add(ComboBoxContent.Teachers.ToString());
-			this.comboBoxPlanning1.SelectedIndex = 0;
-
-			this.comboBoxSummary1.Items.Add(ComboBoxContent.Classes.ToString());
-			this.comboBoxSummary1.Items.Add(ComboBoxContent.Teachers.ToString());
-			this.comboBoxSummary1.SelectedIndex = 0;
-
-			this.comboBoxContent = ComboBoxContent.Students;
-			this.comboBoxPlanningContent = ComboBoxContent.Classes;
-			this.comboBoxSummaryContent = ComboBoxContent.Classes;
-		}
-
-		private void FillTimetableGrid(TabType tabType)
-		{
-			for (int i = 1; i <= timetableDataSet.Days.Count; i++)
-			{
-				for (int j = 1; j <= timetableDataSet.Hours.Count; j++)
-				{
-					var cellControl = new CellControl(this, diffColor: (j % 2) != 0);
-					Grid.SetColumn(cellControl, i);
-					Grid.SetRow(cellControl, j);
-					switch (tabType)
-					{
-						case TabType.Planning:
-							if (comboBoxPlanningContent == ComboBoxContent.Teachers)
-							{
-								string currentPlanningTeacherPesel = timetableDataSet.Teachers.
-									OrderBy(t => t.Pesel).
-									ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
-
-								cellControl.SetLessonData(ExpanderControlType.Add, ComboBoxContent.Teachers, currentPlanningTeacherPesel, null, i, j);
-							}
-							else if (comboBoxPlanningContent == ComboBoxContent.Classes)
-							{
-								int currentPlanningClassId = timetableDataSet.Classes.
-									OrderBy(c => c.Year).
-									ThenBy(c => c.CodeName).
-									ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
-
-								cellControl.SetLessonData(ExpanderControlType.Add, ComboBoxContent.Classes, null, currentPlanningClassId, i, j);
-							}
-							this.gridPlanning.Children.Add(cellControl);
-							break;
-						case TabType.Summary:
-							this.gridSummary.Children.Add(cellControl);
-							break;
-					}
-				}
-			}
-		}
-
-		private void ClearTimetableGrids(TabType tabType)
-		{
-			var tilesToSkip = timetableDataSet.Days.Count + timetableDataSet.Hours.Count;
-			switch (tabType)
-			{
-				case TabType.Planning:
-					if (this.gridPlanning.Children.Count > tilesToSkip)
-					{
-						this.gridPlanning.Children.RemoveRange(tilesToSkip, this.gridPlanning.Children.Count - tilesToSkip);
-					}
-					if (this.gridPlanningRemainingLessons.Children.Count > 0)
-					{
-						this.gridPlanningRemainingLessons.Children.Clear();
-						this.gridPlanningRemainingLessons.RowDefinitions.Clear();
-					}
-					this.FillTimetableGrid(tabType);
-					break;
-				case TabType.Summary:
-					if (this.gridSummary.Children.Count > tilesToSkip)
-					{
-						this.gridSummary.Children.RemoveRange(tilesToSkip, this.gridSummary.Children.Count - tilesToSkip);
-					}
-					this.FillTimetableGrid(tabType);
-					break;
-			}
-		}
-
-		private void AddPersonToGrid(TimetableDataSet.StudentsRow studentRow)
-		{
-			var personControl = new PersonControl(studentRow);
-
-			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
-			Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
-			this.scrollViewersGrid.Children.Add(personControl);
-		}
-
-		private void AddPersonToGrid(TimetableDataSet.TeachersRow teacherRow)
-		{
-			var personControl = new PersonControl(teacherRow);
-
-			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PersonControl.HEIGHT) });
-			Grid.SetRow(personControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
-			this.scrollViewersGrid.Children.Add(personControl);
-		}
-
-		private void AddClassToGrid(TimetableDataSet.ClassesRow classRow)
-		{
-			var classControl = new ClassControl(classRow);
-
-			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(ClassControl.HEIGHT) });
-			Grid.SetRow(classControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
-			this.scrollViewersGrid.Children.Add(classControl);
-		}
-
-		private void AddSubjectToGrid(TimetableDataSet.SubjectsRow subjectRow)
-		{
-			var subjectControl = new SubjectControl(subjectRow);
-
-			this.scrollViewersGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(ClassControl.HEIGHT) });
-			Grid.SetRow(subjectControl, this.scrollViewersGrid.RowDefinitions.Count - 1);
-			this.scrollViewersGrid.Children.Add(subjectControl);
-		}
-
-		private void AddLessonToGrid(TimetableDataSet.LessonsRow lessonRow)
-		{
-			var lessonControl = new LessonControl(lessonRow);
-
-			this.scrollViewersMappingGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(LessonControl.HEIGHT) });
-			Grid.SetRow(lessonControl, this.scrollViewersMappingGrid.RowDefinitions.Count - 1);
-			this.scrollViewersMappingGrid.Children.Add(lessonControl);
-		}
-
-		private void AddLessonToGrid(
-			TimetableDataSet.LessonsRow lessonRow,
-			TabType tabType,
-			ComboBoxContent content)
-		{
-			var cellControl = new CellControl(
-				lessonRow.SubjectsRow.Name,
-				(lessonRow.ClassesRow.Year.ToString()) + (string.IsNullOrEmpty(lessonRow.ClassesRow.CodeName)
-					? string.Empty
-					: $" {lessonRow.ClassesRow.CodeName}"),
-				$"{lessonRow.TeachersRow.FirstName.First()}.{lessonRow.TeachersRow.LastName}",
-				this,
-				diffColor: (this.gridPlanningRemainingLessons.RowDefinitions.Count % 2) != 0
-			);
-
-			this.gridPlanningRemainingLessons.RowDefinitions.Add(new RowDefinition());
-			Grid.SetRow(cellControl, this.gridPlanningRemainingLessons.RowDefinitions.Count - 1);
-			this.gridPlanningRemainingLessons.Children.Add(cellControl);
-		}
-
-		private void AddLessonPlaceToGrid(
-			TimetableDataSet.LessonsPlacesRow lessonPlace,
-			TabType tabType,
-			ComboBoxContent content)
-		{
-			var cellControl = new CellControl(
-				lessonPlace.LessonsRow.SubjectsRow.Name,
-				content == ComboBoxContent.Students
-					? $"{lessonPlace.LessonsRow.TeachersRow.FirstName.First()}. {lessonPlace.LessonsRow.TeachersRow.LastName}"
-					: ($"kl. {lessonPlace.LessonsRow.ClassesRow.Year}") +
-						(string.IsNullOrEmpty(lessonPlace.LessonsRow.ClassesRow.CodeName)
-							? string.Empty
-							: $" {lessonPlace.LessonsRow.ClassesRow.CodeName}"),
-				$"s. {lessonPlace.ClassroomsRow.Name}",
-				this,
-				diffColor: (lessonPlace.HoursRow.Id % 2) != 0
-			);
-			Grid.SetColumn(cellControl, lessonPlace.DaysRow.Id);
-			Grid.SetRow(cellControl, lessonPlace.HoursRow.Id);
-			switch (tabType)
-			{
-				case TabType.Planning:
-					cellControl.SetLessonData(ExpanderControlType.Change, comboBoxPlanningContent,
-						lessonPlace.LessonsRow.TeacherPesel, lessonPlace.LessonsRow.ClassId, lessonPlace.DayId, lessonPlace.HourId);
-					this.gridPlanning.Children.Add(cellControl);
-					break;
-				case TabType.Summary:
-					this.gridSummary.Children.Add(cellControl);
-					break;
-			}
-		}
-
-		#endregion
-
-		#region Events
-
-		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
-		{
-			this.tabControl.SelectedIndex = (int) TabType.Planning;
-
-			this.FillComboBoxes();
-
-			this.FillExpander(ExpanderContent.Management);
-		}
-
-		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			switch ((TabType)this.tabControl.SelectedIndex)
-			{
-				case TabType.Management:
-					this.gridSummaryFilter.Visibility = Visibility.Hidden;
-					this.gridOperations.Visibility = Visibility.Visible;
-					this.gridOperationsComboBox.Visibility = Visibility.Visible;
-					this.expander.Visibility = Visibility.Visible;
-					this.FillExpander(ExpanderContent.Management);
-					this.FillScrollViewer(ComboBoxContent.Students);
-					break;
-				case TabType.Mapping:
-					this.comboBoxContent = ComboBoxContent.Mapping;
-					this.gridSummaryFilter.Visibility = Visibility.Hidden;
-					this.gridOperations.Visibility = Visibility.Visible;
-					this.gridOperationsComboBox.Visibility = Visibility.Hidden;
-					this.expander.Visibility = Visibility.Visible;
-					this.FillExpander(ExpanderContent.Management);
-					this.FillScrollViewer(ComboBoxContent.Mapping);
-					break;
-				case TabType.Planning:
-					this.gridSummaryFilter.Visibility = Visibility.Hidden;
-					this.gridOperations.Visibility = Visibility.Hidden;
-					break;
-				case TabType.Summary:
-					this.gridSummaryFilter.Visibility = Visibility.Visible;
-					this.gridOperations.Visibility = Visibility.Visible;
-					this.gridOperationsComboBox.Visibility = Visibility.Hidden;
-					this.expander.Visibility = Visibility.Visible;
-					this.FillExpander(ExpanderContent.Summary);
-					break;
-			}
-		}
-
-		private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (sender == null)
-			{
-				return;
-			}
-
-			int contentType = ((ComboBox) sender).SelectedIndex;
-
-			switch (contentType)
-			{
-				case 0:
-					this.comboBoxContent = ComboBoxContent.Students;
-					break;
-				case 1:
-					this.comboBoxContent = ComboBoxContent.Teachers;
-					break;
-				case 2:
-					this.comboBoxContent = ComboBoxContent.Classes;
-					break;
-				case 3:
-					this.comboBoxContent = ComboBoxContent.Subjects;
-					break;
-			}
-
-			this.FillExpander(ExpanderContent.Management);
-
-			switch (this.comboBoxContent)
-			{
-				case ComboBoxContent.Students:
-					this.FillScrollViewer(ComboBoxContent.Students);
-					break;
-				case ComboBoxContent.Teachers:
-					this.FillScrollViewer(ComboBoxContent.Teachers);
-					break;
-				case ComboBoxContent.Classes:
-					this.FillScrollViewer(ComboBoxContent.Classes);
-					break;
-				case ComboBoxContent.Subjects:
-					this.FillScrollViewer(ComboBoxContent.Subjects);
-					break;
-			}
-		}
-
-		#region TabPlanning
-
-		private void comboBoxPlanning1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (sender == null)
-			{
-				return;
-			}
-
-			int contentType = ((ComboBox) sender).SelectedIndex;
-
-			switch (contentType)
-			{
-				case 0:
-					this.comboBoxPlanningContent = ComboBoxContent.Classes;
-					break;
-				case 1:
-					this.comboBoxPlanningContent = ComboBoxContent.Teachers;
-					break;
-			}
-
-			switch (this.comboBoxPlanningContent)
-			{
-				case ComboBoxContent.Classes:
-					var classesList = timetableDataSet.Classes.
-						OrderBy(c => c.Year).
-						ThenBy(c => c.CodeName);
-					this.comboBoxPlanning2.ItemsSource = classesList.
-						Select(c => c.ToFriendlyString());
-					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
-					break;
-
-				case ComboBoxContent.Teachers:
-					var teachersList = timetableDataSet.Teachers.
-						OrderBy(t => t.Pesel);
-					this.comboBoxPlanning2.ItemsSource = teachersList.
-						Select(t => t.ToFriendlyString());
-					this.comboBoxPlanning2.SelectedIndex = this.comboBoxPlanning2.Items.Count > 0 ? 0 : -1;
-					break;
-			}
-		}
-		private void comboBoxPlanning2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (this.comboBoxPlanning2.SelectedIndex != -1)
-			{
-				switch (this.comboBoxPlanningContent)
-				{
-					case ComboBoxContent.Classes:
-						this.ClearTimetableGrids(TabType.Planning);
-
-						int currentPlanningClassId = timetableDataSet.Classes.
-							OrderBy(c => c.Year).
-							ThenBy(c => c.CodeName).
-							ElementAt(this.comboBoxPlanning2.SelectedIndex).Id;
-
-						var studentsLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
-							Select(lp => lp.LessonId);
-
-						var classRemainingLessons = timetableDataSet.Lessons.
-							Where(l => l.ClassId == currentPlanningClassId).
-							Where(l => !studentsLessonsPlacesLessonsIds.Contains(l.Id));
-
-						foreach (var lesson in classRemainingLessons)
-						{
-							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Classes);
-						}
-
-						var classLessonsPlaces = timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.ClassId == currentPlanningClassId);
-
-						foreach (var lessonPlace in classLessonsPlaces)
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Students);
-						}
-						break;
-
-					case ComboBoxContent.Teachers:
-						this.ClearTimetableGrids(TabType.Planning);
-
-						string currentPlanningTeacherPesel = timetableDataSet.Teachers.
-							OrderBy(t => t.Pesel).
-							ElementAt(this.comboBoxPlanning2.SelectedIndex).Pesel;
-
-						var teachersLessonsPlacesLessonsIds = timetableDataSet.LessonsPlaces.
-							Select(lp => lp.LessonId);
-
-						var teacherRemainingLessons = timetableDataSet.Lessons.
-							Where(l => l.TeacherPesel == currentPlanningTeacherPesel).
-							Where(l => !teachersLessonsPlacesLessonsIds.Contains(l.Id));
-
-						foreach (var lesson in teacherRemainingLessons)
-						{
-							this.AddLessonToGrid(lesson, TabType.Planning, ComboBoxContent.Teachers);
-						}
-
-						var teacherLessonsPlaces = timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.TeacherPesel == currentPlanningTeacherPesel);
-
-						foreach (var lessonPlace in teacherLessonsPlaces)
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Planning, ComboBoxContent.Teachers);
-						}
-						break;
-				}
-			}
-		}
-
-		#endregion
-
-		#region TabSummary
-
-		private void comboBoxSummary1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (sender == null)
-			{
-				return;
-			}
-
-			int contentType = ((ComboBox) sender).SelectedIndex;
-
-			switch (contentType)
-			{
-				case 0:
-					this.comboBoxSummaryContent = ComboBoxContent.Classes;
-					break;
-				case 1:
-					this.comboBoxSummaryContent = ComboBoxContent.Teachers;
-					break;
-			}
-
-			switch (this.comboBoxSummaryContent)
-			{
-				case ComboBoxContent.Classes:
-					var classesList = timetableDataSet.Classes.
-						OrderBy(c => c.Year).
-						ThenBy(c => c.CodeName);
-					this.comboBoxSummary2.ItemsSource = classesList.
-						Select(c => (c.Year.ToString()) + (string.IsNullOrEmpty(c.CodeName) ? string.Empty : $" {c.CodeName}"));
-					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
-					break;
-
-				case ComboBoxContent.Teachers:
-					var teachersList = timetableDataSet.Teachers.
-						OrderBy(t => t.Pesel);
-					this.comboBoxSummary2.ItemsSource = teachersList.
-						Select(t => $"{t.FirstName[0]}. {t.LastName} ({t.Pesel})");
-					this.comboBoxSummary2.SelectedIndex = this.comboBoxSummary2.Items.Count > 0 ? 0 : -1;
-					break;
-			}
-		}
-		private void comboBoxSummary2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (this.comboBoxSummary2.SelectedIndex != -1)
-			{
-				switch (this.comboBoxSummaryContent)
-				{
-					case ComboBoxContent.Classes:
-						this.ClearTimetableGrids(TabType.Summary);
-
-						int currentSummaryClassId = timetableDataSet.Classes.
-							OrderBy(c => c.Year).
-							ThenBy(c => c.CodeName).
-							ElementAt(this.comboBoxSummary2.SelectedIndex).Id;
-
-						var classLessonsPlaces = timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.ClassId == currentSummaryClassId);
-
-						foreach (var lessonPlace in classLessonsPlaces)
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Students);
-						}
-						break;
-
-					case ComboBoxContent.Teachers:
-						this.ClearTimetableGrids(TabType.Summary);
-
-						string currentSummaryTeacherPesel = timetableDataSet.Teachers.
-							OrderBy(t => t.Pesel).
-							ElementAt(this.comboBoxSummary2.SelectedIndex).Pesel;
-
-						var teacherLessonsPlaces = timetableDataSet.LessonsPlaces.
-							Where(lp => lp.LessonsRow.TeacherPesel == currentSummaryTeacherPesel);
-
-						foreach (var lessonPlace in teacherLessonsPlaces)
-						{
-							this.AddLessonPlaceToGrid(lessonPlace, TabType.Summary, ComboBoxContent.Teachers);
-						}
-						break;
-				}
-			}
-		}
-
-		#endregion
-
-		#endregion
-
 		#region Constants and Statics
 
 		#endregion
 
-		#region Fields
 
-		#region Database
+		#region Fields
 
 		private TimetableDataSet timetableDataSet;
 		private ClassesTableAdapter classesTableAdapter;
@@ -780,12 +32,965 @@ namespace Timetable.Windows
 		private SubjectsTableAdapter subjectsTableAdapter;
 		private TeachersTableAdapter teachersTableAdapter;
 
+		private MainTabControlType _mainTabControlType;
+
+		private ComboBoxContentType
+			_comboBoxContentType,
+			_comboBoxPlanningContentType,
+			_comboBoxSummaryContentType;
+
+		private bool _windowLoaded;
+
 		#endregion
 
-		private ComboBoxContent
-			comboBoxContent,
-			comboBoxPlanningContent,
-			comboBoxSummaryContent;
+
+		#region Properties
+
+		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => timetableDataSet.Students
+			.OrderBy(s => new Pesel(s.Pesel).BirthDate);
+
+		private IEnumerable<string> StudentsFriendlyNamesEnumerable => StudentsEnumerable.Select(c => c.ToFriendlyString(true));
+
+
+		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => timetableDataSet.Teachers
+			.OrderBy(t => new Pesel(t.Pesel).BirthDate);
+
+		private IEnumerable<string> TeachersFriendlyNamesEnumerable => TeachersEnumerable.Select(c => c.ToFriendlyString(true));
+
+		private IOrderedEnumerable<TimetableDataSet.ClassesRow> ClassesEnumerable => timetableDataSet.Classes
+			.OrderBy(c => c.Year)
+			.ThenBy(c => c.CodeName);
+
+		private IEnumerable<string> ClassessFriendlyNamesEnumerable => ClassesEnumerable.Select(c => c.ToFriendlyString());
+
+
+		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => timetableDataSet.Subjects
+			.OrderBy(s => s.Name);
+
+		private IOrderedEnumerable<TimetableDataSet.LessonsRow> LessonsEnumerable => timetableDataSet.Lessons
+			.OrderBy(l => l.SubjectsRow.Name)
+			.ThenBy(l => l.ClassesRow.ToFriendlyString());
+
+		private IOrderedEnumerable<TimetableDataSet.LessonsPlacesRow> LessonsPlacesEnumerable => timetableDataSet.LessonsPlaces
+			.OrderBy(lp => lp.DayId)
+			.ThenBy(lp => lp.HourId);
+
+		private IEnumerable<int> LessonsDistinctIdsEnumerable => timetableDataSet.LessonsPlaces
+			.Select(lp => lp.LessonId).Distinct();
+
+		#endregion
+
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>MainWindow</c>.
+		/// </summary>
+		public MainWindow()
+		{
+			InitDatabaseObjects();
+
+			InitializeComponent();
+		}
+
+		#endregion
+
+
+		#region Events
+
+		private void mainWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			FillComboBoxes();
+
+			tabControl.SelectedIndex = (int) MainTabControlType.Planning;
+
+			_windowLoaded = true;
+
+			RefreshMainCategoryView();
+		}
+
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			switch (tabControl.SelectedIndex)
+			{
+				case 0:
+					_mainTabControlType = MainTabControlType.Management;
+					_comboBoxContentType = GetComboBoxContentType();
+					break;
+				case 1:
+					_mainTabControlType = MainTabControlType.Mapping;
+					_comboBoxContentType = ComboBoxContentType.Lessons;
+					break;
+				case 2:
+					_mainTabControlType = MainTabControlType.Planning;
+					_comboBoxContentType = ComboBoxContentType.LessonsPlaces;
+					break;
+				case 3:
+					_mainTabControlType = MainTabControlType.Summary;
+					_comboBoxContentType = ComboBoxContentType.LessonsPlaces;
+					break;
+			}
+
+			RefreshMainCategoryView();
+		}
+
+		private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			_comboBoxContentType = GetComboBoxContentType();
+
+			RefreshManagementCategoryView();
+		}
+
+		private void comboBoxPlanning1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			if (sender == null)
+				return;
+
+			_comboBoxPlanningContentType = GetComboBoxPlanningContentType();
+
+			RefreshPlanningCategoryView();
+		}
+
+		private void comboBoxPlanning2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			if (sender == null)
+				return;
+
+			if (comboBoxPlanning2.SelectedIndex != -1)
+			{
+				RefreshPlanningEntityView();
+			}
+		}
+
+		private void comboBoxSummary1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			if (sender == null)
+				return;
+
+			_comboBoxSummaryContentType = GetComboBoxSummaryContentType();
+
+			RefreshSummaryCategoryView();
+		}
+
+		private void comboBoxSummary2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+
+			if (sender == null)
+				return;
+
+			if (comboBoxSummary2.SelectedIndex != -1)
+			{
+				RefreshSummaryEntityView();
+			}
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+
+		/// <summary>
+		///     Metoda odświeżająca aktualnie wyświetlany widok.
+		/// </summary>
+		/// <param name="changedDataType">Informacja o rodzaju zmienionych danych.</param>
+		public void RefreshCurrentView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			RefreshMainCategoryView(changedDataType);
+		}
+
+		/// <summary>
+		///     Metoda zwracająca informację o aktualnie wyświetlanym widoku.
+		/// </summary>
+		/// <returns></returns>
+		public MainTabControlType GetCurrentControlType()
+		{
+			return _mainTabControlType;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku zarządzania.
+		/// </summary>
+		/// <returns></returns>
+		public ComboBoxContentType GetCurrentContentType()
+		{
+			return _comboBoxContentType;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku planowania.
+		/// </summary>
+		/// <returns></returns>
+		public ComboBoxContentType GetPlanningContentType()
+		{
+			return _comboBoxPlanningContentType;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public ComboBoxContentType GetSummaryContentType()
+		{
+			return _comboBoxSummaryContentType;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca listę numerów PESEL zaznaczonych osób.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetPeselsOfMarkedPeople()
+		{
+			foreach (PersonControl personControl in scrollViewersGrid.Children)
+				if (personControl.IsChecked())
+					yield return personControl.Pesel.StringRepresentation;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca listę numerów ID zaznaczonych klas.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedClasses()
+		{
+			foreach (ClassControl classControl in scrollViewersGrid.Children)
+				if (classControl.IsChecked())
+					yield return classControl.GetId();
+		}
+
+		/// <summary>
+		///     Metoda zwracająca listę numerów ID zaznaczonych przedmiotów.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedSubjects()
+		{
+			foreach (SubjectControl subjectControl in scrollViewersGrid.Children)
+				if (subjectControl.IsChecked())
+					yield return subjectControl.GetId();
+		}
+
+		/// <summary>
+		///     Metoda zwracająca listę numerów ID zaznaczonych lekcji.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedLessons()
+		{
+			foreach (LessonControl lessonControl in scrollViewersMappingGrid.Children)
+				if (lessonControl.IsChecked())
+					yield return lessonControl.GetId();
+		}
+
+		/// <summary>
+		///     Metoda zwracająca ID klasy wyświetlanej w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public int? GetSummaryClassId()
+		{
+			int? currentSummaryClassId = null;
+
+			if (_comboBoxSummaryContentType == ComboBoxContentType.Classes
+				&& comboBoxSummary2.SelectedIndex != -1)
+				currentSummaryClassId = ClassesEnumerable
+					.ElementAt(comboBoxSummary2.SelectedIndex).Id;
+
+			return currentSummaryClassId;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca Pesel nauczyciela wyświetlanego w widoku podsumowania.
+		/// </summary>
+		/// <returns></returns>
+		public string GetSummaryTeacherPesel()
+		{
+			string currentSummaryTeacherPesel = null;
+
+			if (_comboBoxSummaryContentType == ComboBoxContentType.Teachers
+				&& comboBoxSummary2.SelectedIndex != -1)
+				currentSummaryTeacherPesel = TeachersEnumerable.ElementAt(comboBoxSummary2.SelectedIndex).Pesel;
+
+			return currentSummaryTeacherPesel;
+		}
+
+		#endregion
+
+
+		#region Private methods
+
+		#region Entities operations
+
+		private IEnumerable<TimetableDataSet.LessonsRow> GetRemainingLessons(int classId)
+		{
+			return LessonsEnumerable
+				.Where(l => l.ClassId == classId)
+				.Where(l => !LessonsDistinctIdsEnumerable.Contains(l.Id));
+		}
+
+		private IEnumerable<TimetableDataSet.LessonsRow> GetRemainingLessons(string teacherPesel)
+		{
+			return LessonsEnumerable
+				.Where(l => l.TeacherPesel == teacherPesel)
+				.Where(l => !LessonsDistinctIdsEnumerable.Contains(l.Id));
+		}
+
+		private IEnumerable<TimetableDataSet.LessonsPlacesRow> GetLessonsPlaces(int classId)
+		{
+			return LessonsPlacesEnumerable
+				.Where(lp => lp.LessonsRow.ClassId == classId);
+		}
+
+		private IEnumerable<TimetableDataSet.LessonsPlacesRow> GetLessonsPlaces(string teacherPesel)
+		{
+			return LessonsPlacesEnumerable
+				.Where(lp => lp.LessonsRow.TeacherPesel == teacherPesel);
+		}
+
+		private void InitDatabaseObjects()
+		{
+			timetableDataSet = new TimetableDataSet();
+			classesTableAdapter = new ClassesTableAdapter();
+			classroomsTableAdapter = new ClassroomsTableAdapter();
+			daysTableAdapter = new DaysTableAdapter();
+			hoursTableAdapter = new HoursTableAdapter();
+			lessonsTableAdapter = new LessonsTableAdapter();
+			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			studentsTableAdapter = new StudentsTableAdapter();
+			subjectsTableAdapter = new SubjectsTableAdapter();
+			teachersTableAdapter = new TeachersTableAdapter();
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+			daysTableAdapter.Fill(timetableDataSet.Days);
+			hoursTableAdapter.Fill(timetableDataSet.Hours);
+			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+			studentsTableAdapter.Fill(timetableDataSet.Students);
+			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+		}
+
+		#endregion
+
+		#region Main view controls
+
+		private ComboBoxContentType GetComboBoxContentType()
+		{
+			ComboBoxContentType contentType = ComboBoxContentType.Entities;
+
+			switch (comboBox.SelectedIndex)
+			{
+				case 0:
+					contentType = ComboBoxContentType.Students;
+					break;
+				case 1:
+					contentType = ComboBoxContentType.Teachers;
+					break;
+				case 2:
+					contentType = ComboBoxContentType.Classes;
+					break;
+				case 3:
+					contentType = ComboBoxContentType.Subjects;
+					break;
+			}
+
+			return contentType;
+		}
+
+		private ComboBoxContentType GetComboBoxPlanningContentType()
+		{
+			ComboBoxContentType contentType = ComboBoxContentType.Entities;
+
+			switch (comboBoxPlanning1.SelectedIndex)
+			{
+				case 0:
+					contentType = ComboBoxContentType.Classes;
+					break;
+				case 1:
+					contentType = ComboBoxContentType.Teachers;
+					break;
+			}
+
+			return contentType;
+		}
+
+		private ComboBoxContentType GetComboBoxSummaryContentType()
+		{
+			ComboBoxContentType contentType = ComboBoxContentType.Entities;
+
+			switch (comboBoxSummary1.SelectedIndex)
+			{
+				case 0:
+					contentType = ComboBoxContentType.Classes;
+					break;
+				case 1:
+					contentType = ComboBoxContentType.Teachers;
+					break;
+			}
+
+			return contentType;
+		}
+
+		private void RefreshMainCategoryView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			if (!_windowLoaded)
+				return;
+
+			switch (_mainTabControlType)
+			{
+				case MainTabControlType.Management:
+					gridOperations.Visibility = Visibility.Visible;
+					gridOperationsComboBox.Visibility = Visibility.Visible;
+					expander.Visibility = Visibility.Visible;
+					gridSummaryFilter.Visibility = Visibility.Hidden;
+					RefreshManagementCategoryView(changedDataType);
+					break;
+				case MainTabControlType.Mapping:
+					gridOperations.Visibility = Visibility.Visible;
+					gridOperationsComboBox.Visibility = Visibility.Hidden;
+					expander.Visibility = Visibility.Visible;
+					gridSummaryFilter.Visibility = Visibility.Hidden;
+					RefreshMappingCategoryView(changedDataType);
+					break;
+				case MainTabControlType.Planning:
+					gridOperations.Visibility = Visibility.Hidden;
+					gridSummaryFilter.Visibility = Visibility.Hidden;
+					RefreshPlanningCategoryView(changedDataType);
+					break;
+				case MainTabControlType.Summary:
+					gridOperations.Visibility = Visibility.Visible;
+					gridOperationsComboBox.Visibility = Visibility.Hidden;
+					expander.Visibility = Visibility.Visible;
+					gridSummaryFilter.Visibility = Visibility.Visible;
+					RefreshSummaryCategoryView(changedDataType);
+					break;
+			}
+		}
+
+		private void RefreshManagementCategoryView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			if (!_windowLoaded)
+				return;
+
+			switch (changedDataType)
+			{
+				case ComboBoxContentType.Students:
+				case ComboBoxContentType.Teachers:
+				case ComboBoxContentType.Classes:
+				case ComboBoxContentType.Classrooms:
+				case ComboBoxContentType.Subjects:
+				case ComboBoxContentType.Lessons:
+					studentsTableAdapter.Fill(timetableDataSet.Students);
+					teachersTableAdapter.Fill(timetableDataSet.Teachers);
+					classesTableAdapter.Fill(timetableDataSet.Classes);
+					classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+					RefreshMappingCategoryView(changedDataType);
+					RefreshPlanningCategoryView(changedDataType);
+					RefreshSummaryCategoryView(changedDataType);
+					break;
+			}
+
+			FillExpander(MainTabControlType.Management);
+
+			FillScrollViewerGrid(_comboBoxContentType);
+		}
+
+		private void RefreshMappingCategoryView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			if (!_windowLoaded)
+				return;
+
+			switch (changedDataType)
+			{
+				case ComboBoxContentType.Lessons:
+					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+					RefreshPlanningCategoryView(changedDataType);
+					break;
+			}
+
+			FillExpander(MainTabControlType.Mapping);
+
+			FillScrollViewerGrid(ComboBoxContentType.Lessons);
+		}
+
+		private void RefreshPlanningCategoryView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			if (!_windowLoaded)
+				return;
+
+			FillTimetableComboBox(MainTabControlType.Planning);
+
+			switch (changedDataType)
+			{
+				case ComboBoxContentType.Teachers:
+				case ComboBoxContentType.Classes:
+				case ComboBoxContentType.Classrooms:
+				case ComboBoxContentType.Subjects:
+				case ComboBoxContentType.Lessons:
+					RefreshPlanningEntityView();
+					RefreshSummaryCategoryView(changedDataType);
+					break;
+				case ComboBoxContentType.LessonsPlaces:
+					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+					RefreshPlanningEntityView();
+					RefreshSummaryEntityView();
+					break;
+			}
+		}
+
+		private void RefreshPlanningEntityView()
+		{
+			if (!_windowLoaded)
+				return;
+
+			FillTimetableGrid(MainTabControlType.Planning);
+		}
+
+		private void RefreshSummaryCategoryView(ComboBoxContentType changedDataType = ComboBoxContentType.Entities)
+		{
+			if (!_windowLoaded)
+				return;
+
+			FillExpander(MainTabControlType.Summary);
+
+			FillTimetableComboBox(MainTabControlType.Summary);
+
+			switch (changedDataType)
+			{
+				case ComboBoxContentType.Teachers:
+				case ComboBoxContentType.Classes:
+				case ComboBoxContentType.Classrooms:
+				case ComboBoxContentType.Subjects:
+				case ComboBoxContentType.Lessons:
+					RefreshSummaryEntityView();
+					break;
+			}
+		}
+
+		private void RefreshSummaryEntityView()
+		{
+			if (!_windowLoaded)
+				return;
+
+			FillTimetableGrid(MainTabControlType.Summary);
+		}
+
+		private void FillComboBoxes()
+		{
+			comboBox.Items.Add(ComboBoxContentType.Students.ToString());
+			comboBox.Items.Add(ComboBoxContentType.Teachers.ToString());
+			comboBox.Items.Add(ComboBoxContentType.Classes.ToString());
+			comboBox.Items.Add(ComboBoxContentType.Subjects.ToString());
+			comboBox.SelectedIndex = 0;
+
+			comboBoxPlanning1.Items.Add(ComboBoxContentType.Classes.ToString());
+			comboBoxPlanning1.Items.Add(ComboBoxContentType.Teachers.ToString());
+			comboBoxPlanning1.SelectedIndex = 0;
+
+			comboBoxSummary1.Items.Add(ComboBoxContentType.Classes.ToString());
+			comboBoxSummary1.Items.Add(ComboBoxContentType.Teachers.ToString());
+			comboBoxSummary1.SelectedIndex = 0;
+
+			_comboBoxContentType = ComboBoxContentType.Students;
+			_comboBoxPlanningContentType = ComboBoxContentType.Classes;
+			_comboBoxSummaryContentType = ComboBoxContentType.Classes;
+		}
+
+		private void FillExpander(MainTabControlType controlType)
+		{
+			var stackPanel = new StackPanel();
+
+			switch (controlType)
+			{
+				case MainTabControlType.Management:
+				case MainTabControlType.Mapping:
+					stackPanel.Children.Add(new ExpanderControl(this, ExpanderControlType.Add, ExpanderControlType.Add.ToString()));
+					stackPanel.Children.Add(new ExpanderControl(this, ExpanderControlType.Change, ExpanderControlType.Change.ToString()));
+					stackPanel.Children.Add(new ExpanderControl(this, ExpanderControlType.Remove, ExpanderControlType.Remove.ToString()));
+					expander.Content = stackPanel;
+					expander.Header = "Operation";
+					break;
+				case MainTabControlType.Summary:
+					stackPanel.Children.Add(new ExpanderControl(this, ExpanderControlType.XLS, "Excel"));
+					stackPanel.Children.Add(new ExpanderControl(this, ExpanderControlType.PDF, "PDF"));
+					expander.Content = stackPanel;
+					expander.Header = "Export";
+					break;
+			}
+		}
+
+		#endregion
+
+		#region Management & Mapping
+
+		private Grid GetCurrentScrollViewersGrid()
+		{
+			Grid grid = null;
+
+			switch (_mainTabControlType)
+			{
+				case MainTabControlType.Management:
+					grid = scrollViewersGrid;
+					break;
+				case MainTabControlType.Mapping:
+					grid = scrollViewersMappingGrid;
+					break;
+			}
+
+			return grid;
+		}
+
+		private void ClearScrollViewerGrid()
+		{
+			Grid grid = GetCurrentScrollViewersGrid();
+
+			if (grid.Children.Count > 0)
+			{
+				grid.Children.Clear();
+				grid.RowDefinitions.Clear();
+			}
+		}
+
+		private void FillScrollViewerGrid(ComboBoxContentType contentType = ComboBoxContentType.Entities)
+		{
+			ClearScrollViewerGrid();
+
+			switch (contentType)
+			{
+				case ComboBoxContentType.Students:
+					AddAllStudentsToGrid();
+					break;
+				case ComboBoxContentType.Teachers:
+					AddAllTeachersToGrid();
+					break;
+				case ComboBoxContentType.Classes:
+					AddAllClassesToGrid();
+					break;
+				case ComboBoxContentType.Subjects:
+					AddAllSubjectsToGrid();
+					break;
+				case ComboBoxContentType.Lessons:
+					AddAllLessonsToGrid();
+					break;
+			}
+		}
+
+		#endregion
+
+		#region Planning & Summary
+
+		private ComboBox GetEntityComboBox(MainTabControlType controlType)
+		{
+			ComboBox entityComboBox = null;
+
+			switch (controlType)
+			{
+				case MainTabControlType.Planning:
+					entityComboBox = comboBoxPlanning2;
+					break;
+				case MainTabControlType.Summary:
+					entityComboBox = comboBoxSummary2;
+					break;
+			}
+
+			return entityComboBox;
+		}
+
+		private ComboBoxContentType GetEntityComboBoxContentType(MainTabControlType controlType)
+		{
+			ComboBoxContentType contentType = ComboBoxContentType.Entities;
+
+			switch (controlType)
+			{
+				case MainTabControlType.Planning:
+					contentType = _comboBoxPlanningContentType;
+					break;
+				case MainTabControlType.Summary:
+					contentType = _comboBoxSummaryContentType;
+					break;
+			}
+
+			return contentType;
+		}
+
+		private void FillTimetableComboBox(MainTabControlType controlType)
+		{
+			ComboBox entityComboBox = GetEntityComboBox(controlType);
+			ComboBoxContentType contentType = GetEntityComboBoxContentType(controlType);
+
+			switch (contentType)
+			{
+				case ComboBoxContentType.Classes:
+					entityComboBox.ItemsSource = ClassessFriendlyNamesEnumerable;
+					entityComboBox.SelectedIndex = entityComboBox.Items.Count > 0 ? 0 : -1;
+					break;
+				case ComboBoxContentType.Teachers:
+					entityComboBox.ItemsSource = TeachersFriendlyNamesEnumerable;
+					entityComboBox.SelectedIndex = entityComboBox.Items.Count > 0 ? 0 : -1;
+					break;
+			}
+		}
+
+		private void ClearRemainingLessonsGrid(Grid grid)
+		{
+			if (grid.Children.Count > 0)
+			{
+				grid.Children.Clear();
+				grid.RowDefinitions.Clear();
+			}
+		}
+		private void ClearLessonsPlacesGrid(Grid grid, int tilesToSkip)
+		{
+			if (grid.Children.Count > tilesToSkip)
+			{
+				grid.Children.RemoveRange(tilesToSkip, grid.Children.Count - tilesToSkip);
+			}
+		}
+
+		private void ClearTimetableGrid(MainTabControlType controlType)
+		{
+			var tilesToSkip = timetableDataSet.Days.Count + timetableDataSet.Hours.Count;
+
+			switch (controlType)
+			{
+				case MainTabControlType.Planning:
+					ClearRemainingLessonsGrid(gridPlanningRemainingLessons);
+					ClearLessonsPlacesGrid(gridPlanning, tilesToSkip);
+					break;
+				case MainTabControlType.Summary:
+					ClearLessonsPlacesGrid(gridSummary, tilesToSkip);
+					break;
+			}
+
+			PrepareTimetableGrid(controlType);
+		}
+
+		private void PrepareTimetableGrid(MainTabControlType controlType)
+		{
+			ComboBox entityComboBox = GetEntityComboBox(controlType);
+			ComboBoxContentType contentType = GetEntityComboBoxContentType(controlType);
+
+			switch (contentType)
+			{
+				case ComboBoxContentType.Classes:
+					var currentPlanningClassId = ClassesEnumerable.ElementAt(entityComboBox.SelectedIndex).Id;
+					AddAllEmptyLessonsToGrid(currentPlanningClassId, controlType);
+					break;
+				case ComboBoxContentType.Teachers:
+					var currentPlanningTeacherPesel = TeachersEnumerable.ElementAt(entityComboBox.SelectedIndex).Pesel;
+					AddAllEmptyLessonsToGrid(currentPlanningTeacherPesel, controlType);
+					break;
+			}
+		}
+
+		private void FillTimetableGrid(MainTabControlType controlType)
+		{
+			ClearTimetableGrid(controlType);
+
+			ComboBox entityComboBox = GetEntityComboBox(controlType);
+			ComboBoxContentType contentType = GetEntityComboBoxContentType(controlType);
+
+			int selectedIndex = entityComboBox.SelectedIndex;
+
+			if (selectedIndex < 0)
+				return;
+
+			switch (contentType)
+			{
+				case ComboBoxContentType.Classes:
+					var currentClassId = ClassesEnumerable.ElementAt(selectedIndex).Id;
+
+					if (controlType == MainTabControlType.Planning)
+						AddAllRemainingLessonsToGrid(currentClassId, controlType);
+
+					AddAllLessonsPlacesToGrid(currentClassId, controlType);
+					break;
+				case ComboBoxContentType.Teachers:
+					var currentPlanningTeacherPesel = TeachersEnumerable.ElementAt(selectedIndex).Pesel;
+
+					if (controlType == MainTabControlType.Planning)
+						AddAllRemainingLessonsToGrid(currentPlanningTeacherPesel, controlType);
+
+					AddAllLessonsPlacesToGrid(currentPlanningTeacherPesel, controlType);
+					break;
+			}
+		}
+
+		#endregion
+
+		#region Management & Mapping - subcontrols
+
+		private void AddControlToGrid<TControl, TRow>(TRow dataRow)
+		{
+			Control control = (Control) Activator.CreateInstance(typeof(TControl), dataRow);
+			int height = (int) typeof(TControl).GetField("HEIGHT").GetValue(null);
+
+			Grid grid = GetCurrentScrollViewersGrid();
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(height) });
+			Grid.SetRow(control, grid.RowDefinitions.Count - 1);
+			grid.Children.Add(control);
+		}
+
+		private void AddAllStudentsToGrid()
+		{
+			foreach (TimetableDataSet.StudentsRow studentRow in StudentsEnumerable)
+				AddControlToGrid<PersonControl, TimetableDataSet.StudentsRow>(studentRow);
+		}
+
+		private void AddAllTeachersToGrid()
+		{
+			foreach (TimetableDataSet.TeachersRow teacherRow in TeachersEnumerable)
+				AddControlToGrid<PersonControl, TimetableDataSet.TeachersRow>(teacherRow);
+		}
+
+		private void AddAllClassesToGrid()
+		{
+			foreach (TimetableDataSet.ClassesRow classRow in ClassesEnumerable)
+				AddControlToGrid<ClassControl, TimetableDataSet.ClassesRow>(classRow);
+		}
+
+		private void AddAllSubjectsToGrid()
+		{
+			foreach (TimetableDataSet.SubjectsRow subjectRow in SubjectsEnumerable)
+				AddControlToGrid<SubjectControl, TimetableDataSet.SubjectsRow>(subjectRow);
+		}
+
+		private void AddAllLessonsToGrid()
+		{
+			foreach (TimetableDataSet.LessonsRow lessonRow in LessonsEnumerable)
+				AddControlToGrid<LessonControl, TimetableDataSet.LessonsRow>(lessonRow);
+		}
+
+		#endregion
+
+		#region Planning & Summary - subcontrols
+
+		private void AddAllEmptyLessonsToGrid(object objectId, MainTabControlType controlType)
+		{
+			for (var i = 1; i <= timetableDataSet.Days.Count; i++)
+			{
+				for (var j = 1; j <= timetableDataSet.Hours.Count; j++)
+				{
+					var cellControl = new CellControl(this, j % 2 != 0);
+					Grid.SetColumn(cellControl, i);
+					Grid.SetRow(cellControl, j);
+
+					if (controlType == MainTabControlType.Planning)
+					{
+						if (objectId is int)
+						{
+							cellControl.SetLessonData(ExpanderControlType.Add, (int) objectId, i, j);
+						}
+						else if (objectId is string)
+						{
+							cellControl.SetLessonData(ExpanderControlType.Add, (string) objectId, i, j);
+						}
+
+						gridPlanning.Children.Add(cellControl);
+					}
+					else
+					{
+						gridSummary.Children.Add(cellControl);
+					}
+				}
+			}
+		}
+
+		private void AddAllRemainingLessonsToGrid(int classId, MainTabControlType controlType)
+		{
+			var remainingLessons = GetRemainingLessons(classId);
+
+			foreach (var lesson in remainingLessons)
+				AddLessonToGrid(lesson, controlType, ComboBoxContentType.Classes);
+		}
+
+		private void AddAllRemainingLessonsToGrid(string teacherPesel, MainTabControlType controlType)
+		{
+			var remainingLessons = GetRemainingLessons(teacherPesel);
+
+			foreach (var lesson in remainingLessons)
+				AddLessonToGrid(lesson, controlType, ComboBoxContentType.Classes);
+		}
+
+		private void AddAllLessonsPlacesToGrid(int classId, MainTabControlType controlType)
+		{
+			var allLessonsPlaces = GetLessonsPlaces(classId);
+
+			foreach (var lessonPlace in allLessonsPlaces)
+				AddLessonPlaceToGrid(lessonPlace, controlType, ComboBoxContentType.Classes);
+		}
+
+		private void AddAllLessonsPlacesToGrid(string teacherPesel, MainTabControlType controlType)
+		{
+			var allLessonsPlaces = GetLessonsPlaces(teacherPesel);
+
+			foreach (var lessonPlace in allLessonsPlaces)
+				AddLessonPlaceToGrid(lessonPlace, controlType, ComboBoxContentType.Teachers);
+		}
+
+		private void AddLessonToGrid(TimetableDataSet.LessonsRow lessonRow, MainTabControlType controlType, ComboBoxContentType contentType)
+		{
+			var cellControl = new CellControl(
+				firstRow: lessonRow.SubjectsRow.Name,
+				secondRow: lessonRow.ClassesRow.ToFriendlyString(),
+				thirdRow: lessonRow.TeachersRow.ToFriendlyString(),
+				mainWindow: this,
+				diffColor: gridPlanningRemainingLessons.RowDefinitions.Count % 2 != 0
+			);
+
+			gridPlanningRemainingLessons.RowDefinitions.Add(new RowDefinition());
+			Grid.SetRow(cellControl, gridPlanningRemainingLessons.RowDefinitions.Count - 1);
+			gridPlanningRemainingLessons.Children.Add(cellControl);
+		}
+
+		private void AddLessonPlaceToGrid(TimetableDataSet.LessonsPlacesRow lessonPlace, MainTabControlType controlType, ComboBoxContentType contentType)
+		{
+			var cellControl = new CellControl(
+				firstRow: lessonPlace.LessonsRow.SubjectsRow.Name,
+				secondRow: (contentType == ComboBoxContentType.Classes)
+								? $"kl. {lessonPlace.LessonsRow.ClassesRow.ToFriendlyString()}"
+								: lessonPlace.LessonsRow.TeachersRow.ToFriendlyString(),
+				thirdRow: $"s. {lessonPlace.ClassroomsRow.Name}",
+				mainWindow: this,
+				diffColor: lessonPlace.HoursRow.Id % 2 != 0
+			);
+
+			Grid.SetColumn(cellControl, lessonPlace.DaysRow.Id);
+			Grid.SetRow(cellControl, lessonPlace.HoursRow.Id);
+
+			switch (controlType)
+			{
+				case MainTabControlType.Planning:
+					if (_comboBoxPlanningContentType == ComboBoxContentType.Classes)
+						cellControl.SetLessonData(ExpanderControlType.Change, lessonPlace.LessonsRow.ClassId, lessonPlace.DayId, lessonPlace.HourId);
+					else if (_comboBoxPlanningContentType == ComboBoxContentType.Teachers)
+						cellControl.SetLessonData(ExpanderControlType.Change, lessonPlace.LessonsRow.TeacherPesel, lessonPlace.DayId, lessonPlace.HourId);
+
+					gridPlanning.Children.Add(cellControl);
+					break;
+				case MainTabControlType.Summary:
+					gridSummary.Children.Add(cellControl);
+					break;
+			}
+		}
+
+		#endregion
 
 		#endregion
 	}
