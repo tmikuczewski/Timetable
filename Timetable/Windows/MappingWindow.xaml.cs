@@ -2,6 +2,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Timetable.TimetableDataSetTableAdapters;
@@ -50,8 +51,6 @@ namespace Timetable.Windows
 		/// </summary>
 		public MappingWindow(MainWindow mainWindow, ExpanderControlType controlType)
 		{
-			InitDatabaseObjects();
-
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
@@ -63,23 +62,37 @@ namespace Timetable.Windows
 
 		#region Events
 
-		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
+		private async void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			FillComboBoxes();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					InitDatabaseObjects();
 
-			PrepareEntity();
+					FillComboBoxes();
 
-			FillControls();
+					PrepareEntity();
+
+					FillControls();
+				});
+			});
 		}
 
-		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		private async void buttonOk_Click(object sender, RoutedEventArgs e)
 		{
-			SaveEntity();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(SaveEntity);
+			});
 		}
 
-		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		private async void buttonCancel_Click(object sender, RoutedEventArgs e)
 		{
-			Close();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(Close);
+			});
 		}
 
 		#endregion
@@ -113,13 +126,18 @@ namespace Timetable.Windows
 
 		private void FillComboBoxes()
 		{
-			comboBoxTeachers.ItemsSource = timetableDataSet.Teachers.OrderBy(t => new Pesel(t.Pesel).BirthDate);
+			comboBoxTeachers.ItemsSource = timetableDataSet.Teachers
+				.OrderBy(t => t.LastName)
+				.ThenBy(t => t.FirstName);
 			comboBoxTeachers.SelectedValuePath = "Pesel";
 
-			comboBoxClasses.ItemsSource = timetableDataSet.Classes.OrderBy(c => c.Year).ThenBy(c => c.CodeName);
+			comboBoxClasses.ItemsSource = timetableDataSet.Classes
+				.OrderBy(c => c.Year)
+				.ThenBy(c => c.CodeName);
 			comboBoxClasses.SelectedValuePath = "Id";
 
-			comboBoxSubjects.ItemsSource = timetableDataSet.Subjects.OrderBy(s => s.Name);
+			comboBoxSubjects.ItemsSource = timetableDataSet.Subjects
+				.OrderBy(s => s.Name);
 			comboBoxSubjects.SelectedValuePath = "Id";
 		}
 
@@ -139,14 +157,12 @@ namespace Timetable.Windows
 			}
 			catch (EntityDoesNotExistException)
 			{
-				MessageBox.Show(this, "Lesson with given ID number does not exist.", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox("Lesson with given ID number does not exist.");
 				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 				Close();
 			}
 		}
@@ -173,11 +189,17 @@ namespace Timetable.Windows
 			switch (_controlType)
 			{
 				case ExpanderControlType.Change:
+					if (_currentLessonRow == null)
+						return;
+
 					comboBoxClasses.SelectedValue = _currentLessonRow.ClassId;
 					comboBoxSubjects.SelectedValue = _currentLessonRow.SubjectId;
 					comboBoxTeachers.SelectedValue = _currentLessonRow.TeacherPesel;
 					break;
 			}
+
+			buttonOk.IsEnabled = true;
+			buttonCancel.IsEnabled = true;
 		}
 
 		private void SaveEntity()
@@ -188,27 +210,25 @@ namespace Timetable.Windows
 			}
 			catch (FieldsNotFilledException)
 			{
-				MessageBox.Show(this, "All fields are required.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("All fields are required.");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
 		private void SaveLesson()
 		{
 			if (comboBoxClasses.SelectedValue == null
-			    || comboBoxSubjects.SelectedValue == null
-			    || comboBoxTeachers.SelectedValue == null)
+				|| comboBoxSubjects.SelectedValue == null
+				|| comboBoxTeachers.SelectedValue == null)
 			{
 				throw new FieldsNotFilledException();
 			}
 
 			if (int.TryParse(comboBoxClasses.SelectedValue.ToString(), out _currentClassId)
-			    && int.TryParse(comboBoxSubjects.SelectedValue.ToString(), out _currentSubjectId))
+				&& int.TryParse(comboBoxSubjects.SelectedValue.ToString(), out _currentSubjectId))
 			{
 				_currentLessonRow.ClassId = _currentClassId;
 				_currentLessonRow.SubjectId = _currentSubjectId;
@@ -228,9 +248,19 @@ namespace Timetable.Windows
 
 			lessonsTableAdapter.Update(timetableDataSet.Lessons);
 
-			_callingWindow.RefreshCurrentView(ComboBoxContentType.Lessons);
+			_callingWindow.RefreshViews(ComboBoxContentType.Lessons);
 
 			Close();
+		}
+
+		private MessageBoxResult ShowErrorMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private MessageBoxResult ShowWarningMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		#endregion

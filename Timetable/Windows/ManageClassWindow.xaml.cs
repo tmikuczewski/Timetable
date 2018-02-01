@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
@@ -27,6 +30,7 @@ namespace Timetable.Windows
 
 		private int _currentClassId;
 		private TimetableDataSet.ClassesRow _currentClassRow;
+		private IList<TimetableDataSet.TeachersRow> _teachersItemsSource;
 
 		#endregion
 
@@ -43,8 +47,6 @@ namespace Timetable.Windows
 		/// </summary>
 		public ManageClassWindow(MainWindow mainWindow, ExpanderControlType controlType)
 		{
-			InitDatabaseObjects();
-
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
@@ -55,23 +57,31 @@ namespace Timetable.Windows
 
 		#region Events
 
-		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
+		private async void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			FillComboBoxes();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					InitDatabaseObjects();
 
-			PrepareEntity();
+					FillComboBoxes();
 
-			FillControls();
+					PrepareEntity();
+
+					FillControls();
+				});
+			});
 		}
 
-		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		private async void buttonOk_Click(object sender, RoutedEventArgs e)
 		{
-			SaveEntity();
+			await Task.Factory.StartNew(() => { Dispatcher.Invoke(SaveEntity); });
 		}
 
-		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		private async void buttonCancel_Click(object sender, RoutedEventArgs e)
 		{
-			Close();
+			await Task.Factory.StartNew(() => { Dispatcher.Invoke(Close); });
 		}
 
 		#endregion
@@ -101,7 +111,16 @@ namespace Timetable.Windows
 
 		private void FillComboBoxes()
 		{
-			comboBoxTutor.ItemsSource = timetableDataSet.Teachers.OrderBy(t => new Pesel(t.Pesel).BirthDate);
+			_teachersItemsSource = timetableDataSet.Teachers
+				.OrderBy(t => t.LastName)
+				.ThenBy(t => t.FirstName)
+				.ToList();
+
+			var emptyTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
+			emptyTeacherRow["Pesel"] = DBNull.Value;
+			_teachersItemsSource.Insert(0, emptyTeacherRow);
+
+			comboBoxTutor.ItemsSource = _teachersItemsSource;
 			comboBoxTutor.SelectedValuePath = "Pesel";
 		}
 
@@ -121,14 +140,12 @@ namespace Timetable.Windows
 			}
 			catch (EntityDoesNotExistException)
 			{
-				MessageBox.Show(this, "Class with given ID number does not exist.", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox("Class with given ID number does not exist.");
 				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 				Close();
 			}
 		}
@@ -155,71 +172,96 @@ namespace Timetable.Windows
 			switch (_controlType)
 			{
 				case ExpanderControlType.Change:
+					if (_currentClassRow == null)
+						return;
+
 					textBoxId.Text = _currentClassRow.Id.ToString();
 					textBoxYear.Text = _currentClassRow.Year.ToString();
 					textBoxCodeName.Text = _currentClassRow.CodeName;
 					comboBoxTutor.SelectedValue = _currentClassRow.TutorPesel;
 					break;
 			}
+
+			buttonOk.IsEnabled = true;
+			buttonCancel.IsEnabled = true;
 		}
 
 		private void SaveEntity()
 		{
-			var year = textBoxYear.Text.Trim();
+			var yearString = textBoxYear.Text.Trim();
 			var codeName = textBoxCodeName.Text.Trim();
 
 			try
 			{
-				SaveClass(year, codeName);
+				SaveClass(yearString, codeName);
 			}
 			catch (FieldsNotFilledException)
 			{
-				MessageBox.Show(this, "All fields are required.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("Year is required.");
 			}
 			catch (FormatException)
 			{
-				MessageBox.Show(this, "Year is invalid.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("Year is invalid.");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
-		private void SaveClass(string year, string codeName)
+		private void SaveClass(string yearString, string codeName)
 		{
-			if (comboBoxTutor.SelectedValue == null
-				|| string.IsNullOrEmpty(year)
-				|| string.IsNullOrEmpty(codeName))
+			if (string.IsNullOrEmpty(yearString))
 			{
 				throw new FieldsNotFilledException();
 			}
 
-			_currentClassRow.Year = int.Parse(year);
+			int year = int.Parse(yearString);
+			_currentClassRow.Year = year;
 			_currentClassRow.CodeName = codeName;
-
-			if (comboBoxTutor.SelectedValue != null)
-			{
-				_currentClassRow.TutorPesel = comboBoxTutor.SelectedValue.ToString();
-			}
-			else
-			{
-				throw new FieldsNotFilledException();
-			}
+			_currentClassRow["TutorPesel"] = comboBoxTutor.SelectedValue ?? DBNull.Value;
 
 			if (_controlType == ExpanderControlType.Add)
 			{
 				timetableDataSet.Classes.Rows.Add(_currentClassRow);
 			}
 
+			SetOdbcUpdateClassCommand(_currentClassId, year, codeName);
+
 			classesTableAdapter.Update(timetableDataSet.Classes);
 
-			_callingWindow.RefreshCurrentView(ComboBoxContentType.Classes);
+			_callingWindow.RefreshViews(ComboBoxContentType.Classes);
 
 			Close();
+		}
+
+		private void SetOdbcUpdateClassCommand(int id, int year, string codeName)
+		{
+			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+
+			OdbcCommand cmd = conn.CreateCommand();
+
+			cmd.CommandText = "UPDATE classes " +
+							  "SET year = ?, code_name = ?, tutor = ? " +
+							  "WHERE id = ?";
+
+			cmd.Parameters.Add("year", OdbcType.Int).Value = year;
+			cmd.Parameters.Add("code_name", OdbcType.Text).Value = codeName;
+			cmd.Parameters.Add("tutor", OdbcType.VarChar).Value = comboBoxTutor.SelectedValue ?? DBNull.Value;
+			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
+
+			classesTableAdapter.Adapter.UpdateCommand = cmd;
+		}
+
+		private MessageBoxResult ShowErrorMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private MessageBoxResult ShowWarningMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		#endregion

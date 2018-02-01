@@ -44,17 +44,40 @@ namespace Timetable.Controls
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
-		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public PersonControl(TimetableDataSet.StudentsRow studentRow)
+		/// <param name="peselString">Numer PESEL.</param>
+		/// <param name="firstName">Imię.</param>
+		/// <param name="lastName">Nazwisko.</param>
+		/// <param name="info">Informacje dodatkowe.</param>
+		public PersonControl(string peselString, string firstName, string lastName, string info)
 		{
 			InitializeComponent();
 
-			Pesel = new Pesel(studentRow.Pesel);
-			textBlockFirstName.Text = studentRow.FirstName;
-			textBlockLastName.Text = studentRow.LastName;
-			textBlockInfo.Text = (studentRow.ClassesRow != null)
-				? studentRow.ClassesRow.ToFriendlyString()
-				: string.Empty;
+			try
+			{
+				Pesel = new Pesel(peselString);
+			}
+			catch (InvalidPeselException)
+			{
+				Pesel = new Pesel("00000000000");
+			}
+
+			textBlockFirstName.Text = firstName;
+			textBlockLastName.Text = lastName;
+			textBlockInfo.Text = info;
+		}
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.
+		/// </summary>
+		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public PersonControl(TimetableDataSet.StudentsRow studentRow)
+			: this(studentRow.Pesel,
+				  studentRow.FirstName,
+				  studentRow.LastName,
+				  (studentRow.ClassesRow != null)
+					? studentRow.ClassesRow.ToFriendlyString()
+					: string.Empty)
+		{
 		}
 
 		/// <summary>
@@ -62,15 +85,13 @@ namespace Timetable.Controls
 		/// </summary>
 		/// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
 		public PersonControl(TimetableDataSet.TeachersRow teacherRow)
+			: this(teacherRow.Pesel,
+				  teacherRow.FirstName,
+				  teacherRow.LastName,
+				  (teacherRow.GetClassesRows().Length > 0)
+					? teacherRow.GetClassesRows().First().ToFriendlyString()
+					: string.Empty)
 		{
-			InitializeComponent();
-
-			Pesel = new Pesel(teacherRow.Pesel);
-			textBlockFirstName.Text = teacherRow.FirstName;
-			textBlockLastName.Text = teacherRow.LastName;
-			textBlockInfo.Text = (teacherRow.GetClassesRows().Length > 0)
-				? teacherRow.GetClassesRows().First().ToFriendlyString()
-				: string.Empty;
 		}
 
 		#endregion

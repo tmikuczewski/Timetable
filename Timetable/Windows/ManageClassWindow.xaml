@@ -68,7 +68,7 @@
 				</Border>
 			</Grid>
 		</GroupBox>
-		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOk_Click"/>
-		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancel_Click"/>
+		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOk_Click" IsEnabled="False"/>
+		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancel_Click" IsEnabled="False"/>
 	</Grid>
 </Window>

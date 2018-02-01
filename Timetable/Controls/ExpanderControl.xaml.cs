@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,17 +18,21 @@ namespace Timetable.Controls
 	{
 		#region Constants and Statics
 
+		private const string SEPARATOR = "\n\u2022 ";
+
 		#endregion
 
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private StudentsTableAdapter studentsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
-		private ClassesTableAdapter classesTableAdapter;
-		private SubjectsTableAdapter subjectsTableAdapter;
-		private LessonsTableAdapter lessonsTableAdapter;
+		private static TimetableDataSet timetableDataSet;
+		private static StudentsTableAdapter studentsTableAdapter;
+		private static TeachersTableAdapter teachersTableAdapter;
+		private static ClassesTableAdapter classesTableAdapter;
+		private static ClassroomsTableAdapter classroomsTableAdapter;
+		private static SubjectsTableAdapter subjectsTableAdapter;
+		private static LessonsTableAdapter lessonsTableAdapter;
+		private static LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly Export _exportEngine;
@@ -50,14 +55,114 @@ namespace Timetable.Controls
 		/// <param name="text">Tekst przycisku <c>button</c>.</param>
 		public ExpanderControl(MainWindow mainWindow, ExpanderControlType controlType, string text)
 		{
-			InitDatabaseObjects();
-
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
 
-			button.Content = text;
+			FillControls(controlType, text);
 
+			InitDatabaseObjects();
+
+			switch (controlType)
+			{
+				case ExpanderControlType.XLS:
+				case ExpanderControlType.PDF:
+					_exportEngine = new Export();
+					_exportEngine.ExportFinishedEvent += ExportFinishedConfirmation;
+					break;
+			}
+		}
+
+		#endregion
+
+
+		#region Events
+
+		private async void AddButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.expander.IsExpanded = false;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					ModifyEntities(ExpanderControlType.Add);
+				});
+			});
+		}
+
+		private async void ChangeButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.expander.IsExpanded = false;
+
+			if (!IsAnyEntitiesMarked())
+				return;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					ModifyEntities(ExpanderControlType.Change);
+				});
+			});
+		}
+
+		private async void RemoveButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.expander.IsExpanded = false;
+
+			if (!IsAnyEntitiesMarked())
+				return;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(RemoveEntities);
+			});
+		}
+
+		private async void PdfButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.expanderExport.IsExpanded = false;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					ExportToFile(ExportFileType.PDF);
+				});
+			});
+		}
+
+		private async void XlsButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.expanderExport.IsExpanded = false;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					ExportToFile(ExportFileType.XLS);
+				});
+			});
+		}
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		private void FillControls(ExpanderControlType controlType, string text)
+		{
 			switch (controlType)
 			{
 				case ExpanderControlType.Add:
@@ -82,97 +187,37 @@ namespace Timetable.Controls
 					break;
 			}
 
-			_exportEngine = new Export();
-			_exportEngine.ExportFinishedEvent += ExportFinishedConfirmation;
+			button.Content = text;
 		}
 
-		#endregion
-
-
-		#region Events
-
-		private void AddButton_Click(object sender, RoutedEventArgs e)
-		{
-			_callingWindow.expander.IsExpanded = false;
-
-			ModifyEntities(ExpanderControlType.Add);
-		}
-
-		private void ChangeButton_Click(object sender, RoutedEventArgs e)
-		{
-			_callingWindow.expander.IsExpanded = false;
-
-			ModifyEntities(ExpanderControlType.Change);
-		}
-
-		private void RemoveButton_Click(object sender, RoutedEventArgs e)
-		{
-			_callingWindow.expander.IsExpanded = false;
-
-			switch (_callingWindow.GetCurrentContentType())
-			{
-				case ComboBoxContentType.Students:
-					RemoveStudents();
-					break;
-				case ComboBoxContentType.Teachers:
-					RemoveTeachers();
-					break;
-				case ComboBoxContentType.Classes:
-					RemoveClasses();
-					break;
-				case ComboBoxContentType.Subjects:
-					RemoveSubjects();
-					break;
-				case ComboBoxContentType.Lessons:
-					RemoveLessons();
-					break;
-			}
-
-		}
-
-		private void PdfButton_Click(object sender, RoutedEventArgs e)
-		{
-			_callingWindow.expander.IsExpanded = false;
-
-			ExportToFile(ExportFileType.PDF);
-		}
-
-		private void XlsButton_Click(object sender, RoutedEventArgs e)
-		{
-			_callingWindow.expander.IsExpanded = false;
-
-			ExportToFile(ExportFileType.XLS);
-		}
-
-		#endregion
-
-
-		#region Overridden methods
-
-		#endregion
-
-
-		#region Public methods
-
-		#endregion
-
-
-		#region Private methods
-
-		private void InitDatabaseObjects()
+		private static void InitDatabaseObjects()
 		{
 			timetableDataSet = new TimetableDataSet();
 			studentsTableAdapter = new StudentsTableAdapter();
 			teachersTableAdapter = new TeachersTableAdapter();
 			classesTableAdapter = new ClassesTableAdapter();
+			classroomsTableAdapter = new ClassroomsTableAdapter();
 			subjectsTableAdapter = new SubjectsTableAdapter();
 			lessonsTableAdapter = new LessonsTableAdapter();
+			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+		}
 
-			studentsTableAdapter.Fill(timetableDataSet.Students);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+		private bool IsAnyEntitiesMarked()
+		{
+			switch (_callingWindow.GetCurrentContentType())
+			{
+				case ComboBoxContentType.Students:
+				case ComboBoxContentType.Teachers:
+					return _callingWindow.GetPeselsOfMarkedPeople().Any();
+				case ComboBoxContentType.Classes:
+					return _callingWindow.GetIdNumbersOfMarkedClasses().Any();
+				case ComboBoxContentType.Subjects:
+					return _callingWindow.GetIdNumbersOfMarkedSubjects().Any();
+				case ComboBoxContentType.Lessons:
+					return _callingWindow.GetIdNumbersOfMarkedLessons().Any();
+			}
+
+			return false;
 		}
 
 		private void ModifyEntities(ExpanderControlType controlType)
@@ -203,55 +248,141 @@ namespace Timetable.Controls
 			}
 		}
 
-		private MessageBoxResult ShowRemoveConfirmationMessageBox()
+		private void RemoveEntities()
 		{
-			return MessageBox.Show("Are you sure you want to remove these objects?", "Confirmation",
-				MessageBoxButton.YesNo, MessageBoxImage.Question);
+			switch (_callingWindow.GetCurrentContentType())
+			{
+				case ComboBoxContentType.Students:
+					RemoveStudents();
+					break;
+				case ComboBoxContentType.Teachers:
+					RemoveTeachers();
+					break;
+				case ComboBoxContentType.Classes:
+					RemoveClasses();
+					break;
+				case ComboBoxContentType.Subjects:
+					RemoveSubjects();
+					break;
+				case ComboBoxContentType.Lessons:
+					RemoveLessons();
+					break;
+			}
 		}
 
 		private void RemoveStudents()
 		{
 			try
 			{
-				if (ShowRemoveConfirmationMessageBox() != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked students?") != MessageBoxResult.Yes)
 					return;
 
 				studentsTableAdapter.Fill(timetableDataSet.Students);
 
 				foreach (var pesel in _callingWindow.GetPeselsOfMarkedPeople())
 				{
-					timetableDataSet.Students.FindByPesel(pesel).Delete();
+					var studentRow = timetableDataSet.Students.FindByPesel(pesel);
+
+					if (studentRow == null)
+						continue;
+
+					studentRow.Delete();
+
+					SetOdbcDeleteStudentCommand(pesel);
+
 					studentsTableAdapter.Update(timetableDataSet.Students);
 				}
 
-				_callingWindow.RefreshCurrentView(ComboBoxContentType.Students);
+				_callingWindow.RefreshViews(ComboBoxContentType.Students);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
+		}
+
+		private void SetOdbcDeleteStudentCommand(string pesel)
+		{
+			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+
+			OdbcCommand cmd = conn.CreateCommand();
+
+			cmd.CommandText = "DELETE FROM students " +
+							  "WHERE pesel = ?";
+
+			cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
+
+			studentsTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveTeachers()
 		{
 			try
 			{
-				if (ShowRemoveConfirmationMessageBox() != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked teachers?") != MessageBoxResult.Yes)
 					return;
 
 				teachersTableAdapter.Fill(timetableDataSet.Teachers);
+				classesTableAdapter.Fill(timetableDataSet.Classes);
+				classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 
 				foreach (var pesel in _callingWindow.GetPeselsOfMarkedPeople())
 				{
-					timetableDataSet.Teachers.FindByPesel(pesel).Delete();
+					var teacherRow = timetableDataSet.Teachers.FindByPesel(pesel);
+
+					if (teacherRow == null)
+						continue;
+
+					var classes = timetableDataSet.Classes
+						.Where(c => c.TutorPesel == pesel)
+						.OrderBy(c => c.ToFriendlyString())
+						.ToList();
+
+					if (classes.Any())
+					{
+						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the tutor of classes:{SEPARATOR}" +
+											$"{string.Join(SEPARATOR, classes.Select(c => c.ToFriendlyString()))}");
+						continue;
+					}
+
+					var classrooms = timetableDataSet.Classrooms
+						.Where(cr => cr.AdministratorPesel == pesel)
+						.OrderBy(cr => cr.Name)
+						.ToList();
+
+					if (classrooms.Any())
+					{
+						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the administrator of classrooms:{SEPARATOR}" +
+											$"{string.Join(SEPARATOR, classrooms.Select(cr => cr.Name))}");
+						continue;
+					}
+
+					var lessons = timetableDataSet.Lessons
+						.Where(l => l.TeacherPesel == pesel)
+						.OrderBy(l => l.SubjectsRow.Name)
+						.ThenBy(l => l.ClassesRow.ToFriendlyString())
+						.ToList();
+
+					if (lessons.Any())
+					{
+						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} has the following lessons:{SEPARATOR}" +
+											$"{string.Join(SEPARATOR, lessons.Select(l => l.SubjectsRow.Name))}");
+						continue;
+					}
+
+					teacherRow.Delete();
+
 					teachersTableAdapter.Update(timetableDataSet.Teachers);
 				}
 
-				_callingWindow.RefreshCurrentView(ComboBoxContentType.Teachers);
+				_callingWindow.RefreshViews(ComboBoxContentType.Teachers);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
@@ -259,49 +390,118 @@ namespace Timetable.Controls
 		{
 			try
 			{
-				if (ShowRemoveConfirmationMessageBox() != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked classes?") != MessageBoxResult.Yes)
 					return;
 
 				classesTableAdapter.Fill(timetableDataSet.Classes);
+				studentsTableAdapter.Fill(timetableDataSet.Students);
+				teachersTableAdapter.Fill(timetableDataSet.Teachers);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedClasses())
 				{
-					int idNumber;
-					int.TryParse(id, out idNumber);
-					timetableDataSet.Classes.FindById(idNumber).Delete();
+					int classId;
+
+					if (!int.TryParse(id, out classId))
+						continue;
+
+					var classRow = timetableDataSet.Classes.FindById(classId);
+
+					if (classRow == null)
+						continue;
+
+					var students = timetableDataSet.Students
+						.Where(s => s.ClassId == classId)
+						.ToList();
+
+					if (students.Any())
+					{
+						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
+											$"has {students.Count} assigned students.");
+						continue;
+					}
+
+					var tutor = timetableDataSet.Teachers.FindByPesel(classRow.TutorPesel);
+
+					if (tutor != null)
+					{
+						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
+											$"is assigned to the teacher: {tutor.ToFriendlyString()}.");
+						continue;
+					}
+
+					classRow.Delete();
+
+					SetOdbcDeleteClassCommand(classId);
+
 					classesTableAdapter.Update(timetableDataSet.Classes);
 				}
 
-				_callingWindow.RefreshCurrentView(ComboBoxContentType.Classes);
+				_callingWindow.RefreshViews(ComboBoxContentType.Classes);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
+		}
+
+		private void SetOdbcDeleteClassCommand(int id)
+		{
+			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+
+			OdbcCommand cmd = conn.CreateCommand();
+
+			cmd.CommandText = "DELETE FROM classes " +
+							  "WHERE id = ?";
+
+			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
+
+			classesTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveSubjects()
 		{
 			try
 			{
-				if (ShowRemoveConfirmationMessageBox() != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked subjects?") != MessageBoxResult.Yes)
 					return;
 
 				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedSubjects())
 				{
-					int idNumber;
-					int.TryParse(id, out idNumber);
-					timetableDataSet.Subjects.FindById(idNumber).Delete();
+					int subjectId;
+
+					if (!int.TryParse(id, out subjectId))
+						continue;
+
+					var subjectRow = timetableDataSet.Subjects.FindById(subjectId);
+
+					if (subjectRow == null)
+						continue;
+
+					var lessons = timetableDataSet.Lessons
+						.Where(l => l.SubjectId == subjectId)
+						.ToList();
+
+					if (lessons.Any())
+					{
+						ShowErrorMessageBox($"Subject {subjectRow.Name} " +
+						                    $"is assigned to {lessons.Count} lessons.");
+						continue;
+					}
+
+					subjectRow.Delete();
+
 					subjectsTableAdapter.Update(timetableDataSet.Subjects);
 				}
 
-				_callingWindow.RefreshCurrentView(ComboBoxContentType.Subjects);
+				_callingWindow.RefreshViews(ComboBoxContentType.Subjects);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
@@ -309,24 +509,51 @@ namespace Timetable.Controls
 		{
 			try
 			{
-				if (ShowRemoveConfirmationMessageBox() != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked lessons?") != MessageBoxResult.Yes)
 					return;
 
 				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+				lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+				teachersTableAdapter.Fill(timetableDataSet.Teachers);
+				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+				classesTableAdapter.Fill(timetableDataSet.Classes);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedLessons())
 				{
-					int idNumber;
-					int.TryParse(id, out idNumber);
-					timetableDataSet.Lessons.FindById(idNumber).Delete();
+					int lessonId;
+
+					if (!int.TryParse(id, out lessonId))
+						continue;
+
+					var lessonRow = timetableDataSet.Lessons.FindById(lessonId);
+
+					if (lessonRow == null)
+						continue;
+
+					var lessonsPlaces = timetableDataSet.LessonsPlaces
+						.Where(lp => lp.LessonId == lessonId)
+						.ToList();
+
+					if (lessonsPlaces.Any())
+					{
+						ShowErrorMessageBox($"Lesson with the following attributes:{SEPARATOR}" +
+						                    $"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
+						                    $"subject:\t{lessonRow.SubjectsRow.Name}{SEPARATOR}" +
+						                    $"class:\t{lessonRow.ClassesRow.ToFriendlyString()}\n" +
+						                    $"has {lessonsPlaces.Count} occurrences on the timetable.");
+						continue;
+					}
+
+					lessonRow.Delete();
+
 					lessonsTableAdapter.Update(timetableDataSet.Lessons);
 				}
 
-				_callingWindow.RefreshCurrentView(ComboBoxContentType.Lessons);
+				_callingWindow.RefreshViews(ComboBoxContentType.Lessons);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
@@ -335,7 +562,7 @@ namespace Timetable.Controls
 			int? classId = _callingWindow.GetSummaryClassId();
 
 			if (classId == null)
-				throw new EntityDoesNotExistException("Class with id=" + classId.Value + " does not exists");
+				throw new EntityDoesNotExistException("Class does not exists");
 
 			var classRow = timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
 
@@ -350,7 +577,7 @@ namespace Timetable.Controls
 			string teacherPesel = _callingWindow.GetSummaryTeacherPesel();
 
 			if (string.IsNullOrEmpty(teacherPesel))
-				throw new EntityDoesNotExistException("Teacher with PESEL=" + teacherPesel + " does not exists");
+				throw new EntityDoesNotExistException("Teacher does not exists");
 
 			var teacherRow = timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
 
@@ -365,7 +592,7 @@ namespace Timetable.Controls
 			int? classroomId = -1; //callingWindow.GetSummaryClassroomId();
 
 			if (classroomId == null)
-				throw new EntityDoesNotExistException("Classroom with id=" + classroomId.Value + " does not exists");
+				throw new EntityDoesNotExistException("Classroom does not exists");
 
 			var classroomRow = timetableDataSet.Classrooms.FirstOrDefault(cr => cr.Id == classroomId.Value);
 
@@ -443,7 +670,7 @@ namespace Timetable.Controls
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
@@ -451,9 +678,28 @@ namespace Timetable.Controls
 		{
 			Dispatcher.Invoke(() =>
 			{
-				MessageBox.Show(_callingWindow, "Timetable exported successfully.", "Confirmation", MessageBoxButton.OK,
-					MessageBoxImage.Information);
+				ShowInformationMessageBox("Timetable exported successfully.");
 			});
+		}
+
+		private MessageBoxResult ShowConfirmationMessageBox(string message)
+		{
+			return MessageBox.Show(_callingWindow, message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+		}
+
+		private MessageBoxResult ShowErrorMessageBox(string message)
+		{
+			return MessageBox.Show(_callingWindow, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private MessageBoxResult ShowInformationMessageBox(string message)
+		{
+			return MessageBox.Show(_callingWindow, message, "Confirmation", MessageBoxButton.OK, MessageBoxImage.Information);
+		}
+
+		private MessageBoxResult ShowWarningMessageBox(string message)
+		{
+			return MessageBox.Show(_callingWindow, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		#endregion

@@ -136,6 +136,9 @@ namespace Timetable.Utilities
 				if (month.IsBetweenAnd(81, 92)) // ((month >= 81) && (month <= 92))
 					return new DateTime(1800 + year, month - 80, day);
 
+				if (year == 0 && month == 0 & day == 0)
+					return new DateTime(1, 1, 1);
+
 				throw new InvalidPeselException();
 			}
 
@@ -185,8 +188,7 @@ namespace Timetable.Utilities
 			foreach (var digit in pesel.ToCharArray())
 				digits[i++] = int.Parse(digit.ToString());
 
-			var sum
-				= 1 * digits[0]
+			var sum = 1 * digits[0]
 				  + 3 * digits[1]
 				  + 7 * digits[2]
 				  + 9 * digits[3]

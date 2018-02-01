@@ -48,10 +48,10 @@
 					<TextBox x:Name="textBoxLastName" VerticalAlignment="Center" FontSize="24" BorderThickness="1" Margin="0,28,10,29"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Margin="0,113,0,0" Grid.RowSpan="2">
-					<TextBlock x:Name="comboBoxClassLabel" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Class"/>
+					<TextBlock x:Name="labelClass" TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Class" Visibility="Hidden"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
-					<ComboBox x:Name="comboBoxClass" Margin="0,40,10,40">
+					<ComboBox x:Name="comboBoxClass" Margin="0,40,10,40"  Visibility="Hidden">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<TextBlock>
@@ -66,9 +66,12 @@
 						</ComboBox.ItemTemplate>
 					</ComboBox>
 				</Border>
+				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,113,0,0" Grid.Row="2" HorizontalAlignment="Left" Width="217" Grid.RowSpan="2">
+					<TextBlock x:Name="textBoxClasses" TextWrapping="Wrap" VerticalAlignment="Center" Visibility="Hidden" />
+				</Border>
 			</Grid>
 		</GroupBox>
-		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOk_Click"/>
-		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancel_Click"/>
+		<Button x:Name="buttonOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonOk_Click" IsEnabled="False"/>
+		<Button x:Name="buttonCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,10" Grid.Row="1" Width="75" Background="{x:Null}" FontSize="16" Height="25" VerticalAlignment="Bottom" Click="buttonCancel_Click" IsEnabled="False"/>
 	</Grid>
 </Window>

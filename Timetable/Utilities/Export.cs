@@ -73,7 +73,7 @@ namespace Timetable.Utilities
 		/// <summary>
 		///     Metoda zapisująca plan lekcji dla danej klasy.
 		/// </summary>
-		/// <param name="classId">Idetyfikator klasy.</param>
+		/// <param name="classRow">Obiekt klasy.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ExportFileType fileType)
@@ -90,7 +90,7 @@ namespace Timetable.Utilities
 		/// <summary>
 		///     Metoda zapisująca plan lekcji dla danego nauczyciela.
 		/// </summary>
-		/// <param name="pesel">Pesel nauczyciela.</param>
+		/// <param name="teacherRow">Obiekt nauczyciela.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ExportFileType fileType)
@@ -107,7 +107,7 @@ namespace Timetable.Utilities
 		/// <summary>
 		///     Metoda zapisująca plan lekcji dla danej sali.
 		/// </summary>
-		/// <param name="classroomId">Idetyfikator sali.</param>
+		/// <param name="classroomRow">Obiekt sali.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
@@ -126,7 +126,7 @@ namespace Timetable.Utilities
 
 		#region Private methods
 
-		private void InitDatabaseObjects()
+		private static void InitDatabaseObjects()
 		{
 			timetableDataSet = new TimetableDataSet();
 

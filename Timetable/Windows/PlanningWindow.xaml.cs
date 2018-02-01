@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
@@ -66,8 +67,6 @@ namespace Timetable.Windows
 		public PlanningWindow(MainWindow mainWindow, ExpanderControlType controlType, ComboBoxContentType contentType,
 			int? classId, string teacherPesel, int dayId, int hourId)
 		{
-			InitDatabaseObjects();
-
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
@@ -83,30 +82,44 @@ namespace Timetable.Windows
 
 		#region Events
 
-		private void planningWindow_Loaded(object sender, RoutedEventArgs e)
+		private async void planningWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			PreparePlannedLessons();
-			PrepareAvailableLessons();
-			PrepareEntity();
-			FillControls();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					InitDatabaseObjects();
 
-			PrepareUnavailableLessonsPlaces();
-			UpdateAvailableLessons();
-			FillLessonComboBox();
+					PreparePlannedLessons();
+					PrepareAvailableLessons();
+					PrepareEntity();
+					FillControls();
 
-			PrepareAvailableClassrooms();
-			FillClassroomComboBox();
-			SetComboBoxes();
+					PrepareUnavailableLessonsPlaces();
+					UpdateAvailableLessons();
+					FillLessonComboBox();
+
+					PrepareAvailableClassrooms();
+					FillClassroomComboBox();
+					SetComboBoxes();
+				});
+			});
 		}
 
-		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		private async void buttonOk_Click(object sender, RoutedEventArgs e)
 		{
-			SaveEntity();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(SaveEntity);
+			});
 		}
 
-		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		private async void buttonCancel_Click(object sender, RoutedEventArgs e)
 		{
-			Close();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(Close);
+			});
 		}
 
 		#endregion
@@ -199,14 +212,12 @@ namespace Timetable.Windows
 			}
 			catch (EntityDoesNotExistException)
 			{
-				MessageBox.Show(this, "Lesson with given date, time and other data does not exist.", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox("Lesson with given date, time and other data does not exist.");
 				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 				Close();
 			}
 		}
@@ -234,10 +245,16 @@ namespace Timetable.Windows
 			switch (_contentType)
 			{
 				case ComboBoxContentType.Classes:
+					if (_classRow == null)
+						return;
+
 					labelContentType.Text = "Class:";
 					textBoxContentType.Text = _classRow.ToFriendlyString();
 					break;
 				case ComboBoxContentType.Teachers:
+					if (_teacherRow == null)
+						return;
+
 					labelContentType.Text = "Teacher:";
 					textBoxContentType.Text = $"{_teacherRow.FirstName} {_teacherRow.LastName}";
 					break;
@@ -248,7 +265,7 @@ namespace Timetable.Windows
 		{
 			_unavailableLessonsPlaces = timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
-				.Where(lp => lp.LessonId != _currentLessonPlaceRow.LessonsRow?.Id);
+				.Where(lp => lp.LessonId != _currentLessonPlaceRow?.LessonsRow?.Id);
 		}
 
 		private void UpdateAvailableLessons()
@@ -308,12 +325,18 @@ namespace Timetable.Windows
 			switch (_controlType)
 			{
 				case ExpanderControlType.Change:
+					if (_currentLessonPlaceRow == null)
+						return;
+
 					var currentLessonIndex = _availableLessons.ToList().FindIndex(l => l.Id == _currentLessonPlaceRow.LessonId);
 					comboBoxLessons.SelectedIndex = currentLessonIndex;
 
 					comboBoxClassrooms.SelectedValue = _currentLessonPlaceRow.ClassroomId;
 					break;
 			}
+
+			buttonOk.IsEnabled = true;
+			buttonCancel.IsEnabled = true;
 		}
 
 		private void SaveEntity()
@@ -324,13 +347,11 @@ namespace Timetable.Windows
 			}
 			catch (FieldsNotFilledException)
 			{
-				MessageBox.Show(this, "All fields are required.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("All fields are required.");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
@@ -363,9 +384,19 @@ namespace Timetable.Windows
 
 			lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
 
-			_callingWindow.RefreshCurrentView(ComboBoxContentType.LessonsPlaces);
+			_callingWindow.RefreshViews(ComboBoxContentType.LessonsPlaces);
 
 			Close();
+		}
+
+		private MessageBoxResult ShowErrorMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private MessageBoxResult ShowWarningMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		#endregion

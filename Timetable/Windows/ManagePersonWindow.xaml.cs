@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
@@ -27,10 +30,10 @@ namespace Timetable.Windows
 		private readonly ExpanderControlType _controlType;
 		private readonly ComboBoxContentType _contentType;
 
-		private int _currentClassId;
 		private string _currentPesel;
 		private TimetableDataSet.StudentsRow _currentStudentRow;
 		private TimetableDataSet.TeachersRow _currentTeacherRow;
+		private IList<TimetableDataSet.ClassesRow> _classesItemsSource;
 
 		#endregion
 
@@ -47,8 +50,6 @@ namespace Timetable.Windows
 		/// </summary>
 		public ManagePersonWindow(MainWindow mainWindow, ExpanderControlType controlType)
 		{
-			InitDatabaseObjects();
-
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
@@ -61,23 +62,37 @@ namespace Timetable.Windows
 
 		#region Events
 
-		private void managementWindow_Loaded(object sender, RoutedEventArgs e)
+		private async void managementWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			FillComboBoxes();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					InitDatabaseObjects();
 
-			PrepareEntity();
+					FillComboBoxes();
 
-			FillControls();
+					PrepareEntity();
+
+					FillControls();
+				});
+			});
 		}
 
-		private void buttonOk_Click(object sender, RoutedEventArgs e)
+		private async void buttonOk_Click(object sender, RoutedEventArgs e)
 		{
-			SaveEntity();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(SaveEntity);
+			});
 		}
 
-		private void buttonCancel_Click(object sender, RoutedEventArgs e)
+		private async void buttonCancel_Click(object sender, RoutedEventArgs e)
 		{
-			Close();
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(Close);
+			});
 		}
 
 		#endregion
@@ -112,12 +127,19 @@ namespace Timetable.Windows
 			switch (_contentType)
 			{
 				case ComboBoxContentType.Students:
-					comboBoxClass.ItemsSource = timetableDataSet.Classes.OrderBy(c => c.Year).ThenBy(c => c.CodeName);
+					labelClass.Visibility = Visibility.Visible;
+					comboBoxClass.Visibility = Visibility.Visible;
+
+					_classesItemsSource = timetableDataSet.Classes
+						.OrderBy(c => c.ToFriendlyString())
+						.ToList();
+
+					var emptyClassRow = timetableDataSet.Classes.NewClassesRow();
+					emptyClassRow["Id"] = DBNull.Value;
+					_classesItemsSource.Insert(0, emptyClassRow);
+
+					comboBoxClass.ItemsSource = _classesItemsSource;
 					comboBoxClass.SelectedValuePath = "Id";
-					break;
-				case ComboBoxContentType.Teachers:
-					comboBoxClassLabel.Visibility = Visibility.Hidden;
-					comboBoxClass.Visibility = Visibility.Hidden;
 					break;
 			}
 		}
@@ -152,14 +174,12 @@ namespace Timetable.Windows
 			}
 			catch (EntityDoesNotExistException)
 			{
-				MessageBox.Show(this, "Student with given PESEL number does not exist.", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox("Person with given PESEL number does not exist.");
 				Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 				Close();
 			}
 		}
@@ -209,6 +229,9 @@ namespace Timetable.Windows
 				case ExpanderControlType.Change:
 					if (_contentType == ComboBoxContentType.Students)
 					{
+						if (_currentStudentRow == null)
+							return;
+
 						maskedTextBoxPesel.Text = _currentStudentRow.Pesel;
 						textBoxFirstName.Text = _currentStudentRow.FirstName;
 						textBoxLastName.Text = _currentStudentRow.LastName;
@@ -216,12 +239,30 @@ namespace Timetable.Windows
 					}
 					else if (_contentType == ComboBoxContentType.Teachers)
 					{
+						if (_currentTeacherRow == null)
+							return;
+
 						maskedTextBoxPesel.Text = _currentTeacherRow.Pesel;
 						textBoxFirstName.Text = _currentTeacherRow.FirstName;
 						textBoxLastName.Text = _currentTeacherRow.LastName;
+
+						var classes = _currentTeacherRow.GetClassesRows()
+							.OrderBy(c => c.ToFriendlyString())
+							.Select(c => c.ToFriendlyString())
+							.ToList();
+
+						if (classes.Any())
+						{
+							labelClass.Visibility = Visibility.Visible;
+							textBoxClasses.Visibility = Visibility.Visible;
+							textBoxClasses.Text = string.Join(", ", classes);
+						}
 					}
 					break;
 			}
+
+			buttonOk.IsEnabled = true;
+			buttonCancel.IsEnabled = true;
 		}
 
 		private void SaveEntity()
@@ -234,39 +275,34 @@ namespace Timetable.Windows
 			{
 				if (_contentType == ComboBoxContentType.Students)
 				{
-					SaveStudent(firstName, lastName, peselString);
+					SaveStudent(peselString, firstName, lastName);
 				}
 				else if (_contentType == ComboBoxContentType.Teachers)
 				{
-					SaveTeacher(firstName, lastName, peselString);
+					SaveTeacher(peselString, firstName, lastName);
 				}
 			}
 			catch (FieldsNotFilledException)
 			{
-				MessageBox.Show(this, "All fields are required.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("All fields are required.");
 			}
 			catch (InvalidPeselException)
 			{
-				MessageBox.Show(this, "PESEL number is invalid.", "Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+				ShowWarningMessageBox("PESEL number is invalid.");
 			}
 			catch (DuplicateEntityException)
 			{
-				MessageBox.Show(this, "Person with given PESEL number has already existed.", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox("Person with given PESEL number has already existed.");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.ToString(), "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				ShowErrorMessageBox(ex.ToString());
 			}
 		}
 
-		private void SaveStudent(string firstName, string lastName, string peselString)
+		private void SaveStudent(string peselString, string firstName, string lastName)
 		{
-			if (comboBoxClass.SelectedValue == null
-				|| string.IsNullOrEmpty(firstName)
+			if (string.IsNullOrEmpty(firstName)
 				|| string.IsNullOrEmpty(lastName))
 			{
 				throw new FieldsNotFilledException();
@@ -274,15 +310,7 @@ namespace Timetable.Windows
 
 			_currentStudentRow.FirstName = firstName;
 			_currentStudentRow.LastName = lastName;
-
-			if (int.TryParse(comboBoxClass.SelectedValue.ToString(), out _currentClassId))
-			{
-				_currentStudentRow.ClassId = _currentClassId;
-			}
-			else
-			{
-				throw new FieldsNotFilledException();
-			}
+			_currentStudentRow["ClassId"] = comboBoxClass.SelectedValue ?? DBNull.Value;
 
 			if (_controlType == ExpanderControlType.Add)
 			{
@@ -296,14 +324,35 @@ namespace Timetable.Windows
 				timetableDataSet.Students.Rows.Add(_currentStudentRow);
 			}
 
+			SetOdbcUpdateStudentCommand(peselString, firstName, lastName);
+
 			studentsTableAdapter.Update(timetableDataSet.Students);
 
-			_callingWindow.RefreshCurrentView(ComboBoxContentType.Students);
+			_callingWindow.RefreshViews(ComboBoxContentType.Students);
 
 			Close();
 		}
 
-		private void SaveTeacher(string firstName, string lastName, string peselString)
+		private void SetOdbcUpdateStudentCommand(string pesel, string firstName, string lastName)
+		{
+			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+
+			OdbcCommand cmd = conn.CreateCommand();
+
+			cmd.CommandText = "UPDATE students " +
+			                  "SET first_name = ?, last_name = ?, class = ? " +
+			                  "WHERE pesel = ?";
+
+			cmd.Parameters.Add("first_name", OdbcType.Text).Value = firstName;
+			cmd.Parameters.Add("last_name", OdbcType.Text).Value = lastName;
+			cmd.Parameters.Add("class", OdbcType.Int).Value = comboBoxClass.SelectedValue ?? DBNull.Value;
+			cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
+
+			studentsTableAdapter.Adapter.UpdateCommand = cmd;
+		}
+
+		private void SaveTeacher(string peselString, string firstName, string lastName)
 		{
 			if (string.IsNullOrEmpty(firstName)
 				|| string.IsNullOrEmpty(lastName))
@@ -328,9 +377,19 @@ namespace Timetable.Windows
 
 			teachersTableAdapter.Update(timetableDataSet.Teachers);
 
-			_callingWindow.RefreshCurrentView(ComboBoxContentType.Teachers);
+			_callingWindow.RefreshViews(ComboBoxContentType.Teachers);
 
 			Close();
+		}
+
+		private MessageBoxResult ShowErrorMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private MessageBoxResult ShowWarningMessageBox(string message)
+		{
+			return MessageBox.Show(this, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		#endregion

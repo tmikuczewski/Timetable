@@ -14,8 +14,8 @@
 		<TabControl x:Name="tabControl" Margin="10" SelectionChanged="tabControl_SelectionChanged">
 			<TabItem x:Name="tabItemManagement" Header="Management" HorizontalAlignment="Left" Margin="20,0,-20,0" VerticalAlignment="Top" FontSize="14.667" d:IsLocked="True">
 				<Grid x:Name="gridTabManagement">
-					<ScrollViewer x:Name="scrollViewer" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1" VerticalScrollBarVisibility="Auto">
-						<Grid x:Name="scrollViewersGrid"/>
+					<ScrollViewer x:Name="scrollViewerManagement" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,1" VerticalScrollBarVisibility="Auto">
+						<Grid x:Name="scrollViewersManagementGrid"/>
 					</ScrollViewer>
 				</Grid>
 			</TabItem>
@@ -187,7 +187,7 @@
 				</Grid>
 			</TabItem>
 		</TabControl>
-		<Grid x:Name="gridOperations" HorizontalAlignment="Right" Height="300" VerticalAlignment="Top" Width="302" Margin="0,10,30,0">
+		<Grid x:Name="gridOperations" HorizontalAlignment="Right" Height="300" VerticalAlignment="Top" Width="302" Margin="0,10,30,0" Visibility="Hidden">
 			<Grid x:Name="gridOperationsComboBox" Height="24" VerticalAlignment="Top" Margin="0,0,-103,0" HorizontalAlignment="Left" Width="203">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="10*"/>
@@ -200,8 +200,9 @@
 				<ComboBox x:Name="comboBox" FontSize="14.667" Grid.Column="1" SelectionChanged="comboBox_SelectionChanged"/>
 			</Grid>
 			<Expander x:Name="expander" Header="Operation" Margin="208,0,-1,0" VerticalAlignment="Top" Background="Transparent" FontSize="14.667" HorizontalAlignment="Left" Width="95"/>
+			<Expander x:Name="expanderExport" Header="" Margin="208,0,-1,0" VerticalAlignment="Top" Background="Transparent" FontSize="14.667" HorizontalAlignment="Left" Width="95"/>
 		</Grid>
-		<Grid x:Name="gridSummaryFilter" HorizontalAlignment="Right" Height="30" Margin="0,10,139,0" VerticalAlignment="Top" Width="250">
+		<Grid x:Name="gridSummaryFilter" HorizontalAlignment="Right" Height="30" Margin="0,10,139,0" VerticalAlignment="Top" Width="250" Visibility="Hidden">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
 				<ColumnDefinition/>
