@@ -16,7 +16,7 @@
 			</Border>
 			<ComboBox x:Name="comboBoxManagementFilterEntityType" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Center" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxManagementFilterEntityType_SelectionChanged" />
 		</Grid>
-		<Grid x:Name="gridPlanningilter" HorizontalAlignment="Left" VerticalAlignment="Top"  Width="300" MinHeight="30" Visibility="Collapsed">
+		<Grid x:Name="gridPlanningFilter" HorizontalAlignment="Left" VerticalAlignment="Top"  Width="300" MinHeight="30" Visibility="Collapsed">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />

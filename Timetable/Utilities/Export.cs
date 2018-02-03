@@ -302,8 +302,8 @@ namespace Timetable.Utilities
 						continue;
 
 					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
-					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+					xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
 
 					var range = xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
 						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];

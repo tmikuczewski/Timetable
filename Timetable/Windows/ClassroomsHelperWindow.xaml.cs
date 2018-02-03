@@ -1,14 +1,32 @@
-﻿namespace Timetable.Windows
+﻿using System.Windows;
+
+namespace Timetable.Windows
 {
 	/// <summary>
-	/// Interaction logic for ClassroomsHelperWindow.xaml
+	///     Interaction logic for ClassroomsHelperWindow.xaml
 	/// </summary>
-	public partial class ClassroomsHelperWindow : System.Windows.Window
+	public partial class ClassroomsHelperWindow : Window
 	{
+		#region Constants and Statics
+
+		#endregion
+
+
+		#region Fields
+
+		#endregion
+
+
+		#region Properties
+
+		#endregion
+
+
 		#region Constructors
 
 		/// <summary>
-		/// Konstruktor tworzący obiekt typu <c>ClassroomsHelperWindow</c>.</summary>
+		///     Konstruktor tworzący obiekt typu <c>ClassroomsHelperWindow</c>.
+		/// </summary>
 		public ClassroomsHelperWindow()
 		{
 			InitializeComponent();
@@ -16,31 +34,23 @@
 
 		#endregion
 
-		#region Overridden methods
-
-		#endregion
-
-		#region Public methods
-
-		#endregion
-
-		#region Properties
-
-		#endregion
-
-		#region Private methods
-
-		#endregion
 
 		#region Events
 
 		#endregion
 
-		#region Constants and Statics
+
+		#region Overridden methods
 
 		#endregion
 
-		#region Fields
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
 
 		#endregion
 	}

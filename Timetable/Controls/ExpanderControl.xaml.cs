@@ -667,7 +667,7 @@ namespace Timetable.Controls
 
 		private TimetableDataSet.ClassroomsRow GetCurrentClassroom()
 		{
-			int? classroomId = -1; //callingWindow.GetSummaryClassroomId();
+			int? classroomId = _callingWindow.GetSummaryClassroomId();
 
 			if (classroomId == null)
 				throw new EntityDoesNotExistException("Classroom does not exists");

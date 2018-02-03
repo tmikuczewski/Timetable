@@ -145,28 +145,32 @@ namespace Timetable.Controls
 
 			_entityType = entityType;
 
+			string className = (_cellViewModel.ClassFriendlyName != null) ? $"kl. {_cellViewModel.ClassFriendlyName}" : string.Empty;
+			string classroom = (_cellViewModel.ClassroomName != null) ? $"s. {_cellViewModel.ClassroomName}" : string.Empty;
+			string teacher = _cellViewModel.TeacherFriendlyName ?? string.Empty;
+			string subject = _cellViewModel.SubjectName ?? string.Empty;
+
 			switch (timetableType)
 			{
 				case TimetableType.Class:
-					OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
-					OriginalSecondRow = _cellViewModel.TeacherFriendlyName ?? string.Empty;
-					OriginalThirdRow = (_cellViewModel.ClassroomName != null)
-						? $"s. {_cellViewModel.ClassroomName}"
-						: string.Empty;
+					FirstRow = OriginalFirstRow = subject;
+					SecondRow = OriginalSecondRow = teacher;
+					ThirdRow = OriginalThirdRow = classroom;
 					break;
 				case TimetableType.Teacher:
-					FirstRow = OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
-					SecondRow = OriginalSecondRow = (_cellViewModel.ClassFriendlyName != null)
-						? $"kl. {_cellViewModel.ClassFriendlyName}"
-						: string.Empty;
-					ThirdRow = OriginalThirdRow = (_cellViewModel.ClassroomName != null)
-						? $"s. {_cellViewModel.ClassroomName}"
-						: string.Empty;
+					FirstRow = OriginalFirstRow = subject;
+					SecondRow = OriginalSecondRow = className;
+					ThirdRow = OriginalThirdRow = classroom;
+					break;
+				case TimetableType.Classroom:
+					FirstRow = OriginalFirstRow = subject;
+					SecondRow = OriginalSecondRow = className;
+					ThirdRow = OriginalThirdRow = teacher;
 					break;
 				case TimetableType.Lesson:
-					FirstRow = OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
-					SecondRow = OriginalSecondRow = _cellViewModel.ClassFriendlyName ?? string.Empty;
-					ThirdRow = OriginalThirdRow = _cellViewModel.TeacherFriendlyName ?? string.Empty;
+					FirstRow = OriginalFirstRow = subject;
+					SecondRow = OriginalSecondRow = className;
+					ThirdRow = OriginalThirdRow = teacher;
 					break;
 			}
 
@@ -249,7 +253,7 @@ namespace Timetable.Controls
 		public bool IsChecked()
 		{
 			if ((checkBox.IsChecked ?? false)
-			    && _actionType == ActionType.Change)
+				&& _actionType == ActionType.Change)
 				return true;
 
 			return false;
