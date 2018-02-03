@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Timetable.Utilities;
@@ -27,14 +29,14 @@ namespace Timetable.Controls
 
 		#region Properties
 
-		public Pesel Pesel
+		/// <summary>
+		///	    Numer PESEL.
+		/// </summary>
+		public string Pesel
 		{
-			get { return new Pesel(textBlockPesel.Text); }
-			set { textBlockPesel.Text = value.StringRepresentation; }
+			get { return textBlockPesel.Text; }
+			set { textBlockPesel.Text = value; }
 		}
-
-		public string FirstName { get; set; }
-		public string LastName { get; set; }
 
 		#endregion
 
@@ -42,28 +44,32 @@ namespace Timetable.Controls
 		#region Constructors
 
 		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c>.
+		/// </summary>
+		public PersonControl()
+		{
+			InitializeComponent();
+
+			checkBox.Visibility = Visibility.Hidden;
+			textBlockPesel.FontWeight = FontWeights.Bold;
+			textBlockFirstName.FontWeight = FontWeights.Bold;
+			textBlockLastName.FontWeight = FontWeights.Bold;
+			textBlockClass.FontWeight = FontWeights.Bold;
+		}
+
+		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="peselString">Numer PESEL.</param>
 		/// <param name="firstName">Imię.</param>
 		/// <param name="lastName">Nazwisko.</param>
-		/// <param name="info">Informacje dodatkowe.</param>
-		public PersonControl(string peselString, string firstName, string lastName, string info)
+		public PersonControl(string peselString, string firstName, string lastName)
 		{
 			InitializeComponent();
 
-			try
-			{
-				Pesel = new Pesel(peselString);
-			}
-			catch (InvalidPeselException)
-			{
-				Pesel = new Pesel("00000000000");
-			}
-
+			Pesel = peselString;
 			textBlockFirstName.Text = firstName;
 			textBlockLastName.Text = lastName;
-			textBlockInfo.Text = info;
 		}
 
 		/// <summary>
@@ -71,13 +77,11 @@ namespace Timetable.Controls
 		/// </summary>
 		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
 		public PersonControl(TimetableDataSet.StudentsRow studentRow)
-			: this(studentRow.Pesel,
-				  studentRow.FirstName,
-				  studentRow.LastName,
-				  (studentRow.ClassesRow != null)
-					? studentRow.ClassesRow.ToFriendlyString()
-					: string.Empty)
+			: this(studentRow.Pesel, studentRow.FirstName, studentRow.LastName)
 		{
+			textBlockClass.Text = (studentRow.ClassesRow != null)
+				? studentRow.ClassesRow.ToFriendlyString()
+				: string.Empty;
 		}
 
 		/// <summary>
@@ -85,13 +89,11 @@ namespace Timetable.Controls
 		/// </summary>
 		/// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
 		public PersonControl(TimetableDataSet.TeachersRow teacherRow)
-			: this(teacherRow.Pesel,
-				  teacherRow.FirstName,
-				  teacherRow.LastName,
-				  (teacherRow.GetClassesRows().Length > 0)
-					? teacherRow.GetClassesRows().First().ToFriendlyString()
-					: string.Empty)
+			: this(teacherRow.Pesel, teacherRow.FirstName, teacherRow.LastName)
 		{
+			textBlockClass.Text = (teacherRow.GetClassesRows().Any())
+				? string.Join(", ", teacherRow.GetClassesRows().Select(c => c.ToFriendlyString()))
+				: string.Empty;
 		}
 
 		#endregion

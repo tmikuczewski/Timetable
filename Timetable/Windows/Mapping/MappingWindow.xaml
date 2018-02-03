@@ -11,9 +11,7 @@
 		Title="Mapping - Timetable"
 		Height="500" Width="500"
 		MinHeight="500" MinWidth="500"
-		MaxHeight="500" MaxWidth="800"
 		WindowStartupLocation="CenterScreen" 
-		WindowStyle="ToolWindow"
 		Loaded="mappingWindow_Loaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -36,7 +34,7 @@
 					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="0">
-					<TextBlock Text="Subject:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Subject:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxSubjects" VerticalContentAlignment="Center" Height="40" Padding="12,8">
@@ -54,7 +52,7 @@
 					</ComboBox>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="0">
-					<TextBlock Text="Class:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Class:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxClasses" VerticalContentAlignment="Center" Height="40" Padding="12,8">
@@ -73,7 +71,7 @@
 					</ComboBox>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="0">
-					<TextBlock Text="Teacher:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Teacher:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxTeachers" VerticalContentAlignment="Center" Height="40" Padding="12,8">

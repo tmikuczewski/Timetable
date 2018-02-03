@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Timetable.Utilities;
 using Timetable.Windows;
+using PlanningWindow = Timetable.Windows.Planning.PlanningWindow;
 using SystemColors = System.Drawing.SystemColors;
 
 namespace Timetable.Controls
@@ -15,6 +16,11 @@ namespace Timetable.Controls
 	public partial class CellControl : UserControl
 	{
 		#region Constants and Statics
+
+		/// <summary>
+		///     Wysokość kontrolki planowanych lekcji.
+		/// </summary>
+		public const int HEIGHT = 80;
 
 		private static readonly int PIXELS_PER_LETTER = 7;
 
@@ -28,14 +34,10 @@ namespace Timetable.Controls
 			OriginalSecondRow,
 			OriginalThirdRow;
 
+		private readonly CellViewModel _cellViewModel;
+		private readonly ActionType _actionType;
+		private readonly EntityType _entityType;
 		private readonly MainWindow _callingWindow;
-		private ExpanderControlType _controlType;
-		private ComboBoxContentType _contentType;
-
-		private int? _classId;
-		private string _teacherPesel;
-		private int _dayId;
-		private int _hourId;
 
 		#endregion
 
@@ -43,12 +45,21 @@ namespace Timetable.Controls
 		#region Properties
 
 		/// <summary>
+		///     Ustawienie marginesów umożliwiające zachowanie odstępu między kontrolkami.
+		/// </summary>
+		public static Thickness SEPARATOR_MARGIN => new Thickness(0, 20, 0, 0);
+
+		/// <summary>
 		///     Pierwszy wiersz kontrolki.
 		/// </summary>
 		public string FirstRow
 		{
 			get { return textBlockFirstRow.Text; }
-			set { textBlockFirstRow.Text = value; }
+			set
+			{
+				if (value != null)
+					textBlockFirstRow.Text = value;
+			}
 		}
 
 		/// <summary>
@@ -69,6 +80,12 @@ namespace Timetable.Controls
 			set { textBlockThirdRow.Text = value; }
 		}
 
+		/// <summary>
+		///     Zwraca obiekt typu <c>CellViewModel</c> zaznaczonej lekcji.
+		/// </summary>
+		/// <returns></returns>
+		public CellViewModel CellViewModel => _cellViewModel;
+
 		#endregion
 
 
@@ -87,6 +104,8 @@ namespace Timetable.Controls
 
 			if (diffColor)
 				Background = new SolidColorBrush(SystemColors.InactiveBorder.ToMediaColor());
+			else
+				Background = new SolidColorBrush(SystemColors.Info.ToMediaColor());
 
 			FirstRow = OriginalFirstRow = string.Empty;
 			SecondRow = OriginalSecondRow = string.Empty;
@@ -107,6 +126,60 @@ namespace Timetable.Controls
 			FirstRow = OriginalFirstRow = firstRow;
 			SecondRow = OriginalSecondRow = secondRow;
 			ThirdRow = OriginalThirdRow = thirdRow;
+		}
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>CellControl</c> na bazie przesłanych za pomocą parametru danych.
+		/// </summary>
+		/// <param name="cellViewModel">Obiekt przechowujący informacje o zaplanowanej lekcji.</param>
+		/// <param name="actionType">Rodzaj wybranej akcji.</param>
+		/// <param name="entityType">Rodzaj wybranej encji.</param>
+		/// <param name="timetableType">Rodzaj wybranego podglądu.</param>
+		/// <param name="mainWindow">Uchwyt do wywołującego okna.</param>
+		/// <param name="diffColor">Parametr sterujący zmianą koloru kontrolki.</param>
+		public CellControl(CellViewModel cellViewModel, ActionType actionType, EntityType entityType,
+			TimetableType timetableType, MainWindow mainWindow, bool diffColor = false)
+					: this(mainWindow, diffColor)
+		{
+			_cellViewModel = cellViewModel;
+
+			_entityType = entityType;
+
+			switch (timetableType)
+			{
+				case TimetableType.Class:
+					OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
+					OriginalSecondRow = _cellViewModel.TeacherFriendlyName ?? string.Empty;
+					OriginalThirdRow = (_cellViewModel.ClassroomName != null)
+						? $"s. {_cellViewModel.ClassroomName}"
+						: string.Empty;
+					break;
+				case TimetableType.Teacher:
+					FirstRow = OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
+					SecondRow = OriginalSecondRow = (_cellViewModel.ClassFriendlyName != null)
+						? $"kl. {_cellViewModel.ClassFriendlyName}"
+						: string.Empty;
+					ThirdRow = OriginalThirdRow = (_cellViewModel.ClassroomName != null)
+						? $"s. {_cellViewModel.ClassroomName}"
+						: string.Empty;
+					break;
+				case TimetableType.Lesson:
+					FirstRow = OriginalFirstRow = _cellViewModel.SubjectName ?? string.Empty;
+					SecondRow = OriginalSecondRow = _cellViewModel.ClassFriendlyName ?? string.Empty;
+					ThirdRow = OriginalThirdRow = _cellViewModel.TeacherFriendlyName ?? string.Empty;
+					break;
+			}
+
+			switch (actionType)
+			{
+				case ActionType.Add:
+					_actionType = actionType;
+					break;
+				case ActionType.Change:
+					checkBox.Visibility = Visibility.Visible;
+					_actionType = actionType;
+					break;
+			}
 		}
 
 		#endregion
@@ -149,52 +222,37 @@ namespace Timetable.Controls
 
 		private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if (_contentType == ComboBoxContentType.Teachers || _contentType == ComboBoxContentType.Classes)
+			if (_actionType == ActionType.Add
+				|| _actionType == ActionType.Change)
 			{
-				var planningWindow = new PlanningWindow(_callingWindow, _controlType, _contentType,
-					_classId, _teacherPesel, _dayId, _hourId);
+				var planningWindow = new PlanningWindow(_callingWindow, _actionType, _entityType,
+					_cellViewModel.ClassId, _cellViewModel.TeacherPesel, _cellViewModel.DayId, _cellViewModel.HourId);
 				planningWindow.Owner = _callingWindow;
 				planningWindow.Show();
 			}
 		}
 
 		#endregion
+
+
 		#region Overridden methods
 
 		#endregion
 
+
 		#region Public methods
 
 		/// <summary>
-		///     Metoda zapisująca dodatkowe informacje o umiejscowieniu na planie lekcji.
+		///     Sprawdza, czy wybrana lekcja jest zaznaczona.
 		/// </summary>
-		/// <param name="controlType">Rodzaj wybranej akcji.</param>
-		/// <param name="classId">Identyfikator klasy.</param>
-		/// <param name="dayId">Identyfikator dnia.</param>
-		/// <param name="hourId">Identyfikator godziny.</param>
-		public void SetLessonData(ExpanderControlType controlType, int? classId, int dayId, int hourId)
+		/// <returns></returns>
+		public bool IsChecked()
 		{
-			_controlType = controlType;
-			_contentType = ComboBoxContentType.Classes;
-			_classId = classId;
-			_dayId = dayId;
-			_hourId = hourId;
-		}
+			if ((checkBox.IsChecked ?? false)
+			    && _actionType == ActionType.Change)
+				return true;
 
-		/// <summary>
-		///     Metoda zapisująca dodatkowe informacje o umiejscowieniu na planie lekcji.
-		/// </summary>
-		/// <param name="controlType">Rodzaj wybranej akcji.</param>
-		/// <param name="teacherPesel">Pesel nauczyciela.</param>
-		/// <param name="dayId">Identyfikator dnia.</param>
-		/// <param name="hourId">Identyfikator godziny.</param>
-		public void SetLessonData(ExpanderControlType controlType, string teacherPesel, int dayId, int hourId)
-		{
-			_controlType = controlType;
-			_contentType = ComboBoxContentType.Teachers;
-			_teacherPesel = teacherPesel;
-			_dayId = dayId;
-			_hourId = hourId;
+			return false;
 		}
 
 		#endregion

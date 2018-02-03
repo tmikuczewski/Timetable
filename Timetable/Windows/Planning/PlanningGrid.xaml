@@ -6,99 +6,22 @@
 			 xmlns:local="clr-namespace:Timetable.Windows.Planning"
 			 mc:Ignorable="d" >
 	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition Height="11*"/>
-		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="4*"/>
-			<ColumnDefinition/>
+			<ColumnDefinition Width="4*" />
+			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
-		<Border BorderBrush="Gray" BorderThickness="1,1,1,1" Margin="10,0,0,10" Grid.Row="1" RenderTransformOrigin="0.5,0.5">
-			<Border.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform ScaleY="-1"/>
-					<SkewTransform/>
-					<RotateTransform/>
-					<TranslateTransform/>
-				</TransformGroup>
-			</Border.RenderTransform>
-		</Border>
-		<Grid HorizontalAlignment="Right" Height="37" Margin="0,6,10,0" VerticalAlignment="Top" Width="366">
-			<Border BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,8,0,9" Width="111">
-				<TextBlock TextWrapping="Wrap" Text="Display:" VerticalAlignment="Center" TextAlignment="Right"/>
-			</Border>
-			<ComboBox x:Name="comboBoxPlanning1" Width="120" Height="28" HorizontalAlignment="Left" Margin="116,4,0,5" SelectionChanged="comboBoxPlanning1_SelectionChanged"/>
-			<ComboBox x:Name="comboBoxPlanning2" Margin="241,4,0,5" Width="120" Height="28" HorizontalAlignment="Left" SelectionChanged="comboBoxPlanning2_SelectionChanged"/>
-		</Grid>
-		<Grid x:Name="gridPlanning" Margin="15,10,10,15" Grid.Row="1">
+		<Grid x:Name="gridPlanning" Grid.Row="0" Column="0" Margin="10" />
+		<Grid x:Name="gridRemainingLessons" Grid.Row="0" Grid.Column="1" Margin="10,0">
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="2*"/>
+				<RowDefinition Height="40" />
+				<RowDefinition />
 			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="3*"/>
-			</Grid.ColumnDefinitions>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="1" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="0" VerticalAlignment="Center" TextAlignment="Center"/>
+			<Border Grid.Row="0" BorderBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,10,0,0">
+				<TextBlock Text="Remaining Lessons:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
 			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="2" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="1" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="3" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="2" VerticalAlignment="Center" TextAlignment="Center" Margin="0,16,0,17"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="4" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="3" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="5" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="4" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="6" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="5" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="7" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="6" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Height="53" Width="37" Grid.Row="8" Margin="0">
-				<TextBlock TextWrapping="Wrap" Text="7" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Column="1">
-				<TextBlock TextWrapping="Wrap" Text="MO" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Column="2">
-				<TextBlock TextWrapping="Wrap" Text="TU" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Column="3">
-				<TextBlock TextWrapping="Wrap" Text="WE" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Column="4">
-				<TextBlock TextWrapping="Wrap" Text="TH" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Column="5">
-				<TextBlock TextWrapping="Wrap" Text="FR" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Border>
+			<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0,10">
+				<Grid x:Name="gridPlanningRemainingLessons" Margin="0,-20,0,0" />
+			</ScrollViewer>
 		</Grid>
-		<!--<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="0,0,10,10" ScrollViewer.VerticalScrollBarVisibility="Auto">
-						<Grid x:Name="gridPlanningRemainingLessons" Height="420" Width="120"/>
-					</ScrollViewer>-->
-		<ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" Margin="2,0,0,10" VerticalScrollBarVisibility="Auto">
-			<Grid x:Name="gridPlanningRemainingLessons"/>
-		</ScrollViewer>
-		<Border BorderBrush="{x:Null}" Grid.Column="1" Height="37" Margin="10,6,10,0" VerticalAlignment="Top">
-			<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Remaining lessons"/>
-		</Border>
 	</Grid>
 </UserControl>

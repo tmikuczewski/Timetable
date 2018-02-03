@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 
 namespace Timetable.Utilities
@@ -30,7 +29,7 @@ namespace Timetable.Utilities
 			}
 			catch (Exception)
 			{
-				return Double.NaN;
+				return double.NaN;
 			}
 		}
 
@@ -47,7 +46,7 @@ namespace Timetable.Utilities
 			object parameter,
 			CultureInfo culture)
 		{
-			return Double.NaN;
+			return double.NaN;
 		}
 	}
 }

@@ -1,5 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Timetable.Utilities;
 
 namespace Timetable.Controls
 {
@@ -31,6 +33,20 @@ namespace Timetable.Controls
 		#region Constructors
 
 		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c>.
+		/// </summary>
+		public ClassControl()
+		{
+			InitializeComponent();
+
+			checkBox.Visibility = Visibility.Hidden;
+			textBlockId.FontWeight = FontWeights.Bold;
+			textBlockYear.FontWeight = FontWeights.Bold;
+			textBlockCodeName.FontWeight = FontWeights.Bold;
+			textBlockTutor.FontWeight = FontWeights.Bold;
+		}
+
+		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
@@ -41,7 +57,7 @@ namespace Timetable.Controls
 			textBlockId.Text = classRow.Id.ToString();
 			textBlockYear.Text = classRow.Year.ToString();
 			textBlockCodeName.Text = classRow.CodeName ?? string.Empty;
-			textBlockTutorPesel.Text = classRow.TutorPesel ?? string.Empty;
+			textBlockTutor.Text = classRow.TeachersRow?.ToFriendlyString();
 		}
 
 		#endregion

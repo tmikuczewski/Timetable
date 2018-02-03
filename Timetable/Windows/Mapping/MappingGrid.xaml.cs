@@ -1,28 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace Timetable.Windows.Mapping
 {
 	/// <summary>
-	/// Interaction logic for MappingGrid.xaml
+	///     Interaction logic for MappingGrid.xaml
 	/// </summary>
 	public partial class MappingGrid : UserControl
 	{
+		#region Constants and Statics
+
+		#endregion
+
+
+		#region Fields
+
+		#endregion
+
+
+		#region Properties
+
+		#endregion
+
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>MappingGrid</c>.
+		/// </summary>
 		public MappingGrid()
 		{
 			InitializeComponent();
 		}
+
+		#endregion
+
+
+		#region Events
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		#endregion
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Timetable.Controls
@@ -31,6 +32,20 @@ namespace Timetable.Controls
 		#region Constructors
 
 		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.LessonControl</c>.
+		/// </summary>
+		public LessonControl()
+		{
+			InitializeComponent();
+
+			checkBox.Visibility = Visibility.Hidden;
+			textBlockId.FontWeight = FontWeights.Bold;
+			textBlockSubject.FontWeight = FontWeights.Bold;
+			textBlockClass.FontWeight = FontWeights.Bold;
+			textBlockTeacher.FontWeight = FontWeights.Bold;
+		}
+
+		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>Controls.LessonControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="lessonRow">Obiekt typu <c>TimetableDataSet.LessonRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
@@ -38,10 +53,10 @@ namespace Timetable.Controls
 		{
 			InitializeComponent();
 
-			textBlockID.Text = lessonRow.Id.ToString();
-			textBlockTeacher.Text = lessonRow.TeachersRow.FirstName[0] + ". " + lessonRow.TeachersRow.LastName;
-			textBlockClass.Text = lessonRow.ClassesRow.Year + " " + lessonRow.ClassesRow.CodeName;
+			textBlockId.Text = lessonRow.Id.ToString();
 			textBlockSubject.Text = lessonRow.SubjectsRow.Name;
+			textBlockClass.Text = lessonRow.ClassesRow.Year + " " + lessonRow.ClassesRow.CodeName;
+			textBlockTeacher.Text = lessonRow.TeachersRow.FirstName[0] + ". " + lessonRow.TeachersRow.LastName;
 		}
 
 		#endregion
@@ -65,7 +80,7 @@ namespace Timetable.Controls
 		#region Public methods
 
 		/// <summary>
-		///     Sprawdza, czy wybrana osoba jest zaznaczona.
+		///     Sprawdza, czy wybrana lekcja jest zaznaczona.
 		/// </summary>
 		/// <returns></returns>
 		public bool IsChecked()
@@ -74,12 +89,12 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer id klasy w kontrolce.
+		///     Zwraca numer ID lekcji w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()
 		{
-			return textBlockID.Text;
+			return textBlockId.Text;
 		}
 
 		#endregion

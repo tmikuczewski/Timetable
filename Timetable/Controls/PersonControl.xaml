@@ -4,30 +4,34 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Timetable.Controls"
+			 xmlns:utilities="clr-namespace:Timetable.Utilities"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="16.525" Height="30" MinWidth="550" MinHeight="30" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+			 Height="30" MinHeight="30" MinWidth="400" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+	<UserControl.Resources>
+		<utilities:PercentageConverter x:Key="PercentageConverter" />
+	</UserControl.Resources>
 	<Grid x:Name="gridMain">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="4*"/>
-			<ColumnDefinition Width="6*"/>
-			<ColumnDefinition Width="6*"/>
-			<ColumnDefinition Width="5*"/>
+			<ColumnDefinition Width="40" />
+			<ColumnDefinition Width="120" />
+			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="1*" />
 		</Grid.ColumnDefinitions>
-		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="0">
-			<CheckBox x:Name="checkBox" Content="" Focusable="False" VerticalAlignment="Center" Margin="5,0,0,0"/>
+		<Border Grid.Column="0" BorderBrush="{x:Null}">
+			<CheckBox x:Name="checkBox" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="1">
-			<TextBlock x:Name="textBlockPesel" TextWrapping="Wrap" Text="99999999999" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		<Border Grid.Column="1" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockPesel" Text="PESEL" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="2">
-			<TextBlock x:Name="textBlockFirstName" TextWrapping="Wrap" Text="FirstName" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		<Border Grid.Column="2" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockFirstName" Text="First Name" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" MaxWidth="{Binding Converter={StaticResource PercentageConverter}, ElementName=gridMain, Path=ActualWidth, ConverterParameter=0.25}" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="3">
-			<TextBlock x:Name="textBlockLastName" TextWrapping="Wrap" Text="LastName" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		<Border Grid.Column="3" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockLastName" Text="Last Name" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" MaxWidth="{Binding ActualWidth, ElementName=textBlockFirstName}" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Height="30" VerticalAlignment="Top" Grid.Column="4">
-			<TextBlock x:Name="textBlockInfo" TextWrapping="Wrap" Text="Info" FontSize="16" TextAlignment="Center" FontFamily="Arial" VerticalAlignment="Center"/>
+		<Border Grid.Column="4" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockClass" Text="Class" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" MaxWidth="{Binding Converter={StaticResource PercentageConverter}, ElementName=gridMain, Path=ActualWidth, ConverterParameter=0.15}" />
 		</Border>
 	</Grid>
 </UserControl>

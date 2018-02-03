@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Timetable.Controls
@@ -29,6 +30,18 @@ namespace Timetable.Controls
 
 
 		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>Controls.SubjectControl</c>.
+		/// </summary>
+		public SubjectControl()
+		{
+			InitializeComponent();
+
+			checkBox.Visibility = Visibility.Hidden;
+			textBlockId.FontWeight = FontWeights.Bold;
+			textBlockName.FontWeight = FontWeights.Bold;
+		}
 
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>Controls.SubjectControl</c> na bazie przesłanych za pomocą parametru danych.
@@ -63,7 +76,7 @@ namespace Timetable.Controls
 		#region Public methods
 
 		/// <summary>
-		///     Sprawdza, czy wybrana klasa jest zaznaczona.
+		///     Sprawdza, czy wybrany przedmiot jest zaznaczony.
 		/// </summary>
 		/// <returns></returns>
 		public bool IsChecked()
@@ -72,7 +85,7 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer id klasy w kontrolce.
+		///     Zwraca numer ID przedmiotu w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()

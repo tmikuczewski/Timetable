@@ -1,28 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace Timetable.Windows.Summary
 {
 	/// <summary>
-	/// Interaction logic for SummaryGrid.xaml
+	///     Interaction logic for SummaryGrid.xaml
 	/// </summary>
 	public partial class SummaryGrid : UserControl
 	{
+		#region Constants and Statics
+
+		#endregion
+
+
+		#region Fields
+
+		#endregion
+
+
+		#region Properties
+
+		#endregion
+
+
+		#region Constructors
+
+		/// <summary>
+		///     Konstruktor tworzący obiekt typu <c>SummaryGrid</c>.
+		/// </summary>
 		public SummaryGrid()
 		{
 			InitializeComponent();
 		}
+
+		#endregion
+
+
+		#region Events
+
+		#endregion
+
+
+		#region Overridden methods
+
+		#endregion
+
+
+		#region Public methods
+
+		#endregion
+
+
+		#region Private methods
+
+		#endregion
 	}
 }

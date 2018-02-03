@@ -26,7 +26,7 @@ namespace Timetable.Windows.Management
 		private TeachersTableAdapter teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
-		private readonly ExpanderControlType _controlType;
+		private readonly ActionType _actionType;
 
 		private int _currentClassId;
 		private TimetableDataSet.ClassesRow _currentClassRow;
@@ -45,12 +45,12 @@ namespace Timetable.Windows.Management
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
 		/// </summary>
-		public ManageClassWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		public ManageClassWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
-			_controlType = controlType;
+			_actionType = actionType;
 		}
 
 		#endregion
@@ -128,12 +128,12 @@ namespace Timetable.Windows.Management
 		{
 			try
 			{
-				switch (_controlType)
+				switch (_actionType)
 				{
-					case ExpanderControlType.Add:
+					case ActionType.Add:
 						_currentClassRow = timetableDataSet.Classes.NewClassesRow();
 						break;
-					case ExpanderControlType.Change:
+					case ActionType.Change:
 						_currentClassRow = PrepareClass();
 						break;
 				}
@@ -169,9 +169,9 @@ namespace Timetable.Windows.Management
 
 		private void FillControls()
 		{
-			switch (_controlType)
+			switch (_actionType)
 			{
-				case ExpanderControlType.Change:
+				case ActionType.Change:
 					if (_currentClassRow == null)
 						return;
 
@@ -221,7 +221,7 @@ namespace Timetable.Windows.Management
 			_currentClassRow.CodeName = codeName;
 			_currentClassRow["TutorPesel"] = comboBoxTutor.SelectedValue ?? DBNull.Value;
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				timetableDataSet.Classes.Rows.Add(_currentClassRow);
 			}
@@ -230,7 +230,7 @@ namespace Timetable.Windows.Management
 
 			classesTableAdapter.Update(timetableDataSet.Classes);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.Classes);
+			_callingWindow.RefreshViews(EntityType.Classes);
 
 			Close();
 		}

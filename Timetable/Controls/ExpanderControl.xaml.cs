@@ -8,6 +8,10 @@ using Microsoft.Win32;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 using Timetable.Windows;
+using ManageClassWindow = Timetable.Windows.Management.ManageClassWindow;
+using ManagePersonWindow = Timetable.Windows.Management.ManagePersonWindow;
+using ManageSubjectWindow = Timetable.Windows.Management.ManageSubjectWindow;
+using MappingWindow = Timetable.Windows.Mapping.MappingWindow;
 
 namespace Timetable.Controls
 {
@@ -26,6 +30,8 @@ namespace Timetable.Controls
 		#region Fields
 
 		private static TimetableDataSet timetableDataSet;
+		private static DaysTableAdapter daysTableAdapter;
+		private static HoursTableAdapter hoursTableAdapter;
 		private static StudentsTableAdapter studentsTableAdapter;
 		private static TeachersTableAdapter teachersTableAdapter;
 		private static ClassesTableAdapter classesTableAdapter;
@@ -51,22 +57,22 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.ExpanderControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="mainWindow">Uchwyt do wywołującego okna.</param>
-		/// <param name="controlType">Rodzaj wybranej akcji.</param>
+		/// <param name="actionType">Rodzaj wybranej akcji.</param>
 		/// <param name="text">Tekst przycisku <c>button</c>.</param>
-		public ExpanderControl(MainWindow mainWindow, ExpanderControlType controlType, string text)
+		public ExpanderControl(MainWindow mainWindow, ActionType actionType, string text)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
 
-			FillControls(controlType, text);
+			FillControls(actionType, text);
 
 			InitDatabaseObjects();
 
-			switch (controlType)
+			switch (actionType)
 			{
-				case ExpanderControlType.XLS:
-				case ExpanderControlType.PDF:
+				case ActionType.XLS:
+				case ActionType.PDF:
 					_exportEngine = new Export();
 					_exportEngine.ExportFinishedEvent += ExportFinishedConfirmation;
 					break;
@@ -80,38 +86,38 @@ namespace Timetable.Controls
 
 		private async void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.expander.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderOperation.IsExpanded = false;
 
 			await Task.Factory.StartNew(() =>
 			{
 				Dispatcher.Invoke(() =>
 				{
-					ModifyEntities(ExpanderControlType.Add);
+					ModifyEntities(ActionType.Add);
 				});
 			});
 		}
 
 		private async void ChangeButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.expander.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderOperation.IsExpanded = false;
 
-			if (!IsAnyEntitiesMarked())
+			if (!AreAnyEntitiesMarked())
 				return;
 
 			await Task.Factory.StartNew(() =>
 			{
 				Dispatcher.Invoke(() =>
 				{
-					ModifyEntities(ExpanderControlType.Change);
+					ModifyEntities(ActionType.Change);
 				});
 			});
 		}
 
 		private async void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.expander.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderOperation.IsExpanded = false;
 
-			if (!IsAnyEntitiesMarked())
+			if (!AreAnyEntitiesMarked())
 				return;
 
 			await Task.Factory.StartNew(() =>
@@ -120,28 +126,41 @@ namespace Timetable.Controls
 			});
 		}
 
-		private async void PdfButton_Click(object sender, RoutedEventArgs e)
+		private async void RemoveLessonPlaceButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.expanderExport.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderPlanning.IsExpanded = false;
+
+			if (!AreAnyEntitiesMarked())
+				return;
 
 			await Task.Factory.StartNew(() =>
 			{
-				Dispatcher.Invoke(() =>
-				{
-					ExportToFile(ExportFileType.PDF);
-				});
+				Dispatcher.Invoke(RemoveEntities);
 			});
 		}
 
 		private async void XlsButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.expanderExport.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderExport.IsExpanded = false;
 
 			await Task.Factory.StartNew(() =>
 			{
 				Dispatcher.Invoke(() =>
 				{
 					ExportToFile(ExportFileType.XLS);
+				});
+			});
+		}
+
+		private async void PdfButton_Click(object sender, RoutedEventArgs e)
+		{
+			_callingWindow.stackPanelOperations.expanderExport.IsExpanded = false;
+
+			await Task.Factory.StartNew(() =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					ExportToFile(ExportFileType.PDF);
 				});
 			});
 		}
@@ -161,27 +180,31 @@ namespace Timetable.Controls
 
 		#region Private methods
 
-		private void FillControls(ExpanderControlType controlType, string text)
+		private void FillControls(ActionType actionType, string text)
 		{
-			switch (controlType)
+			switch (actionType)
 			{
-				case ExpanderControlType.Add:
+				case ActionType.Add:
 					image.Source = Properties.Resources.add.ToBitmapImage();
 					button.Click += AddButton_Click;
 					break;
-				case ExpanderControlType.Change:
+				case ActionType.Change:
 					image.Source = Properties.Resources.manage.ToBitmapImage();
 					button.Click += ChangeButton_Click;
 					break;
-				case ExpanderControlType.Remove:
+				case ActionType.Remove:
 					image.Source = Properties.Resources.delete.ToBitmapImage();
 					button.Click += RemoveButton_Click;
 					break;
-				case ExpanderControlType.XLS:
+				case ActionType.RemoveLessonPlace:
+					image.Source = Properties.Resources.delete.ToBitmapImage();
+					button.Click += RemoveLessonPlaceButton_Click;
+					break;
+				case ActionType.XLS:
 					image.Source = Properties.Resources.excel.ToBitmapImage();
 					button.Click += XlsButton_Click;
 					break;
-				case ExpanderControlType.PDF:
+				case ActionType.PDF:
 					image.Source = Properties.Resources.pdf.ToBitmapImage();
 					button.Click += PdfButton_Click;
 					break;
@@ -193,6 +216,8 @@ namespace Timetable.Controls
 		private static void InitDatabaseObjects()
 		{
 			timetableDataSet = new TimetableDataSet();
+			daysTableAdapter = new DaysTableAdapter();
+			hoursTableAdapter = new HoursTableAdapter();
 			studentsTableAdapter = new StudentsTableAdapter();
 			teachersTableAdapter = new TeachersTableAdapter();
 			classesTableAdapter = new ClassesTableAdapter();
@@ -202,46 +227,48 @@ namespace Timetable.Controls
 			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
 		}
 
-		private bool IsAnyEntitiesMarked()
+		private bool AreAnyEntitiesMarked()
 		{
-			switch (_callingWindow.GetCurrentContentType())
+			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case ComboBoxContentType.Students:
-				case ComboBoxContentType.Teachers:
+				case EntityType.Students:
+				case EntityType.Teachers:
 					return _callingWindow.GetPeselsOfMarkedPeople().Any();
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					return _callingWindow.GetIdNumbersOfMarkedClasses().Any();
-				case ComboBoxContentType.Subjects:
+				case EntityType.Subjects:
 					return _callingWindow.GetIdNumbersOfMarkedSubjects().Any();
-				case ComboBoxContentType.Lessons:
+				case EntityType.Lessons:
 					return _callingWindow.GetIdNumbersOfMarkedLessons().Any();
+				case EntityType.LessonsPlaces:
+					return _callingWindow.GetCollectionOfMarkedLessonsPlaces().Any();
 			}
 
 			return false;
 		}
 
-		private void ModifyEntities(ExpanderControlType controlType)
+		private void ModifyEntities(ActionType actionType)
 		{
-			switch (_callingWindow.GetCurrentContentType())
+			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case ComboBoxContentType.Students:
-				case ComboBoxContentType.Teachers:
-					var manageWindow = new ManagePersonWindow(_callingWindow, controlType);
+				case EntityType.Students:
+				case EntityType.Teachers:
+					var manageWindow = new ManagePersonWindow(_callingWindow, actionType);
 					manageWindow.Owner = _callingWindow;
 					manageWindow.Show();
 					break;
-				case ComboBoxContentType.Classes:
-					var manageClassWindow = new ManageClassWindow(_callingWindow, controlType);
+				case EntityType.Classes:
+					var manageClassWindow = new ManageClassWindow(_callingWindow, actionType);
 					manageClassWindow.Owner = _callingWindow;
 					manageClassWindow.Show();
 					break;
-				case ComboBoxContentType.Subjects:
-					var manageSubjectWindow = new ManageSubjectWindow(_callingWindow, controlType);
+				case EntityType.Subjects:
+					var manageSubjectWindow = new ManageSubjectWindow(_callingWindow, actionType);
 					manageSubjectWindow.Owner = _callingWindow;
 					manageSubjectWindow.Show();
 					break;
-				case ComboBoxContentType.Lessons:
-					var mappingWindow = new MappingWindow(_callingWindow, controlType);
+				case EntityType.Lessons:
+					var mappingWindow = new MappingWindow(_callingWindow, actionType);
 					mappingWindow.Owner = _callingWindow;
 					mappingWindow.Show();
 					break;
@@ -250,22 +277,25 @@ namespace Timetable.Controls
 
 		private void RemoveEntities()
 		{
-			switch (_callingWindow.GetCurrentContentType())
+			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case ComboBoxContentType.Students:
+				case EntityType.Students:
 					RemoveStudents();
 					break;
-				case ComboBoxContentType.Teachers:
+				case EntityType.Teachers:
 					RemoveTeachers();
 					break;
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					RemoveClasses();
 					break;
-				case ComboBoxContentType.Subjects:
+				case EntityType.Subjects:
 					RemoveSubjects();
 					break;
-				case ComboBoxContentType.Lessons:
+				case EntityType.Lessons:
 					RemoveLessons();
+					break;
+				case EntityType.LessonsPlaces:
+					RemoveLessonsPlaces();
 					break;
 			}
 		}
@@ -293,7 +323,7 @@ namespace Timetable.Controls
 					studentsTableAdapter.Update(timetableDataSet.Students);
 				}
 
-				_callingWindow.RefreshViews(ComboBoxContentType.Students);
+				_callingWindow.RefreshViews(EntityType.Students);
 			}
 			catch (Exception ex)
 			{
@@ -378,7 +408,7 @@ namespace Timetable.Controls
 					teachersTableAdapter.Update(timetableDataSet.Teachers);
 				}
 
-				_callingWindow.RefreshViews(ComboBoxContentType.Teachers);
+				_callingWindow.RefreshViews(EntityType.Teachers);
 			}
 			catch (Exception ex)
 			{
@@ -436,7 +466,7 @@ namespace Timetable.Controls
 					classesTableAdapter.Update(timetableDataSet.Classes);
 				}
 
-				_callingWindow.RefreshViews(ComboBoxContentType.Classes);
+				_callingWindow.RefreshViews(EntityType.Classes);
 			}
 			catch (Exception ex)
 			{
@@ -488,7 +518,7 @@ namespace Timetable.Controls
 					if (lessons.Any())
 					{
 						ShowErrorMessageBox($"Subject {subjectRow.Name} " +
-						                    $"is assigned to {lessons.Count} lessons.");
+											$"is assigned to {lessons.Count} lessons.");
 						continue;
 					}
 
@@ -497,7 +527,7 @@ namespace Timetable.Controls
 					subjectsTableAdapter.Update(timetableDataSet.Subjects);
 				}
 
-				_callingWindow.RefreshViews(ComboBoxContentType.Subjects);
+				_callingWindow.RefreshViews(EntityType.Subjects);
 			}
 			catch (Exception ex)
 			{
@@ -537,10 +567,10 @@ namespace Timetable.Controls
 					if (lessonsPlaces.Any())
 					{
 						ShowErrorMessageBox($"Lesson with the following attributes:{SEPARATOR}" +
-						                    $"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
-						                    $"subject:\t{lessonRow.SubjectsRow.Name}{SEPARATOR}" +
-						                    $"class:\t{lessonRow.ClassesRow.ToFriendlyString()}\n" +
-						                    $"has {lessonsPlaces.Count} occurrences on the timetable.");
+											$"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
+											$"subject:\t{lessonRow.SubjectsRow.Name}{SEPARATOR}" +
+											$"class:\t{lessonRow.ClassesRow.ToFriendlyString()}\n" +
+											$"has {lessonsPlaces.Count} occurrences on the timetable.");
 						continue;
 					}
 
@@ -549,7 +579,51 @@ namespace Timetable.Controls
 					lessonsTableAdapter.Update(timetableDataSet.Lessons);
 				}
 
-				_callingWindow.RefreshViews(ComboBoxContentType.Lessons);
+				_callingWindow.RefreshViews(EntityType.Lessons);
+			}
+			catch (Exception ex)
+			{
+				ShowErrorMessageBox(ex.ToString());
+			}
+		}
+
+		private void RemoveLessonsPlaces()
+		{
+			try
+			{
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked lessons?") != MessageBoxResult.Yes)
+					return;
+
+				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+				lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+				teachersTableAdapter.Fill(timetableDataSet.Teachers);
+				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+				classesTableAdapter.Fill(timetableDataSet.Classes);
+				classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+				daysTableAdapter.Fill(timetableDataSet.Days);
+				hoursTableAdapter.Fill(timetableDataSet.Hours);
+
+				foreach (var cellViewModel in _callingWindow.GetCollectionOfMarkedLessonsPlaces())
+				{
+					if (cellViewModel.LessonId == null || cellViewModel.ClassroomId == null)
+						continue;
+
+					var lessonPlaceRow = timetableDataSet.LessonsPlaces
+						.FindByLessonIdClassroomIdDayIdHourId(
+						(int) cellViewModel.LessonId,
+						(int) cellViewModel.ClassroomId,
+						cellViewModel.DayId,
+						cellViewModel.HourId);
+
+					if (lessonPlaceRow == null)
+						continue;
+
+					lessonPlaceRow.Delete();
+
+					lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
+				}
+
+				_callingWindow.RefreshViews(EntityType.LessonsPlaces);
 			}
 			catch (Exception ex)
 			{
@@ -563,6 +637,8 @@ namespace Timetable.Controls
 
 			if (classId == null)
 				throw new EntityDoesNotExistException("Class does not exists");
+
+			classesTableAdapter.Fill(timetableDataSet.Classes);
 
 			var classRow = timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
 
@@ -579,6 +655,8 @@ namespace Timetable.Controls
 			if (string.IsNullOrEmpty(teacherPesel))
 				throw new EntityDoesNotExistException("Teacher does not exists");
 
+			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+
 			var teacherRow = timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
 
 			if (teacherRow == null)
@@ -593,6 +671,8 @@ namespace Timetable.Controls
 
 			if (classroomId == null)
 				throw new EntityDoesNotExistException("Classroom does not exists");
+
+			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
 
 			var classroomRow = timetableDataSet.Classrooms.FirstOrDefault(cr => cr.Id == classroomId.Value);
 
@@ -610,7 +690,7 @@ namespace Timetable.Controls
 			TimetableDataSet.TeachersRow teacherRow = null;
 			TimetableDataSet.ClassroomsRow classroomRow = null;
 
-			var contentType = _callingWindow.GetSummaryContentType();
+			var entityType = _callingWindow.GetSummaryEntityType();
 			var date = DateTime.Now.ToString("yyyyMMddTHHmmss");
 
 			var saveFileDialog = new SaveFileDialog();
@@ -618,17 +698,17 @@ namespace Timetable.Controls
 
 			try
 			{
-				switch (contentType)
+				switch (entityType)
 				{
-					case ComboBoxContentType.Classes:
+					case EntityType.Classes:
 						classRow = GetCurrentClass();
 						saveFileDialog.FileName = $"Klasa {classRow.ToFriendlyString()} ({date})";
 						break;
-					case ComboBoxContentType.Teachers:
+					case EntityType.Teachers:
 						teacherRow = GetCurrentTeacher();
 						saveFileDialog.FileName = $"{teacherRow.LastName} {teacherRow.FirstName} ({date})";
 						break;
-					case ComboBoxContentType.Classrooms:
+					case EntityType.Classrooms:
 						classroomRow = GetCurrentClassroom();
 						saveFileDialog.FileName = $"Sala {classroomRow.Name} ({date})";
 						break;
@@ -653,15 +733,15 @@ namespace Timetable.Controls
 
 				await Task.Factory.StartNew(() =>
 				{
-					switch (contentType)
+					switch (entityType)
 					{
-						case ComboBoxContentType.Classes:
+						case EntityType.Classes:
 							_exportEngine.SaveTimeTableForClass(classRow, saveFileDialog.FileName, fileType);
 							break;
-						case ComboBoxContentType.Teachers:
+						case EntityType.Teachers:
 							_exportEngine.SaveTimeTableForTeacher(teacherRow, saveFileDialog.FileName, fileType);
 							break;
-						case ComboBoxContentType.Classrooms:
+						case EntityType.Classrooms:
 							_exportEngine.SaveTimeTableForClassroom(classroomRow, saveFileDialog.FileName, fileType);
 							break;
 					}

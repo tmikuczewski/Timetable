@@ -12,19 +12,32 @@
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 			<Border Grid.Column="0" BorderBrush="{x:Null}" HorizontalAlignment="Right" VerticalAlignment="Center" MinHeight="30" Margin="10,-2,0,0">
-				<TextBlock Text="Data: " TextWrapping="Wrap" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" />
+				<TextBlock Text="Data: " TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" />
 			</Border>
-			<ComboBox x:Name="comboBoxManagement" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Center" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxManagement_SelectionChanged" />
+			<ComboBox x:Name="comboBoxManagementFilterEntityType" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Center" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxManagementFilterEntityType_SelectionChanged" />
+		</Grid>
+		<Grid x:Name="gridPlanningilter" HorizontalAlignment="Left" VerticalAlignment="Top"  Width="300" MinHeight="30" Visibility="Collapsed">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<ComboBox x:Name="comboBoxPlanningFilterEntityType" Grid.Column="0" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxPlanningFilterEntityType_SelectionChanged" />
+			<ComboBox x:Name="comboBoxPlanningFilterEntity" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxPlanningFilterEntity_SelectionChanged" />
 		</Grid>
 		<Grid x:Name="gridSummaryFilter" HorizontalAlignment="Left" VerticalAlignment="Top"  Width="300" MinHeight="30" Visibility="Collapsed">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<ComboBox x:Name="comboBoxSummary1" Grid.Column="0" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxSummary1_SelectionChanged" />
-			<ComboBox x:Name="comboBoxSummary2" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxSummary2_SelectionChanged" />
+			<ComboBox x:Name="comboBoxSummaryFilterEntityType" Grid.Column="0" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxSummaryFilterEntityType_SelectionChanged" />
+			<ComboBox x:Name="comboBoxSummaryFilterEntity" Grid.Column="1" FontSize="14" VerticalContentAlignment="Center" VerticalAlignment="Top" MinHeight="30" Margin="10,0,0,0" SelectionChanged="comboBoxSummaryFilterEntity_SelectionChanged" />
 		</Grid>
 		<Expander x:Name="expanderOperation" FontSize="14" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" MinHeight="30" Margin="10,4,0,0" Visibility="Collapsed">
+			<Expander.Header>
+				<TextBlock Text="Operation" TextAlignment="Center" VerticalAlignment="Center" Margin="4,0,0,0" />
+			</Expander.Header>
+		</Expander>
+		<Expander x:Name="expanderPlanning" FontSize="14" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" MinHeight="30" Margin="10,4,0,0" Visibility="Collapsed">
 			<Expander.Header>
 				<TextBlock Text="Operation" TextAlignment="Center" VerticalAlignment="Center" Margin="4,0,0,0" />
 			</Expander.Header>

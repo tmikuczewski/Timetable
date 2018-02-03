@@ -5,29 +5,29 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Timetable.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="85.805" d:DesignWidth="300" MinHeight="30" Height="30" MinWidth="300" Width="Auto" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+			 Height="30" MinHeight="30" MinWidth="400" ClipToBounds="True" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
 	<Grid x:Name="gridMain">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="3*"/>
+			<ColumnDefinition Width="40" />
+			<ColumnDefinition Width="80" />
 			<ColumnDefinition Width="2*"/>
 			<ColumnDefinition Width="2*"/>
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
-		<Border BorderBrush="{x:Null}" Height="30" Grid.Column="0" Margin="0,0,5,0">
-			<CheckBox x:Name="checkBox" Content="" Focusable="False" VerticalAlignment="Center" Margin="5,0,0,0"/>
+		<Border Grid.Column="0" BorderBrush="{x:Null}">
+			<CheckBox x:Name="checkBox" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Grid.Column="1" Height="30" Margin="0,0,5,0">
-			<TextBlock x:Name="textBlockId" TextWrapping="Wrap" Text="999999999" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<Border Grid.Column="1" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockId" Text="ID" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Grid.Column="2" Height="30" Margin="0,0,5,0">
-			<TextBlock x:Name="textBlockYear" TextWrapping="Wrap" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<Border Grid.Column="2" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockYear" Text="Year" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Grid.Column="3" Height="30" Margin="0,0,5,0">
-			<TextBlock x:Name="textBlockCodeName" TextWrapping="Wrap" Text="3GDA" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<Border Grid.Column="3" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockCodeName" Text="Name" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" />
 		</Border>
-		<Border BorderBrush="{x:Null}" Grid.Column="4" Height="30">
-			<TextBlock x:Name="textBlockTutorPesel" TextWrapping="Wrap" Text="12345678901" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		<Border Grid.Column="4" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5,0,5,0">
+			<TextBlock x:Name="textBlockTutor" Text="Tutor" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="16" TextAlignment="Center" />
 		</Border>
 	</Grid>
 </UserControl>

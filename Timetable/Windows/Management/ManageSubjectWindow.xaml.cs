@@ -23,7 +23,7 @@ namespace Timetable.Windows.Management
 		private SubjectsTableAdapter subjectsTableAdapter;
 
 		private readonly MainWindow _callingWindow;
-		private readonly ExpanderControlType _controlType;
+		private readonly ActionType _actionType;
 
 		private int _currentSubjectId;
 		private TimetableDataSet.SubjectsRow _currentSubjectRow;
@@ -41,12 +41,12 @@ namespace Timetable.Windows.Management
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
 		/// </summary>
-		public ManageSubjectWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		public ManageSubjectWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
-			_controlType = controlType;
+			_actionType = actionType;
 		}
 
 		#endregion
@@ -112,12 +112,12 @@ namespace Timetable.Windows.Management
 		{
 			try
 			{
-				switch (_controlType)
+				switch (_actionType)
 				{
-					case ExpanderControlType.Add:
+					case ActionType.Add:
 						_currentSubjectRow = timetableDataSet.Subjects.NewSubjectsRow();
 						break;
-					case ExpanderControlType.Change:
+					case ActionType.Change:
 						_currentSubjectRow = PrepareSubject();
 						break;
 				}
@@ -153,9 +153,9 @@ namespace Timetable.Windows.Management
 
 		private void FillControls()
 		{
-			switch (_controlType)
+			switch (_actionType)
 			{
-				case ExpanderControlType.Change:
+				case ActionType.Change:
 					if (_currentSubjectRow == null)
 						return;
 
@@ -195,14 +195,14 @@ namespace Timetable.Windows.Management
 
 			_currentSubjectRow.Name = name;
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				timetableDataSet.Subjects.Rows.Add(_currentSubjectRow);
 			}
 
 			subjectsTableAdapter.Update(timetableDataSet.Subjects);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.Subjects);
+			_callingWindow.RefreshViews(EntityType.Subjects);
 
 			Close();
 		}

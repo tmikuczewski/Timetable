@@ -7,7 +7,10 @@ using Timetable.TimetableDataSetTableAdapters;
 
 namespace Timetable.Utilities
 {
-	//http://csharp.net-informations.com/excel/csharp-format-excel.htm
+	/// <summary>
+	///     Klasa do eksportowania planu lekcji za pomocą programu Microsoft Excel.
+	///     http://csharp.net-informations.com/excel/csharp-format-excel.htm
+	/// </summary>
 	public class Export
 	{
 		#region Constants and Statics
@@ -24,7 +27,6 @@ namespace Timetable.Utilities
 		private static HoursTableAdapter hoursTableAdapter;
 		private static LessonsTableAdapter lessonsTableAdapter;
 		private static LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
-		private static StudentsTableAdapter studentsTableAdapter;
 		private static SubjectsTableAdapter subjectsTableAdapter;
 		private static TeachersTableAdapter teachersTableAdapter;
 
@@ -43,8 +45,14 @@ namespace Timetable.Utilities
 
 		#region Delegates
 
+		/// <summary>
+		///     Delegat dla zdarzeń zakończenia eksportowania danych.
+		/// </summary>
 		public delegate void ExportFinishedDelegate();
 
+		/// <summary>
+		///     Zdarzenie zakończenia eksportowania danych.
+		/// </summary>
 		public event ExportFinishedDelegate ExportFinishedEvent;
 
 		#endregion
@@ -53,7 +61,7 @@ namespace Timetable.Utilities
 		#region Constructors
 
 		/// <summary>
-		///     Klasa eksportująca plan z bazy do Excelowego formatu XLS
+		///     Konstruktor tworząy obiekt typu <c>Utilities.Export</c>.
 		/// </summary>
 		public Export()
 		{
@@ -78,6 +86,8 @@ namespace Timetable.Utilities
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ExportFileType fileType)
 		{
+			RefreshDatabaseObjects();
+
 			PrepareExcel();
 
 			WriteTimeTableForClass(classRow);
@@ -95,6 +105,8 @@ namespace Timetable.Utilities
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ExportFileType fileType)
 		{
+			RefreshDatabaseObjects();
+
 			PrepareExcel();
 
 			WriteTimeTableForTeacher(teacherRow);
@@ -112,6 +124,8 @@ namespace Timetable.Utilities
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
 		public void SaveTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
 		{
+			RefreshDatabaseObjects();
+
 			PrepareExcel();
 
 			WriteTimeTableForClassroom(classroomRow);
@@ -136,17 +150,19 @@ namespace Timetable.Utilities
 			hoursTableAdapter = new HoursTableAdapter();
 			lessonsTableAdapter = new LessonsTableAdapter();
 			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			studentsTableAdapter = new StudentsTableAdapter();
 			subjectsTableAdapter = new SubjectsTableAdapter();
 			teachersTableAdapter = new TeachersTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
 			daysTableAdapter.Fill(timetableDataSet.Days);
 			hoursTableAdapter.Fill(timetableDataSet.Hours);
+		}
+
+		private static void RefreshDatabaseObjects()
+		{
+			classesTableAdapter.Fill(timetableDataSet.Classes);
+			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
 			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
 			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-			studentsTableAdapter.Fill(timetableDataSet.Students);
 			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
 			teachersTableAdapter.Fill(timetableDataSet.Teachers);
 		}
@@ -182,7 +198,7 @@ namespace Timetable.Utilities
 					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 				}
 			}
-			catch (Exception e1)
+			catch (Exception)
 			{
 				throw new EntityDoesNotExistException("Day with id=" + dayId + " does not exist.");
 			}
@@ -203,7 +219,7 @@ namespace Timetable.Utilities
 					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
-			catch (Exception e2)
+			catch (Exception)
 			{
 				throw new EntityDoesNotExistException("Hour with id=" + hourId + " does not exist.");
 			}
@@ -305,7 +321,7 @@ namespace Timetable.Utilities
 			for (var i = 1; i < 10; i++)
 			{
 				Range column = xlWorkSheet.Columns[i];
-				max = column.ColumnWidth > max ? column.ColumnWidth : max;
+				max = (column.ColumnWidth > max) ? column.ColumnWidth : max;
 			}
 
 			return max;
@@ -351,7 +367,7 @@ namespace Timetable.Utilities
 				Marshal.ReleaseComObject(obj);
 				obj = null;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				obj = null;
 			}

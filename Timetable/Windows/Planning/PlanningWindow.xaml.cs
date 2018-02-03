@@ -31,8 +31,8 @@ namespace Timetable.Windows.Planning
 		private TeachersTableAdapter teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
-		private readonly ExpanderControlType _controlType;
-		private readonly ComboBoxContentType _contentType;
+		private readonly ActionType _actionType;
+		private readonly EntityType _entityType;
 
 		private readonly int? _classId;
 		private readonly string _teacherPesel;
@@ -46,8 +46,8 @@ namespace Timetable.Windows.Planning
 		private TimetableDataSet.DaysRow _dayRow;
 		private TimetableDataSet.HoursRow _hourRow;
 
-		private IEnumerable<PlannedLesson> _plannedLessons;
-		private IEnumerable<PlannedLesson> _availableLessons;
+		private IEnumerable<CellViewModel> _plannedLessons;
+		private IEnumerable<CellViewModel> _availableLessons;
 		private IEnumerable<TimetableDataSet.LessonsPlacesRow> _unavailableLessonsPlaces;
 		private IEnumerable<TimetableDataSet.ClassroomsRow> _availableClassrooms;
 
@@ -64,14 +64,14 @@ namespace Timetable.Windows.Planning
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>PlanningWindow</c>.
 		/// </summary>
-		public PlanningWindow(MainWindow mainWindow, ExpanderControlType controlType, ComboBoxContentType contentType,
+		public PlanningWindow(MainWindow mainWindow, ActionType actionType, EntityType entityType,
 			int? classId, string teacherPesel, int dayId, int hourId)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
-			_controlType = controlType;
-			_contentType = contentType;
+			_actionType = actionType;
+			_entityType = entityType;
 			_classId = classId;
 			_teacherPesel = teacherPesel;
 			_dayId = dayId;
@@ -168,15 +168,19 @@ namespace Timetable.Windows.Planning
 							  join t in timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
 							  orderby l.Id
 							  from s in grp.DefaultIfEmpty()
-							  select new PlannedLesson
+							  select new CellViewModel
 							  {
 								  Id = l.Id,
 								  TeacherPesel = l.TeacherPesel,
-								  TeacherName = t?.ToFriendlyString(),
+								  TeacherFirstName = t?.FirstName,
+								  TeacherLastName = t?.LastName,
+								  TeacherFriendlyName = t?.ToFriendlyString(),
 								  SubjectId = l.SubjectId,
 								  SubjectName = s?.Name,
 								  ClassId = l.ClassId,
-								  ClassName = c?.ToFriendlyString()
+								  ClassYear = c?.Year,
+								  ClassCodeName = c?.CodeName,
+								  ClassFriendlyName = c?.ToFriendlyString()
 							  };
 		}
 
@@ -184,13 +188,13 @@ namespace Timetable.Windows.Planning
 		{
 			_availableLessons = _plannedLessons;
 
-			switch (_contentType)
+			switch (_entityType)
 			{
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					_classRow = timetableDataSet.Classes.FindById(_classId ?? -1);
 					_availableLessons = _plannedLessons.Where(l => l.ClassId == _classId);
 					break;
-				case ComboBoxContentType.Teachers:
+				case EntityType.Teachers:
 					_teacherRow = timetableDataSet.Teachers.FindByPesel(_teacherPesel);
 					_availableLessons = _plannedLessons.Where(l => l.TeacherPesel == _teacherPesel);
 					break;
@@ -201,12 +205,12 @@ namespace Timetable.Windows.Planning
 		{
 			try
 			{
-				switch (_controlType)
+				switch (_actionType)
 				{
-					case ExpanderControlType.Add:
+					case ActionType.Add:
 						_currentLessonPlaceRow = timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
 						break;
-					case ExpanderControlType.Change:
+					case ActionType.Change:
 						_currentLessonPlaceRow = PrepareLessonPlace();
 						break;
 				}
@@ -241,21 +245,23 @@ namespace Timetable.Windows.Planning
 		{
 			_dayRow = timetableDataSet.Days.FindById(_dayId);
 			_hourRow = timetableDataSet.Hours.FindById(_hourId);
-			textBoxDetails.Text = $"{_dayRow.Name}, {_hourRow.Hour}";
+			textBoxDetails.Text = $"{_dayRow.Name}, {_hourRow.Hour}\n";
 
-			switch (_contentType)
+			switch (_entityType)
 			{
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					if (_classRow == null)
 						return;
 
-					textBoxDetails.Text += $"\nClass: {_classRow.ToFriendlyString()}";
+					labelDetails.Text += $"Class:";
+					textBoxDetails.Text += $"{_classRow.ToFriendlyString()}";
 					break;
-				case ComboBoxContentType.Teachers:
+				case EntityType.Teachers:
 					if (_teacherRow == null)
 						return;
 
-					textBoxDetails.Text += $"\nTeacher: {_teacherRow.FirstName} {_teacherRow.LastName}";
+					labelDetails.Text += $"Teacher:";
+					textBoxDetails.Text += $"{_teacherRow.FirstName} {_teacherRow.LastName}";
 					break;
 			}
 		}
@@ -269,21 +275,21 @@ namespace Timetable.Windows.Planning
 
 		private void UpdateAvailableLessons()
 		{
-			switch (_contentType)
+			switch (_entityType)
 			{
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					var unavailableTeachers = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.TeacherPesel);
 
 					_availableLessons = _availableLessons.Where(l => !unavailableTeachers.Contains(l.TeacherPesel))
 						.OrderBy(l => l.SubjectName);
 
 					break;
-				case ComboBoxContentType.Teachers:
+				case EntityType.Teachers:
 					var unavailableClasses = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.ClassId);
 
-					_availableLessons = _availableLessons.Where(l => !unavailableClasses.Contains(l.ClassId))
+					_availableLessons = _availableLessons.Where(l => (l.ClassId != null) && !unavailableClasses.Contains(l.ClassId ?? -1))
 						.OrderBy(l => l.SubjectName)
-						.ThenBy(l => l.ClassName);
+						.ThenBy(l => l.ClassFriendlyName);
 
 					break;
 			}
@@ -291,14 +297,14 @@ namespace Timetable.Windows.Planning
 
 		private void FillLessonComboBox()
 		{
-			switch (_contentType)
+			switch (_entityType)
 			{
-				case ComboBoxContentType.Classes:
+				case EntityType.Classes:
 					comboBoxLessons.ItemsSource = _availableLessons;
 					comboBoxLessons.DisplayMemberPath = "SubjectTeacher";
 					comboBoxLessons.SelectedValuePath = "Id";
 					break;
-				case ComboBoxContentType.Teachers:
+				case EntityType.Teachers:
 					comboBoxLessons.ItemsSource = _availableLessons;
 					comboBoxLessons.DisplayMemberPath = "SubjectClass";
 					comboBoxLessons.SelectedValuePath = "Id";
@@ -321,9 +327,9 @@ namespace Timetable.Windows.Planning
 
 		private void SetComboBoxes()
 		{
-			switch (_controlType)
+			switch (_actionType)
 			{
-				case ExpanderControlType.Change:
+				case ActionType.Change:
 					if (_currentLessonPlaceRow == null)
 						return;
 
@@ -374,7 +380,7 @@ namespace Timetable.Windows.Planning
 			}
 
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				_currentLessonPlaceRow.DayId = _dayId;
 				_currentLessonPlaceRow.HourId = _hourId;
@@ -383,7 +389,7 @@ namespace Timetable.Windows.Planning
 
 			lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.LessonsPlaces);
+			_callingWindow.RefreshViews(EntityType.LessonsPlaces);
 
 			Close();
 		}
@@ -396,24 +402,6 @@ namespace Timetable.Windows.Planning
 		private MessageBoxResult ShowWarningMessageBox(string message)
 		{
 			return MessageBox.Show(this, message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-		}
-
-		#endregion
-
-
-		#region Claases
-
-		private class PlannedLesson
-		{
-			public int Id { get; set; }
-			public int ClassId { get; set; }
-			public string ClassName { get; set; }
-			public string TeacherPesel { get; set; }
-			public string TeacherName { get; set; }
-			public int SubjectId { get; set; }
-			public string SubjectName { get; set; }
-			public string SubjectClass => $"{SubjectName}\n-- {ClassName}";
-			public string SubjectTeacher => $"{SubjectName}\n-- {TeacherName}";
 		}
 
 		#endregion

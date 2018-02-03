@@ -11,9 +11,7 @@
 		Title="Management - Timetable"
 		Height="400" Width="500"
 		MinHeight="400" MinWidth="500"
-		MaxHeight="400" MaxWidth="800"
 		WindowStartupLocation="CenterScreen" 
-		WindowStyle="ToolWindow"
 		Loaded="managementWindow_Loaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -35,13 +33,13 @@
 					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="0">
-					<TextBlock Text="ID:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="ID:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="1" Margin="20,0,0,0" HorizontalAlignment="Left">
-					<TextBlock x:Name="textBoxId" TextWrapping="Wrap" FontSize="18" VerticalAlignment="Center" />
+					<TextBlock x:Name="textBoxId" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="0">
-					<TextBlock Text="Name:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Name:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0">
 					<TextBox x:Name="textBoxName" FontSize="18" BorderThickness="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Height="40" Padding="10,0" />

@@ -26,7 +26,7 @@ namespace Timetable.Windows.Mapping
 		private LessonsTableAdapter lessonsTableAdapter;
 
 		private readonly MainWindow _callingWindow;
-		private readonly ExpanderControlType _controlType;
+		private readonly ActionType _actionType;
 
 		private int _currentClassId;
 		private int _currentSubjectId;
@@ -46,12 +46,12 @@ namespace Timetable.Windows.Mapping
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>MappingWindow</c>.
 		/// </summary>
-		public MappingWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		public MappingWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
-			_controlType = controlType;
+			_actionType = actionType;
 		}
 
 		#endregion
@@ -142,12 +142,12 @@ namespace Timetable.Windows.Mapping
 		{
 			try
 			{
-				switch (_controlType)
+				switch (_actionType)
 				{
-					case ExpanderControlType.Add:
+					case ActionType.Add:
 						_currentLessonRow = timetableDataSet.Lessons.NewLessonsRow();
 						break;
-					case ExpanderControlType.Change:
+					case ActionType.Change:
 						_currentLessonRow = PrepareLesson();
 						break;
 				}
@@ -183,9 +183,9 @@ namespace Timetable.Windows.Mapping
 
 		private void FillControls()
 		{
-			switch (_controlType)
+			switch (_actionType)
 			{
-				case ExpanderControlType.Change:
+				case ActionType.Change:
 					if (_currentLessonRow == null)
 						return;
 
@@ -238,14 +238,14 @@ namespace Timetable.Windows.Mapping
 			_currentLessonRow.TeacherPesel = comboBoxTeachers.SelectedValue.ToString();
 
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				timetableDataSet.Lessons.Rows.Add(_currentLessonRow);
 			}
 
 			lessonsTableAdapter.Update(timetableDataSet.Lessons);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.Lessons);
+			_callingWindow.RefreshViews(EntityType.Lessons);
 
 			Close();
 		}

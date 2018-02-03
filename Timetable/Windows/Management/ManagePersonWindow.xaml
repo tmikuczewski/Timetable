@@ -11,9 +11,7 @@
 		Title="Management - Timetable"
 		Height="600" Width="500"
 		MinHeight="600" MinWidth="500"
-		MaxHeight="600" MaxWidth="800"
 		WindowStartupLocation="CenterScreen" 
-		WindowStyle="ToolWindow"
 		Loaded="managementWindow_Loaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -37,25 +35,25 @@
 					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="0">
-					<TextBlock Text="PESEL:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="PESEL:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="1" Margin="20,0,0,0" HorizontalAlignment="Left">
 					<xctk:MaskedTextBox x:Name="maskedTextBoxPesel" Mask="00000000000" ValueDataType="{x:Type system:String}" FontSize="18" BorderThickness="0" VerticalAlignment="Center" MaxWidth="400" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="0">
-					<TextBlock Text="First Name:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="First Name:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0">
 					<TextBox x:Name="textBoxFirstName" FontSize="18" BorderThickness="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Height="40" Padding="10,0" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="0">
-					<TextBlock Text="Last Name:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Last Name:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="1" Margin="20,0,20,0">
 					<TextBox x:Name="textBoxLastName" FontSize="18" BorderThickness="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Height="40" Padding="10,0" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="3">
-					<TextBlock x:Name="labelClass" Text="Class:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center"  Visibility="Hidden" />
+					<TextBlock x:Name="labelClass" Text="Class:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center"  Visibility="Hidden" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="3" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxClass" VerticalContentAlignment="Center" Height="40" Padding="12,8" Visibility="Hidden">
@@ -74,7 +72,7 @@
 					</ComboBox>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="3" Grid.Column="1" Margin="20,0,20,0">
-					<TextBlock x:Name="textBoxClasses" TextWrapping="Wrap" FontSize="18" VerticalAlignment="Center" Visibility="Hidden" />
+					<TextBlock x:Name="textBoxClasses" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" VerticalAlignment="Center" Visibility="Hidden" />
 				</Border>
 			</Grid>
 		</GroupBox>

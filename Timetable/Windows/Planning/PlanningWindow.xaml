@@ -11,9 +11,7 @@
 		Title="Planning - Timetable"
 		Height="500" Width="500"
 		MinHeight="500" MinWidth="500"
-		MaxHeight="500" MaxWidth="800"
 		WindowStartupLocation="CenterScreen" 
-		WindowStyle="ToolWindow"
 		Loaded="planningWindow_Loaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -36,19 +34,19 @@
 					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="0">
-					<TextBlock x:Name="labelDetails" Text="Details:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock x:Name="labelDetails" Text="Term:&#x0a;" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="0" Grid.Column="1" Margin="20,0,0,0" HorizontalAlignment="Left">
-					<TextBlock x:Name="textBoxDetails" TextWrapping="Wrap" FontSize="18" VerticalAlignment="Center" />
+					<TextBlock x:Name="textBoxDetails" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="0">
-					<TextBlock Text="Lesson:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock Text="Lesson:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxLessons" VerticalContentAlignment="Center" Height="40" Padding="12,8" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="0">
-					<TextBlock x:Name="labelClassrooms" Text="Classrooms:" TextWrapping="Wrap" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
+					<TextBlock x:Name="labelClassrooms" Text="Classrooms:" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontSize="18" TextAlignment="Right" VerticalAlignment="Center" />
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Grid.Column="1" Margin="20,0,20,0">
 					<ComboBox x:Name="comboBoxClassrooms" VerticalContentAlignment="Center" Height="40" Padding="12,8" />

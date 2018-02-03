@@ -27,8 +27,8 @@ namespace Timetable.Windows.Management
 		private TeachersTableAdapter teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
-		private readonly ExpanderControlType _controlType;
-		private readonly ComboBoxContentType _contentType;
+		private readonly ActionType _actionType;
+		private readonly EntityType _entityType;
 
 		private string _currentPesel;
 		private TimetableDataSet.StudentsRow _currentStudentRow;
@@ -48,13 +48,13 @@ namespace Timetable.Windows.Management
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>ManagePersonWindow</c>.
 		/// </summary>
-		public ManagePersonWindow(MainWindow mainWindow, ExpanderControlType controlType)
+		public ManagePersonWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
 			_callingWindow = mainWindow;
-			_controlType = controlType;
-			_contentType = _callingWindow.GetCurrentContentType();
+			_actionType = actionType;
+			_entityType = _callingWindow.GetCurrentEntityType();
 		}
 
 		#endregion
@@ -124,9 +124,9 @@ namespace Timetable.Windows.Management
 
 		private void FillComboBoxes()
 		{
-			switch (_contentType)
+			switch (_entityType)
 			{
-				case ComboBoxContentType.Students:
+				case EntityType.Students:
 					labelClass.Visibility = Visibility.Visible;
 					comboBoxClass.Visibility = Visibility.Visible;
 
@@ -148,24 +148,24 @@ namespace Timetable.Windows.Management
 		{
 			try
 			{
-				switch (_controlType)
+				switch (_actionType)
 				{
-					case ExpanderControlType.Add:
-						if (_contentType == ComboBoxContentType.Students)
+					case ActionType.Add:
+						if (_entityType == EntityType.Students)
 						{
 							_currentStudentRow = timetableDataSet.Students.NewStudentsRow();
 						}
-						else if (_contentType == ComboBoxContentType.Teachers)
+						else if (_entityType == EntityType.Teachers)
 						{
 							_currentTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
 						}
 						break;
-					case ExpanderControlType.Change:
-						if (_contentType == ComboBoxContentType.Students)
+					case ActionType.Change:
+						if (_entityType == EntityType.Students)
 						{
 							_currentStudentRow = PrepareStudent();
 						}
-						else if (_contentType == ComboBoxContentType.Teachers)
+						else if (_entityType == EntityType.Teachers)
 						{
 							_currentTeacherRow = PrepareTeachert();
 						}
@@ -224,10 +224,10 @@ namespace Timetable.Windows.Management
 
 		private void FillControls()
 		{
-			switch (_controlType)
+			switch (_actionType)
 			{
-				case ExpanderControlType.Change:
-					if (_contentType == ComboBoxContentType.Students)
+				case ActionType.Change:
+					if (_entityType == EntityType.Students)
 					{
 						if (_currentStudentRow == null)
 							return;
@@ -237,7 +237,7 @@ namespace Timetable.Windows.Management
 						textBoxLastName.Text = _currentStudentRow.LastName;
 						comboBoxClass.SelectedValue = _currentStudentRow.ClassId;
 					}
-					else if (_contentType == ComboBoxContentType.Teachers)
+					else if (_entityType == EntityType.Teachers)
 					{
 						if (_currentTeacherRow == null)
 							return;
@@ -273,11 +273,11 @@ namespace Timetable.Windows.Management
 
 			try
 			{
-				if (_contentType == ComboBoxContentType.Students)
+				if (_entityType == EntityType.Students)
 				{
 					SaveStudent(peselString, firstName, lastName);
 				}
-				else if (_contentType == ComboBoxContentType.Teachers)
+				else if (_entityType == EntityType.Teachers)
 				{
 					SaveTeacher(peselString, firstName, lastName);
 				}
@@ -312,7 +312,7 @@ namespace Timetable.Windows.Management
 			_currentStudentRow.LastName = lastName;
 			_currentStudentRow["ClassId"] = comboBoxClass.SelectedValue ?? DBNull.Value;
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				_currentStudentRow.Pesel = new Pesel(peselString).StringRepresentation;
 
@@ -328,7 +328,7 @@ namespace Timetable.Windows.Management
 
 			studentsTableAdapter.Update(timetableDataSet.Students);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.Students);
+			_callingWindow.RefreshViews(EntityType.Students);
 
 			Close();
 		}
@@ -363,7 +363,7 @@ namespace Timetable.Windows.Management
 			_currentTeacherRow.FirstName = firstName;
 			_currentTeacherRow.LastName = lastName;
 
-			if (_controlType == ExpanderControlType.Add)
+			if (_actionType == ActionType.Add)
 			{
 				_currentTeacherRow.Pesel = new Pesel(peselString).StringRepresentation;
 
@@ -377,7 +377,7 @@ namespace Timetable.Windows.Management
 
 			teachersTableAdapter.Update(timetableDataSet.Teachers);
 
-			_callingWindow.RefreshViews(ComboBoxContentType.Teachers);
+			_callingWindow.RefreshViews(EntityType.Teachers);
 
 			Close();
 		}

@@ -27,22 +27,23 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<Border BorderBrush="{x:Null}" Margin="0">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center"><Run Text="Classroom"/><Run Text="s"/></TextBlock>
+					<TextBlock 
+						TextAlignment="Right" VerticalAlignment="Center"><Run Text="Classroom"/><Run Text="s"/></TextBlock>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="1">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Name"/>
+					<TextBlock TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Right" VerticalAlignment="Center" Text="Name"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Row="2" Margin="0">
-					<TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center" Text="Administrator" FontSize="15.5"/>
+					<TextBlock TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Right" VerticalAlignment="Center" Text="Administrator" FontSize="15.5"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Margin="10,0,0,0">
 					<ComboBox x:Name="comboBox" Height="26" Margin="0,34,0,33" MaxWidth="200" HorizontalAlignment="Left" MinWidth="150" Width="184"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
-					<TextBlock x:Name="textBlockName" TextWrapping="Wrap" VerticalAlignment="Center" Text="TextBlock" Margin="0,24,10,24"/>
+					<TextBlock x:Name="textBlockName" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Text="TextBlock" Margin="0,24,10,24"/>
 				</Border>
 				<Border BorderBrush="{x:Null}" Grid.Column="1" Grid.Row="2" Margin="10,0,0,0">
-					<TextBlock x:Name="textBlockAdministrator" TextWrapping="Wrap" VerticalAlignment="Center" Text="TextBlock" Margin="0,24,10,24"/>
+					<TextBlock x:Name="textBlockAdministrator" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Text="TextBlock" Margin="0,24,10,24"/>
 				</Border>
 			</Grid>
 		</GroupBox>

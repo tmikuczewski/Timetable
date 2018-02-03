@@ -1,9 +1,9 @@
 ﻿namespace Timetable.Utilities
 {
 	/// <summary>
-	///     Rodzaj wybranej zakładki oraz zawartości kontrolki <c>Expander</c>.
+	///     Rodzaj wybranej zakładki oraz zawartości kontrolki <c>TabControl</c>.
 	/// </summary>
-	public enum MainTabControlType
+	public enum MainWindowTabType
 	{
 		/// <summary>
 		///     Zakładka 'Zarządzanie'.
@@ -29,12 +29,12 @@
 	/// <summary>
 	///     Rodzaj wybranej encji oraz zawartość kontrolki <c>ComboBox</c>.
 	/// </summary>
-	public enum ComboBoxContentType
+	public enum EntityType
 	{
 		/// <summary>
-		///     Wszystkie encje.
+		///     Brak encji.
 		/// </summary>
-		Entities,
+		None,
 
 		/// <summary>
 		///     Lista studentów.
@@ -73,10 +73,46 @@
 	}
 
 	/// <summary>
+	///     Rodzaj wybranego podglądu planu lekcji oraz zawartość kontrolki <c>CellControl</c>.
+	/// </summary>
+	public enum TimetableType
+	{
+		/// <summary>
+		///     Brak podglądu.
+		/// </summary>
+		None,
+
+		/// <summary>
+		///     Podgląd dla klasy.
+		/// </summary>
+		Class,
+
+		/// <summary>
+		///     Podgląd dla nauczyciela.
+		/// </summary>
+		Teacher,
+
+		/// <summary>
+		///     Podgląda dla sali.
+		/// </summary>
+		Classroom,
+
+		/// <summary>
+		///     Podgląd dla lekcji.
+		/// </summary>
+		Lesson
+	}
+
+	/// <summary>
 	///     Rodzaj wybranej akcji oraz zawartość kontrolki <c>ExpanderControl</c>.
 	/// </summary>
-	public enum ExpanderControlType
+	public enum ActionType
 	{
+		/// <summary>
+		///     Brak akcji.
+		/// </summary>
+		None,
+
 		/// <summary>
 		///     Akcja 'Dodaj'.
 		/// </summary>
@@ -91,6 +127,11 @@
 		///     Akcja 'Usuń'.
 		/// </summary>
 		Remove,
+
+		/// <summary>
+		///     Akcja 'Usuń'.
+		/// </summary>
+		RemoveLessonPlace,
 
 		/// <summary>
 		///     Akcja 'XLS'.

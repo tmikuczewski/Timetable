@@ -52,19 +52,29 @@ namespace Timetable.Windows
 
 		#region Events
 
-		private void comboBoxManagement_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void comboBoxManagementFilterEntityType_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			_callingWindow?.comboBoxManagement_SelectionChanged(sender, e);
+			_callingWindow?.comboBoxManagementFilterEntityType_SelectionChanged(sender, e);
 		}
 
-		private void comboBoxSummary1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void comboBoxPlanningFilterEntityType_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			_callingWindow?.comboBoxSummary1_SelectionChanged(sender, e);
+			_callingWindow?.comboBoxPlanningFilterEntityType_SelectionChanged(sender, e);
 		}
 
-		private void comboBoxSummary2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void comboBoxPlanningFilterEntity_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			_callingWindow?.comboBoxSummary2_SelectionChanged(sender, e);
+			_callingWindow?.comboBoxPlanningFilterEntity_SelectionChanged(sender, e);
+		}
+
+		private void comboBoxSummaryFilterEntityType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			_callingWindow?.comboBoxSummaryFilterEntityType_SelectionChanged(sender, e);
+		}
+
+		private void comboBoxSummaryFilterEntity_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			_callingWindow?.comboBoxSummaryFilterEntity_SelectionChanged(sender, e);
 		}
 
 		#endregion

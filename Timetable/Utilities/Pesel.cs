@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Timetable.Utilities
 {
 	/// <summary>
-	///     Klasa przechowująca walidującac i przechowująca informację o jednym poprawnym kodzie PESEL.
+	///     Klasa walidującaca i przechowująca informację o jednym poprawnym numerze PESEL.
 	/// </summary>
 	public class Pesel
 	{
@@ -136,9 +136,6 @@ namespace Timetable.Utilities
 				if (month.IsBetweenAnd(81, 92)) // ((month >= 81) && (month <= 92))
 					return new DateTime(1800 + year, month - 80, day);
 
-				if (year == 0 && month == 0 & day == 0)
-					return new DateTime(1, 1, 1);
-
 				throw new InvalidPeselException();
 			}
 
@@ -170,7 +167,7 @@ namespace Timetable.Utilities
 		public static Sex GetSex(string pesel)
 		{
 			if (IsValid(pesel))
-				return (Sex) (int.Parse(pesel.Trim().Substring(9, 1)) % 2 == 0 ? 0 : 1);
+				return (Sex) ((int.Parse(pesel.Trim().Substring(9, 1)) % 2 == 0) ? 0 : 1);
 
 			throw new InvalidPeselException();
 		}
@@ -200,7 +197,7 @@ namespace Timetable.Utilities
 				  + 3 * digits[9];
 
 			int sumModulo = sum % 10,
-				calculatedCheckDigit = sumModulo > 0 ? 10 - sumModulo : 0;
+				calculatedCheckDigit = (sumModulo > 0) ? 10 - sumModulo : 0;
 
 			return digits[10] == calculatedCheckDigit;
 		}
