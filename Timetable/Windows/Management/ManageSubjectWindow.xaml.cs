@@ -19,8 +19,8 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private SubjectsTableAdapter subjectsTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private SubjectsTableAdapter _subjectsTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
@@ -102,10 +102,10 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			subjectsTableAdapter = new SubjectsTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_subjectsTableAdapter = new SubjectsTableAdapter();
 
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
 		}
 
 		private void PrepareEntity()
@@ -115,7 +115,7 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentSubjectRow = timetableDataSet.Subjects.NewSubjectsRow();
+						_currentSubjectRow = _timetableDataSet.Subjects.NewSubjectsRow();
 						break;
 					case ActionType.Change:
 						_currentSubjectRow = PrepareSubject();
@@ -141,7 +141,7 @@ namespace Timetable.Windows.Management
 				throw new EntityDoesNotExistException();
 			}
 
-			var subjectRowe = timetableDataSet.Subjects.FindById(_currentSubjectId);
+			var subjectRowe = _timetableDataSet.Subjects.FindById(_currentSubjectId);
 
 			if (subjectRowe == null)
 			{
@@ -197,10 +197,10 @@ namespace Timetable.Windows.Management
 
 			if (_actionType == ActionType.Add)
 			{
-				timetableDataSet.Subjects.Rows.Add(_currentSubjectRow);
+				_timetableDataSet.Subjects.Rows.Add(_currentSubjectRow);
 			}
 
-			subjectsTableAdapter.Update(timetableDataSet.Subjects);
+			_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 
 			_callingWindow.RefreshViews(EntityType.Subjects);
 

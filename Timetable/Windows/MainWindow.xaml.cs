@@ -22,16 +22,16 @@ namespace Timetable.Windows
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private ClassesTableAdapter classesTableAdapter;
-		private ClassroomsTableAdapter classroomsTableAdapter;
-		private DaysTableAdapter daysTableAdapter;
-		private HoursTableAdapter hoursTableAdapter;
-		private LessonsTableAdapter lessonsTableAdapter;
-		private LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
-		private StudentsTableAdapter studentsTableAdapter;
-		private SubjectsTableAdapter subjectsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private ClassesTableAdapter _classesTableAdapter;
+		private ClassroomsTableAdapter _classroomsTableAdapter;
+		private DaysTableAdapter _daysTableAdapter;
+		private HoursTableAdapter _hoursTableAdapter;
+		private LessonsTableAdapter _lessonsTableAdapter;
+		private LessonsPlacesTableAdapter _lessonsPlacesTableAdapter;
+		private StudentsTableAdapter _studentsTableAdapter;
+		private SubjectsTableAdapter _subjectsTableAdapter;
+		private TeachersTableAdapter _teachersTableAdapter;
 
 		private MainWindowTabType _mainWindowTabType;
 
@@ -47,47 +47,47 @@ namespace Timetable.Windows
 
 		#region Properties
 
-		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => timetableDataSet.Days
+		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => _timetableDataSet.Days
 			.OrderBy(d => d.Id);
 
-		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => timetableDataSet.Hours
+		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => _timetableDataSet.Hours
 			.OrderBy(d => d.Id);
 
-		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => timetableDataSet.Students
+		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
 			.OrderBy(s => s.LastName)
 			.ThenBy(s => s.FirstName);
 
 		private IEnumerable<string> StudentsFriendlyNamesEnumerable => StudentsEnumerable.Select(c => c.ToFriendlyString(true));
 
-		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => timetableDataSet.Teachers
+		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => _timetableDataSet.Teachers
 			.OrderBy(s => s.LastName)
 			.ThenBy(s => s.FirstName);
 
 		private IEnumerable<string> TeachersFriendlyNamesEnumerable => TeachersEnumerable.Select(c => c.ToFriendlyString(true));
 
-		private IOrderedEnumerable<TimetableDataSet.ClassesRow> ClassesEnumerable => timetableDataSet.Classes
+		private IOrderedEnumerable<TimetableDataSet.ClassesRow> ClassesEnumerable => _timetableDataSet.Classes
 			.OrderBy(c => c.ToFriendlyString());
 
 		private IEnumerable<string> ClassessFriendlyNamesEnumerable => ClassesEnumerable.Select(c => c.ToFriendlyString());
 
-		private IOrderedEnumerable<TimetableDataSet.ClassroomsRow> ClassroomsEnumerable => timetableDataSet.Classrooms
+		private IOrderedEnumerable<TimetableDataSet.ClassroomsRow> ClassroomsEnumerable => _timetableDataSet.Classrooms
 			.OrderBy(cr => cr.Name);
 
 		private IEnumerable<string> ClassroomsFriendlyNamesEnumerable => ClassroomsEnumerable.Select(cr => cr.Name);
 
 
-		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => timetableDataSet.Subjects
+		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => _timetableDataSet.Subjects
 			.OrderBy(s => s.Name);
 
-		private IOrderedEnumerable<TimetableDataSet.LessonsRow> LessonsEnumerable => timetableDataSet.Lessons
+		private IOrderedEnumerable<TimetableDataSet.LessonsRow> LessonsEnumerable => _timetableDataSet.Lessons
 			.OrderBy(l => l.SubjectsRow.Name)
 			.ThenBy(l => l.ClassesRow.ToFriendlyString());
 
-		private IOrderedEnumerable<TimetableDataSet.LessonsPlacesRow> LessonsPlacesEnumerable => timetableDataSet.LessonsPlaces
+		private IOrderedEnumerable<TimetableDataSet.LessonsPlacesRow> LessonsPlacesEnumerable => _timetableDataSet.LessonsPlaces
 			.OrderBy(lp => lp.DayId)
 			.ThenBy(lp => lp.HourId);
 
-		private IEnumerable<int> LessonsDistinctIdsEnumerable => timetableDataSet.LessonsPlaces
+		private IEnumerable<int> LessonsDistinctIdsEnumerable => _timetableDataSet.LessonsPlaces
 			.Select(lp => lp.LessonId).Distinct();
 
 		#endregion
@@ -509,26 +509,26 @@ namespace Timetable.Windows
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			classesTableAdapter = new ClassesTableAdapter();
-			classroomsTableAdapter = new ClassroomsTableAdapter();
-			daysTableAdapter = new DaysTableAdapter();
-			hoursTableAdapter = new HoursTableAdapter();
-			lessonsTableAdapter = new LessonsTableAdapter();
-			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			studentsTableAdapter = new StudentsTableAdapter();
-			subjectsTableAdapter = new SubjectsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_classroomsTableAdapter = new ClassroomsTableAdapter();
+			_daysTableAdapter = new DaysTableAdapter();
+			_hoursTableAdapter = new HoursTableAdapter();
+			_lessonsTableAdapter = new LessonsTableAdapter();
+			_lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			_studentsTableAdapter = new StudentsTableAdapter();
+			_subjectsTableAdapter = new SubjectsTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
-			daysTableAdapter.Fill(timetableDataSet.Days);
-			hoursTableAdapter.Fill(timetableDataSet.Hours);
-			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-			studentsTableAdapter.Fill(timetableDataSet.Students);
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+			_daysTableAdapter.Fill(_timetableDataSet.Days);
+			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
+			_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+			_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+			_studentsTableAdapter.Fill(_timetableDataSet.Students);
+			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 		}
 
 		private void RefreshDatabaseObjects(EntityType changedDataEntityType)
@@ -536,25 +536,25 @@ namespace Timetable.Windows
 			switch (changedDataEntityType)
 			{
 				case EntityType.Students:
-					studentsTableAdapter.Fill(timetableDataSet.Students);
+					_studentsTableAdapter.Fill(_timetableDataSet.Students);
 					break;
 				case EntityType.Teachers:
-					teachersTableAdapter.Fill(timetableDataSet.Teachers);
+					_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 					break;
 				case EntityType.Classes:
-					classesTableAdapter.Fill(timetableDataSet.Classes);
+					_classesTableAdapter.Fill(_timetableDataSet.Classes);
 					break;
 				case EntityType.Classrooms:
-					classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+					_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
 					break;
 				case EntityType.Subjects:
-					subjectsTableAdapter.Fill(timetableDataSet.Subjects);
+					_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
 					break;
 				case EntityType.Lessons:
-					lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+					_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
 					break;
 				case EntityType.LessonsPlaces:
-					lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
+					_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
 					break;
 			}
 		}

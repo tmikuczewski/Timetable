@@ -19,11 +19,11 @@ namespace Timetable.Windows.Mapping
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private ClassesTableAdapter classesTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
-		private SubjectsTableAdapter subjectsTableAdapter;
-		private LessonsTableAdapter lessonsTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private ClassesTableAdapter _classesTableAdapter;
+		private TeachersTableAdapter _teachersTableAdapter;
+		private SubjectsTableAdapter _subjectsTableAdapter;
+		private LessonsTableAdapter _lessonsTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
@@ -109,31 +109,31 @@ namespace Timetable.Windows.Mapping
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			classesTableAdapter = new ClassesTableAdapter();
-			subjectsTableAdapter = new SubjectsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
-			lessonsTableAdapter = new LessonsTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_subjectsTableAdapter = new SubjectsTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
+			_lessonsTableAdapter = new LessonsTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
-			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
+			_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
 		}
 
 		private void FillComboBoxes()
 		{
-			comboBoxTeachers.ItemsSource = timetableDataSet.Teachers
+			comboBoxTeachers.ItemsSource = _timetableDataSet.Teachers
 				.OrderBy(t => t.LastName)
 				.ThenBy(t => t.FirstName);
 			comboBoxTeachers.SelectedValuePath = "Pesel";
 
-			comboBoxClasses.ItemsSource = timetableDataSet.Classes
+			comboBoxClasses.ItemsSource = _timetableDataSet.Classes
 				.OrderBy(c => c.Year)
 				.ThenBy(c => c.CodeName);
 			comboBoxClasses.SelectedValuePath = "Id";
 
-			comboBoxSubjects.ItemsSource = timetableDataSet.Subjects
+			comboBoxSubjects.ItemsSource = _timetableDataSet.Subjects
 				.OrderBy(s => s.Name);
 			comboBoxSubjects.SelectedValuePath = "Id";
 		}
@@ -145,7 +145,7 @@ namespace Timetable.Windows.Mapping
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentLessonRow = timetableDataSet.Lessons.NewLessonsRow();
+						_currentLessonRow = _timetableDataSet.Lessons.NewLessonsRow();
 						break;
 					case ActionType.Change:
 						_currentLessonRow = PrepareLesson();
@@ -171,7 +171,7 @@ namespace Timetable.Windows.Mapping
 				throw new EntityDoesNotExistException();
 			}
 
-			var lessonsRow = timetableDataSet.Lessons.FindById(_currentLessonId);
+			var lessonsRow = _timetableDataSet.Lessons.FindById(_currentLessonId);
 
 			if (lessonsRow == null)
 			{
@@ -240,10 +240,10 @@ namespace Timetable.Windows.Mapping
 
 			if (_actionType == ActionType.Add)
 			{
-				timetableDataSet.Lessons.Rows.Add(_currentLessonRow);
+				_timetableDataSet.Lessons.Rows.Add(_currentLessonRow);
 			}
 
-			lessonsTableAdapter.Update(timetableDataSet.Lessons);
+			_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 
 			_callingWindow.RefreshViews(EntityType.Lessons);
 

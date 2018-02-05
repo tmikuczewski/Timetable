@@ -29,19 +29,20 @@ namespace Timetable.Controls
 
 		#region Fields
 
-		private static TimetableDataSet timetableDataSet;
-		private static DaysTableAdapter daysTableAdapter;
-		private static HoursTableAdapter hoursTableAdapter;
-		private static StudentsTableAdapter studentsTableAdapter;
-		private static TeachersTableAdapter teachersTableAdapter;
-		private static ClassesTableAdapter classesTableAdapter;
-		private static ClassroomsTableAdapter classroomsTableAdapter;
-		private static SubjectsTableAdapter subjectsTableAdapter;
-		private static LessonsTableAdapter lessonsTableAdapter;
-		private static LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
+		private static TimetableDataSet _timetableDataSet;
+		private static ClassesTableAdapter _classesTableAdapter;
+		private static ClassroomsTableAdapter _classroomsTableAdapter;
+		private static DaysTableAdapter _daysTableAdapter;
+		private static HoursTableAdapter _hoursTableAdapter;
+		private static LessonsPlacesTableAdapter _lessonsPlacesTableAdapter;
+		private static LessonsTableAdapter _lessonsTableAdapter;
+		private static StudentsTableAdapter _studentsTableAdapter;
+		private static SubjectsTableAdapter _subjectsTableAdapter;
+		private static TeachersTableAdapter _teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly Export _exportEngine;
+		private static bool _exportEngineWorking;
 
 		#endregion
 
@@ -215,16 +216,16 @@ namespace Timetable.Controls
 
 		private static void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			daysTableAdapter = new DaysTableAdapter();
-			hoursTableAdapter = new HoursTableAdapter();
-			studentsTableAdapter = new StudentsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
-			classesTableAdapter = new ClassesTableAdapter();
-			classroomsTableAdapter = new ClassroomsTableAdapter();
-			subjectsTableAdapter = new SubjectsTableAdapter();
-			lessonsTableAdapter = new LessonsTableAdapter();
-			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_classroomsTableAdapter = new ClassroomsTableAdapter();
+			_daysTableAdapter = new DaysTableAdapter();
+			_hoursTableAdapter = new HoursTableAdapter();
+			_lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			_lessonsTableAdapter = new LessonsTableAdapter();
+			_studentsTableAdapter = new StudentsTableAdapter();
+			_subjectsTableAdapter = new SubjectsTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
 		}
 
 		private bool AreAnyEntitiesMarked()
@@ -307,11 +308,11 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked students?") != MessageBoxResult.Yes)
 					return;
 
-				studentsTableAdapter.Fill(timetableDataSet.Students);
+				_studentsTableAdapter.Fill(_timetableDataSet.Students);
 
 				foreach (var pesel in _callingWindow.GetPeselsOfMarkedPeople())
 				{
-					var studentRow = timetableDataSet.Students.FindByPesel(pesel);
+					var studentRow = _timetableDataSet.Students.FindByPesel(pesel);
 
 					if (studentRow == null)
 						continue;
@@ -320,7 +321,7 @@ namespace Timetable.Controls
 
 					SetOdbcDeleteStudentCommand(pesel);
 
-					studentsTableAdapter.Update(timetableDataSet.Students);
+					_studentsTableAdapter.Update(_timetableDataSet.Students);
 				}
 
 				_callingWindow.RefreshViews(EntityType.Students);
@@ -343,7 +344,7 @@ namespace Timetable.Controls
 
 			cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
 
-			studentsTableAdapter.Adapter.DeleteCommand = cmd;
+			_studentsTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveTeachers()
@@ -353,20 +354,20 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked teachers?") != MessageBoxResult.Yes)
 					return;
 
-				teachersTableAdapter.Fill(timetableDataSet.Teachers);
-				classesTableAdapter.Fill(timetableDataSet.Classes);
-				classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
-				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+				_classesTableAdapter.Fill(_timetableDataSet.Classes);
+				_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+				_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+				_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+				_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 
 				foreach (var pesel in _callingWindow.GetPeselsOfMarkedPeople())
 				{
-					var teacherRow = timetableDataSet.Teachers.FindByPesel(pesel);
+					var teacherRow = _timetableDataSet.Teachers.FindByPesel(pesel);
 
 					if (teacherRow == null)
 						continue;
 
-					var classes = timetableDataSet.Classes
+					var classes = _timetableDataSet.Classes
 						.Where(c => c.TutorPesel == pesel)
 						.OrderBy(c => c.ToFriendlyString())
 						.ToList();
@@ -378,7 +379,7 @@ namespace Timetable.Controls
 						continue;
 					}
 
-					var classrooms = timetableDataSet.Classrooms
+					var classrooms = _timetableDataSet.Classrooms
 						.Where(cr => cr.AdministratorPesel == pesel)
 						.OrderBy(cr => cr.Name)
 						.ToList();
@@ -390,7 +391,7 @@ namespace Timetable.Controls
 						continue;
 					}
 
-					var lessons = timetableDataSet.Lessons
+					var lessons = _timetableDataSet.Lessons
 						.Where(l => l.TeacherPesel == pesel)
 						.OrderBy(l => l.SubjectsRow.Name)
 						.ThenBy(l => l.ClassesRow.ToFriendlyString())
@@ -405,7 +406,7 @@ namespace Timetable.Controls
 
 					teacherRow.Delete();
 
-					teachersTableAdapter.Update(timetableDataSet.Teachers);
+					_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 				}
 
 				_callingWindow.RefreshViews(EntityType.Teachers);
@@ -423,9 +424,9 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked classes?") != MessageBoxResult.Yes)
 					return;
 
-				classesTableAdapter.Fill(timetableDataSet.Classes);
-				studentsTableAdapter.Fill(timetableDataSet.Students);
-				teachersTableAdapter.Fill(timetableDataSet.Teachers);
+				_classesTableAdapter.Fill(_timetableDataSet.Classes);
+				_studentsTableAdapter.Fill(_timetableDataSet.Students);
+				_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedClasses())
 				{
@@ -434,12 +435,12 @@ namespace Timetable.Controls
 					if (!int.TryParse(id, out classId))
 						continue;
 
-					var classRow = timetableDataSet.Classes.FindById(classId);
+					var classRow = _timetableDataSet.Classes.FindById(classId);
 
 					if (classRow == null)
 						continue;
 
-					var students = timetableDataSet.Students
+					var students = _timetableDataSet.Students
 						.Where(s => s.ClassId == classId)
 						.ToList();
 
@@ -450,7 +451,7 @@ namespace Timetable.Controls
 						continue;
 					}
 
-					var tutor = timetableDataSet.Teachers.FindByPesel(classRow.TutorPesel);
+					var tutor = _timetableDataSet.Teachers.FindByPesel(classRow.TutorPesel);
 
 					if (tutor != null)
 					{
@@ -463,7 +464,7 @@ namespace Timetable.Controls
 
 					SetOdbcDeleteClassCommand(classId);
 
-					classesTableAdapter.Update(timetableDataSet.Classes);
+					_classesTableAdapter.Update(_timetableDataSet.Classes);
 				}
 
 				_callingWindow.RefreshViews(EntityType.Classes);
@@ -486,7 +487,7 @@ namespace Timetable.Controls
 
 			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
-			classesTableAdapter.Adapter.DeleteCommand = cmd;
+			_classesTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveSubjects()
@@ -496,8 +497,8 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked subjects?") != MessageBoxResult.Yes)
 					return;
 
-				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
+				_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+				_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedSubjects())
 				{
@@ -506,12 +507,12 @@ namespace Timetable.Controls
 					if (!int.TryParse(id, out subjectId))
 						continue;
 
-					var subjectRow = timetableDataSet.Subjects.FindById(subjectId);
+					var subjectRow = _timetableDataSet.Subjects.FindById(subjectId);
 
 					if (subjectRow == null)
 						continue;
 
-					var lessons = timetableDataSet.Lessons
+					var lessons = _timetableDataSet.Lessons
 						.Where(l => l.SubjectId == subjectId)
 						.ToList();
 
@@ -524,7 +525,7 @@ namespace Timetable.Controls
 
 					subjectRow.Delete();
 
-					subjectsTableAdapter.Update(timetableDataSet.Subjects);
+					_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 				}
 
 				_callingWindow.RefreshViews(EntityType.Subjects);
@@ -542,11 +543,11 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked lessons?") != MessageBoxResult.Yes)
 					return;
 
-				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-				lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-				teachersTableAdapter.Fill(timetableDataSet.Teachers);
-				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-				classesTableAdapter.Fill(timetableDataSet.Classes);
+				_classesTableAdapter.Fill(_timetableDataSet.Classes);
+				_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+				_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+				_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+				_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 
 				foreach (var id in _callingWindow.GetIdNumbersOfMarkedLessons())
 				{
@@ -555,12 +556,12 @@ namespace Timetable.Controls
 					if (!int.TryParse(id, out lessonId))
 						continue;
 
-					var lessonRow = timetableDataSet.Lessons.FindById(lessonId);
+					var lessonRow = _timetableDataSet.Lessons.FindById(lessonId);
 
 					if (lessonRow == null)
 						continue;
 
-					var lessonsPlaces = timetableDataSet.LessonsPlaces
+					var lessonsPlaces = _timetableDataSet.LessonsPlaces
 						.Where(lp => lp.LessonId == lessonId)
 						.ToList();
 
@@ -576,7 +577,7 @@ namespace Timetable.Controls
 
 					lessonRow.Delete();
 
-					lessonsTableAdapter.Update(timetableDataSet.Lessons);
+					_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 				}
 
 				_callingWindow.RefreshViews(EntityType.Lessons);
@@ -594,21 +595,21 @@ namespace Timetable.Controls
 				if (ShowConfirmationMessageBox("Are you sure you want to remove marked lessons?") != MessageBoxResult.Yes)
 					return;
 
-				lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-				lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-				teachersTableAdapter.Fill(timetableDataSet.Teachers);
-				subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-				classesTableAdapter.Fill(timetableDataSet.Classes);
-				classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
-				daysTableAdapter.Fill(timetableDataSet.Days);
-				hoursTableAdapter.Fill(timetableDataSet.Hours);
+				_classesTableAdapter.Fill(_timetableDataSet.Classes);
+				_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+				_daysTableAdapter.Fill(_timetableDataSet.Days);
+				_hoursTableAdapter.Fill(_timetableDataSet.Hours);
+				_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+				_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+				_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+				_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 
 				foreach (var cellViewModel in _callingWindow.GetCollectionOfMarkedLessonsPlaces())
 				{
 					if (cellViewModel.LessonId == null || cellViewModel.ClassroomId == null)
 						continue;
 
-					var lessonPlaceRow = timetableDataSet.LessonsPlaces
+					var lessonPlaceRow = _timetableDataSet.LessonsPlaces
 						.FindByLessonIdClassroomIdDayIdHourId(
 						(int) cellViewModel.LessonId,
 						(int) cellViewModel.ClassroomId,
@@ -620,7 +621,7 @@ namespace Timetable.Controls
 
 					lessonPlaceRow.Delete();
 
-					lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
+					_lessonsPlacesTableAdapter.Update(_timetableDataSet.LessonsPlaces);
 				}
 
 				_callingWindow.RefreshViews(EntityType.LessonsPlaces);
@@ -638,9 +639,9 @@ namespace Timetable.Controls
 			if (classId == null)
 				throw new EntityDoesNotExistException("Class does not exists");
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
 
-			var classRow = timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
+			var classRow = _timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
 
 			if (classRow == null)
 				throw new EntityDoesNotExistException("Class with id=" + classId.Value + " does not exists");
@@ -655,9 +656,9 @@ namespace Timetable.Controls
 			if (string.IsNullOrEmpty(teacherPesel))
 				throw new EntityDoesNotExistException("Teacher does not exists");
 
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 
-			var teacherRow = timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
+			var teacherRow = _timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
 
 			if (teacherRow == null)
 				throw new EntityDoesNotExistException("Teacher with PESEL=" + teacherPesel + " does not exists");
@@ -672,9 +673,9 @@ namespace Timetable.Controls
 			if (classroomId == null)
 				throw new EntityDoesNotExistException("Classroom does not exists");
 
-			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
+			_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
 
-			var classroomRow = timetableDataSet.Classrooms.FirstOrDefault(cr => cr.Id == classroomId.Value);
+			var classroomRow = _timetableDataSet.Classrooms.FirstOrDefault(cr => cr.Id == classroomId.Value);
 
 			if (classroomRow == null)
 			{
@@ -686,6 +687,9 @@ namespace Timetable.Controls
 
 		private async void ExportToFile(ExportFileType fileType)
 		{
+			if (_exportEngineWorking)
+				return;
+
 			TimetableDataSet.ClassesRow classRow = null;
 			TimetableDataSet.TeachersRow teacherRow = null;
 			TimetableDataSet.ClassroomsRow classroomRow = null;
@@ -733,6 +737,8 @@ namespace Timetable.Controls
 
 				await Task.Factory.StartNew(() =>
 				{
+					_exportEngineWorking = true;
+
 					switch (entityType)
 					{
 						case EntityType.Classes:
@@ -758,6 +764,8 @@ namespace Timetable.Controls
 		{
 			Dispatcher.Invoke(() =>
 			{
+				_exportEngineWorking = false;
+
 				ShowInformationMessageBox("Timetable exported successfully.");
 			});
 		}

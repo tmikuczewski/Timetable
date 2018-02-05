@@ -22,7 +22,7 @@ namespace Timetable.Controls
 		/// </summary>
 		public const int HEIGHT = 80;
 
-		private static readonly int PIXELS_PER_LETTER = 7;
+		private const int PIXELS_PER_LETTER = 7;
 
 		#endregion
 
@@ -30,9 +30,9 @@ namespace Timetable.Controls
 		#region Fields
 
 		private readonly string
-			OriginalFirstRow,
-			OriginalSecondRow,
-			OriginalThirdRow;
+			_originalFirstRow,
+			_originalSecondRow,
+			_originalThirdRow;
 
 		private readonly CellViewModel _cellViewModel;
 		private readonly ActionType _actionType;
@@ -107,9 +107,9 @@ namespace Timetable.Controls
 			else
 				Background = new SolidColorBrush(SystemColors.Info.ToMediaColor());
 
-			FirstRow = OriginalFirstRow = string.Empty;
-			SecondRow = OriginalSecondRow = string.Empty;
-			ThirdRow = OriginalThirdRow = string.Empty;
+			FirstRow = _originalFirstRow = string.Empty;
+			SecondRow = _originalSecondRow = string.Empty;
+			ThirdRow = _originalThirdRow = string.Empty;
 		}
 
 		/// <summary>
@@ -123,9 +123,9 @@ namespace Timetable.Controls
 		public CellControl(string firstRow, string secondRow, string thirdRow, MainWindow mainWindow, bool diffColor = false)
 			: this(mainWindow, diffColor)
 		{
-			FirstRow = OriginalFirstRow = firstRow;
-			SecondRow = OriginalSecondRow = secondRow;
-			ThirdRow = OriginalThirdRow = thirdRow;
+			FirstRow = _originalFirstRow = firstRow;
+			SecondRow = _originalSecondRow = secondRow;
+			ThirdRow = _originalThirdRow = thirdRow;
 		}
 
 		/// <summary>
@@ -153,24 +153,24 @@ namespace Timetable.Controls
 			switch (timetableType)
 			{
 				case TimetableType.Class:
-					FirstRow = OriginalFirstRow = subject;
-					SecondRow = OriginalSecondRow = teacher;
-					ThirdRow = OriginalThirdRow = classroom;
+					FirstRow = _originalFirstRow = subject;
+					SecondRow = _originalSecondRow = teacher;
+					ThirdRow = _originalThirdRow = classroom;
 					break;
 				case TimetableType.Teacher:
-					FirstRow = OriginalFirstRow = subject;
-					SecondRow = OriginalSecondRow = className;
-					ThirdRow = OriginalThirdRow = classroom;
+					FirstRow = _originalFirstRow = subject;
+					SecondRow = _originalSecondRow = className;
+					ThirdRow = _originalThirdRow = classroom;
 					break;
 				case TimetableType.Classroom:
-					FirstRow = OriginalFirstRow = subject;
-					SecondRow = OriginalSecondRow = className;
-					ThirdRow = OriginalThirdRow = teacher;
+					FirstRow = _originalFirstRow = subject;
+					SecondRow = _originalSecondRow = className;
+					ThirdRow = _originalThirdRow = teacher;
 					break;
 				case TimetableType.Lesson:
-					FirstRow = OriginalFirstRow = subject;
-					SecondRow = OriginalSecondRow = className;
-					ThirdRow = OriginalThirdRow = teacher;
+					FirstRow = _originalFirstRow = subject;
+					SecondRow = _originalSecondRow = className;
+					ThirdRow = _originalThirdRow = teacher;
 					break;
 			}
 
@@ -193,34 +193,34 @@ namespace Timetable.Controls
 
 		private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			if (e.NewSize.Width < OriginalFirstRow.Length * PIXELS_PER_LETTER)
+			if (e.NewSize.Width < _originalFirstRow.Length * PIXELS_PER_LETTER)
 			{
 				var a = (int) Math.Floor(e.NewSize.Width / PIXELS_PER_LETTER);
-				textBlockFirstRow.Text = $"{OriginalFirstRow.Substring(0, a - 4)} ...";
+				textBlockFirstRow.Text = $"{_originalFirstRow.Substring(0, a - 4)} ...";
 			}
 			else
 			{
-				textBlockFirstRow.Text = OriginalFirstRow;
+				textBlockFirstRow.Text = _originalFirstRow;
 			}
 
-			if (e.NewSize.Width < OriginalSecondRow.Length * PIXELS_PER_LETTER)
+			if (e.NewSize.Width < _originalSecondRow.Length * PIXELS_PER_LETTER)
 			{
 				var a = (int) Math.Floor(e.NewSize.Width / PIXELS_PER_LETTER);
-				textBlockSecondRow.Text = $"{OriginalSecondRow.Substring(0, a - 4)} ...";
+				textBlockSecondRow.Text = $"{_originalSecondRow.Substring(0, a - 4)} ...";
 			}
 			else
 			{
-				textBlockSecondRow.Text = OriginalSecondRow;
+				textBlockSecondRow.Text = _originalSecondRow;
 			}
 
-			if (e.NewSize.Width < OriginalThirdRow.Length * PIXELS_PER_LETTER)
+			if (e.NewSize.Width < _originalThirdRow.Length * PIXELS_PER_LETTER)
 			{
 				var a = (int) Math.Floor(e.NewSize.Width / PIXELS_PER_LETTER);
-				textBlockThirdRow.Text = $"{OriginalThirdRow.Substring(0, a - 4)} ...";
+				textBlockThirdRow.Text = $"{_originalThirdRow.Substring(0, a - 4)} ...";
 			}
 			else
 			{
-				textBlockThirdRow.Text = OriginalThirdRow;
+				textBlockThirdRow.Text = _originalThirdRow;
 			}
 		}
 

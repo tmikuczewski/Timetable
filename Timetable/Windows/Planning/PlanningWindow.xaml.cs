@@ -20,15 +20,15 @@ namespace Timetable.Windows.Planning
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private ClassesTableAdapter classesTableAdapter;
-		private ClassroomsTableAdapter classroomsTableAdapter;
-		private DaysTableAdapter daysTableAdapter;
-		private HoursTableAdapter hoursTableAdapter;
-		private LessonsTableAdapter lessonsTableAdapter;
-		private LessonsPlacesTableAdapter lessonsPlacesTableAdapter;
-		private SubjectsTableAdapter subjectsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private ClassesTableAdapter _classesTableAdapter;
+		private ClassroomsTableAdapter _classroomsTableAdapter;
+		private DaysTableAdapter _daysTableAdapter;
+		private HoursTableAdapter _hoursTableAdapter;
+		private LessonsTableAdapter _lessonsTableAdapter;
+		private LessonsPlacesTableAdapter _lessonsPlacesTableAdapter;
+		private SubjectsTableAdapter _subjectsTableAdapter;
+		private TeachersTableAdapter _teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
@@ -140,32 +140,32 @@ namespace Timetable.Windows.Planning
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			classesTableAdapter = new ClassesTableAdapter();
-			classroomsTableAdapter = new ClassroomsTableAdapter();
-			daysTableAdapter = new DaysTableAdapter();
-			hoursTableAdapter = new HoursTableAdapter();
-			lessonsTableAdapter = new LessonsTableAdapter();
-			lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
-			subjectsTableAdapter = new SubjectsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_classroomsTableAdapter = new ClassroomsTableAdapter();
+			_daysTableAdapter = new DaysTableAdapter();
+			_hoursTableAdapter = new HoursTableAdapter();
+			_lessonsTableAdapter = new LessonsTableAdapter();
+			_lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
+			_subjectsTableAdapter = new SubjectsTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			classroomsTableAdapter.Fill(timetableDataSet.Classrooms);
-			daysTableAdapter.Fill(timetableDataSet.Days);
-			hoursTableAdapter.Fill(timetableDataSet.Hours);
-			lessonsTableAdapter.Fill(timetableDataSet.Lessons);
-			lessonsPlacesTableAdapter.Fill(timetableDataSet.LessonsPlaces);
-			subjectsTableAdapter.Fill(timetableDataSet.Subjects);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+			_daysTableAdapter.Fill(_timetableDataSet.Days);
+			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
+			_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+			_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 		}
 
 		private void PreparePlannedLessons()
 		{
-			_plannedLessons = from l in timetableDataSet.Lessons
-							  join s in timetableDataSet.Subjects on l.SubjectId equals s.Id into grp
-							  join c in timetableDataSet.Classes on l.ClassId equals c.Id
-							  join t in timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
+			_plannedLessons = from l in _timetableDataSet.Lessons
+							  join s in _timetableDataSet.Subjects on l.SubjectId equals s.Id into grp
+							  join c in _timetableDataSet.Classes on l.ClassId equals c.Id
+							  join t in _timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
 							  orderby l.Id
 							  from s in grp.DefaultIfEmpty()
 							  select new CellViewModel
@@ -191,11 +191,11 @@ namespace Timetable.Windows.Planning
 			switch (_entityType)
 			{
 				case EntityType.Classes:
-					_classRow = timetableDataSet.Classes.FindById(_classId ?? -1);
+					_classRow = _timetableDataSet.Classes.FindById(_classId ?? -1);
 					_availableLessons = _plannedLessons.Where(l => l.ClassId == _classId);
 					break;
 				case EntityType.Teachers:
-					_teacherRow = timetableDataSet.Teachers.FindByPesel(_teacherPesel);
+					_teacherRow = _timetableDataSet.Teachers.FindByPesel(_teacherPesel);
 					_availableLessons = _plannedLessons.Where(l => l.TeacherPesel == _teacherPesel);
 					break;
 			}
@@ -208,7 +208,7 @@ namespace Timetable.Windows.Planning
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentLessonPlaceRow = timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
+						_currentLessonPlaceRow = _timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
 						break;
 					case ActionType.Change:
 						_currentLessonPlaceRow = PrepareLessonPlace();
@@ -229,7 +229,7 @@ namespace Timetable.Windows.Planning
 
 		private TimetableDataSet.LessonsPlacesRow PrepareLessonPlace()
 		{
-			var lessonsPlaceRow = timetableDataSet.LessonsPlaces
+			var lessonsPlaceRow = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
 				.FirstOrDefault(lp => _availableLessons.Select(l => l.Id).Contains(lp.LessonId));
 
@@ -243,8 +243,8 @@ namespace Timetable.Windows.Planning
 
 		private void FillControls()
 		{
-			_dayRow = timetableDataSet.Days.FindById(_dayId);
-			_hourRow = timetableDataSet.Hours.FindById(_hourId);
+			_dayRow = _timetableDataSet.Days.FindById(_dayId);
+			_hourRow = _timetableDataSet.Hours.FindById(_hourId);
 			textBoxDetails.Text = $"{_dayRow.Name}, {_hourRow.Hour}\n";
 
 			switch (_entityType)
@@ -268,7 +268,7 @@ namespace Timetable.Windows.Planning
 
 		private void PrepareUnavailableLessonsPlaces()
 		{
-			_unavailableLessonsPlaces = timetableDataSet.LessonsPlaces
+			_unavailableLessonsPlaces = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
 				.Where(lp => lp.LessonId != _currentLessonPlaceRow?.LessonsRow?.Id);
 		}
@@ -314,7 +314,7 @@ namespace Timetable.Windows.Planning
 
 		private void PrepareAvailableClassrooms()
 		{
-			_availableClassrooms = timetableDataSet.Classrooms
+			_availableClassrooms = _timetableDataSet.Classrooms
 				.Where(cr => !_unavailableLessonsPlaces.Select(lp => lp.ClassroomId).Contains(cr.Id));
 		}
 
@@ -384,10 +384,10 @@ namespace Timetable.Windows.Planning
 			{
 				_currentLessonPlaceRow.DayId = _dayId;
 				_currentLessonPlaceRow.HourId = _hourId;
-				timetableDataSet.LessonsPlaces.Rows.Add(_currentLessonPlaceRow);
+				_timetableDataSet.LessonsPlaces.Rows.Add(_currentLessonPlaceRow);
 			}
 
-			lessonsPlacesTableAdapter.Update(timetableDataSet.LessonsPlaces);
+			_lessonsPlacesTableAdapter.Update(_timetableDataSet.LessonsPlaces);
 
 			_callingWindow.RefreshViews(EntityType.LessonsPlaces);
 

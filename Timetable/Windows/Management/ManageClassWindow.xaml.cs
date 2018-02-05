@@ -21,9 +21,9 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private ClassesTableAdapter classesTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private ClassesTableAdapter _classesTableAdapter;
+		private TeachersTableAdapter _teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
@@ -101,22 +101,22 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			classesTableAdapter = new ClassesTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 		}
 
 		private void FillComboBoxes()
 		{
-			_teachersItemsSource = timetableDataSet.Teachers
+			_teachersItemsSource = _timetableDataSet.Teachers
 				.OrderBy(t => t.LastName)
 				.ThenBy(t => t.FirstName)
 				.ToList();
 
-			var emptyTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
+			var emptyTeacherRow = _timetableDataSet.Teachers.NewTeachersRow();
 			emptyTeacherRow["Pesel"] = DBNull.Value;
 			_teachersItemsSource.Insert(0, emptyTeacherRow);
 
@@ -131,7 +131,7 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentClassRow = timetableDataSet.Classes.NewClassesRow();
+						_currentClassRow = _timetableDataSet.Classes.NewClassesRow();
 						break;
 					case ActionType.Change:
 						_currentClassRow = PrepareClass();
@@ -157,7 +157,7 @@ namespace Timetable.Windows.Management
 				throw new EntityDoesNotExistException();
 			}
 
-			var classRow = timetableDataSet.Classes.FindById(_currentClassId);
+			var classRow = _timetableDataSet.Classes.FindById(_currentClassId);
 
 			if (classRow == null)
 			{
@@ -223,12 +223,12 @@ namespace Timetable.Windows.Management
 
 			if (_actionType == ActionType.Add)
 			{
-				timetableDataSet.Classes.Rows.Add(_currentClassRow);
+				_timetableDataSet.Classes.Rows.Add(_currentClassRow);
 			}
 
 			SetOdbcUpdateClassCommand(_currentClassId, year, codeName);
 
-			classesTableAdapter.Update(timetableDataSet.Classes);
+			_classesTableAdapter.Update(_timetableDataSet.Classes);
 
 			_callingWindow.RefreshViews(EntityType.Classes);
 
@@ -251,7 +251,7 @@ namespace Timetable.Windows.Management
 			cmd.Parameters.Add("tutor", OdbcType.VarChar).Value = comboBoxTutor.SelectedValue ?? DBNull.Value;
 			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
-			classesTableAdapter.Adapter.UpdateCommand = cmd;
+			_classesTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private MessageBoxResult ShowErrorMessageBox(string message)

@@ -21,10 +21,10 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet timetableDataSet;
-		private ClassesTableAdapter classesTableAdapter;
-		private StudentsTableAdapter studentsTableAdapter;
-		private TeachersTableAdapter teachersTableAdapter;
+		private TimetableDataSet _timetableDataSet;
+		private ClassesTableAdapter _classesTableAdapter;
+		private StudentsTableAdapter _studentsTableAdapter;
+		private TeachersTableAdapter _teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
@@ -112,14 +112,14 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			timetableDataSet = new TimetableDataSet();
-			classesTableAdapter = new ClassesTableAdapter();
-			studentsTableAdapter = new StudentsTableAdapter();
-			teachersTableAdapter = new TeachersTableAdapter();
+			_timetableDataSet = new TimetableDataSet();
+			_classesTableAdapter = new ClassesTableAdapter();
+			_studentsTableAdapter = new StudentsTableAdapter();
+			_teachersTableAdapter = new TeachersTableAdapter();
 
-			classesTableAdapter.Fill(timetableDataSet.Classes);
-			studentsTableAdapter.Fill(timetableDataSet.Students);
-			teachersTableAdapter.Fill(timetableDataSet.Teachers);
+			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_studentsTableAdapter.Fill(_timetableDataSet.Students);
+			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 		}
 
 		private void FillComboBoxes()
@@ -130,11 +130,11 @@ namespace Timetable.Windows.Management
 					labelClass.Visibility = Visibility.Visible;
 					comboBoxClass.Visibility = Visibility.Visible;
 
-					_classesItemsSource = timetableDataSet.Classes
+					_classesItemsSource = _timetableDataSet.Classes
 						.OrderBy(c => c.ToFriendlyString())
 						.ToList();
 
-					var emptyClassRow = timetableDataSet.Classes.NewClassesRow();
+					var emptyClassRow = _timetableDataSet.Classes.NewClassesRow();
 					emptyClassRow["Id"] = DBNull.Value;
 					_classesItemsSource.Insert(0, emptyClassRow);
 
@@ -153,11 +153,11 @@ namespace Timetable.Windows.Management
 					case ActionType.Add:
 						if (_entityType == EntityType.Students)
 						{
-							_currentStudentRow = timetableDataSet.Students.NewStudentsRow();
+							_currentStudentRow = _timetableDataSet.Students.NewStudentsRow();
 						}
 						else if (_entityType == EntityType.Teachers)
 						{
-							_currentTeacherRow = timetableDataSet.Teachers.NewTeachersRow();
+							_currentTeacherRow = _timetableDataSet.Teachers.NewTeachersRow();
 						}
 						break;
 					case ActionType.Change:
@@ -193,7 +193,7 @@ namespace Timetable.Windows.Management
 				throw new EntityDoesNotExistException();
 			}
 
-			var studentRow = timetableDataSet.Students.FindByPesel(_currentPesel);
+			var studentRow = _timetableDataSet.Students.FindByPesel(_currentPesel);
 
 			if (studentRow == null)
 			{
@@ -212,7 +212,7 @@ namespace Timetable.Windows.Management
 				throw new EntityDoesNotExistException();
 			}
 
-			var teacherRow = timetableDataSet.Teachers.FindByPesel(_currentPesel);
+			var teacherRow = _timetableDataSet.Teachers.FindByPesel(_currentPesel);
 
 			if (teacherRow == null)
 			{
@@ -316,17 +316,17 @@ namespace Timetable.Windows.Management
 			{
 				_currentStudentRow.Pesel = new Pesel(peselString).StringRepresentation;
 
-				if (timetableDataSet.Students.FindByPesel(_currentStudentRow.Pesel) != null)
+				if (_timetableDataSet.Students.FindByPesel(_currentStudentRow.Pesel) != null)
 				{
 					throw new DuplicateEntityException();
 				}
 
-				timetableDataSet.Students.Rows.Add(_currentStudentRow);
+				_timetableDataSet.Students.Rows.Add(_currentStudentRow);
 			}
 
 			SetOdbcUpdateStudentCommand(peselString, firstName, lastName);
 
-			studentsTableAdapter.Update(timetableDataSet.Students);
+			_studentsTableAdapter.Update(_timetableDataSet.Students);
 
 			_callingWindow.RefreshViews(EntityType.Students);
 
@@ -349,7 +349,7 @@ namespace Timetable.Windows.Management
 			cmd.Parameters.Add("class", OdbcType.Int).Value = comboBoxClass.SelectedValue ?? DBNull.Value;
 			cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
 
-			studentsTableAdapter.Adapter.UpdateCommand = cmd;
+			_studentsTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private void SaveTeacher(string peselString, string firstName, string lastName)
@@ -367,15 +367,15 @@ namespace Timetable.Windows.Management
 			{
 				_currentTeacherRow.Pesel = new Pesel(peselString).StringRepresentation;
 
-				if (timetableDataSet.Teachers.FindByPesel(_currentTeacherRow.Pesel) != null)
+				if (_timetableDataSet.Teachers.FindByPesel(_currentTeacherRow.Pesel) != null)
 				{
 					throw new DuplicateEntityException();
 				}
 
-				timetableDataSet.Teachers.Rows.Add(_currentTeacherRow);
+				_timetableDataSet.Teachers.Rows.Add(_currentTeacherRow);
 			}
 
-			teachersTableAdapter.Update(timetableDataSet.Teachers);
+			_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 
 			_callingWindow.RefreshViews(EntityType.Teachers);
 
