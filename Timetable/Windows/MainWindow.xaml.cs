@@ -791,7 +791,6 @@ namespace Timetable.Windows
 				case EntityType.Classroom:
 				case EntityType.Hour:
 				case EntityType.Lesson:
-				case EntityType.LessonsPlace:
 				case EntityType.Subject:
 				case EntityType.Teacher:
 					if (_mainWindowTabType != MainWindowTabType.Planning)
@@ -802,6 +801,18 @@ namespace Timetable.Windows
 					if (_mainWindowTabType != MainWindowTabType.Summary)
 					{
 						RefreshSummaryTabView(true);
+
+					}
+					break;
+				case EntityType.LessonsPlace:
+					if (_mainWindowTabType != MainWindowTabType.Planning)
+					{
+						RefreshPlanningEntityView();
+
+					}
+					if (_mainWindowTabType != MainWindowTabType.Summary)
+					{
+						RefreshSummaryEntityView();
 
 					}
 					break;
@@ -822,7 +833,11 @@ namespace Timetable.Windows
 		{
 			if (forceRefresh)
 			{
-				FillFilterComboBoxesForView(MainWindowTabType.Planning);
+				if (_mainWindowTabType != MainWindowTabType.Planning)
+				{
+					FillFilterComboBoxesForView(MainWindowTabType.Planning);
+				}
+
 				RefreshPlanningEntityView();
 			}
 		}
@@ -836,7 +851,11 @@ namespace Timetable.Windows
 		{
 			if (forceRefresh)
 			{
-				FillFilterComboBoxesForView(MainWindowTabType.Summary);
+				if (_mainWindowTabType != MainWindowTabType.Summary)
+				{
+					FillFilterComboBoxesForView(MainWindowTabType.Summary);
+				}
+
 				RefreshSummaryEntityView();
 			}
 		}
