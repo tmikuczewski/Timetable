@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Planning
@@ -20,7 +20,7 @@ namespace Timetable.Windows.Planning
 
 		#region Fields
 
-		private TimetableDataSet _timetableDataSet;
+		private TimetableDataSetMySql _timetableDataSet;
 		private ClassesTableAdapter _classesTableAdapter;
 		private ClassroomsTableAdapter _classroomsTableAdapter;
 		private DaysTableAdapter _daysTableAdapter;
@@ -40,16 +40,16 @@ namespace Timetable.Windows.Planning
 		private readonly int _hourId;
 		private int _currentLessonId;
 		private int _currentClassroomId;
-		private TimetableDataSet.LessonsPlacesRow _currentLessonsPlaceRow;
-		private TimetableDataSet.TeachersRow _teacherRow;
-		private TimetableDataSet.ClassesRow _classRow;
-		private TimetableDataSet.DaysRow _dayRow;
-		private TimetableDataSet.HoursRow _hourRow;
+		private TimetableDataSetMySql.LessonsPlacesRow _currentLessonsPlaceRow;
+		private TimetableDataSetMySql.TeachersRow _teacherRow;
+		private TimetableDataSetMySql.ClassesRow _classRow;
+		private TimetableDataSetMySql.DaysRow _dayRow;
+		private TimetableDataSetMySql.HoursRow _hourRow;
 
 		private IEnumerable<CellViewModel> _plannedLessons;
 		private IEnumerable<CellViewModel> _availableLessons;
-		private IEnumerable<TimetableDataSet.LessonsPlacesRow> _unavailableLessonsPlaces;
-		private IEnumerable<TimetableDataSet.ClassroomsRow> _availableClassrooms;
+		private IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> _unavailableLessonsPlaces;
+		private IEnumerable<TimetableDataSetMySql.ClassroomsRow> _availableClassrooms;
 
 		#endregion
 
@@ -140,7 +140,7 @@ namespace Timetable.Windows.Planning
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_classroomsTableAdapter = new ClassroomsTableAdapter();
 			_daysTableAdapter = new DaysTableAdapter();
@@ -227,7 +227,7 @@ namespace Timetable.Windows.Planning
 			}
 		}
 
-		private TimetableDataSet.LessonsPlacesRow PrepareLessonsPlace()
+		private TimetableDataSetMySql.LessonsPlacesRow PrepareLessonsPlace()
 		{
 			var lessonsPlaceRow = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)

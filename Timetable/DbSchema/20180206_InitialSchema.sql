@@ -124,7 +124,7 @@ ALTER SEQUENCE classrooms_id_seq OWNED BY classrooms.id;
 CREATE TABLE days (
     id integer NOT NULL,
     name text NOT NULL,
-    number integer DEFAULT 0 NOT NULL
+    number integer NOT NULL
 );
 
 
@@ -161,9 +161,9 @@ ALTER SEQUENCE days_id_seq OWNED BY days.id;
 
 CREATE TABLE hours (
     id integer NOT NULL,
-    begin time without time zone NOT NULL,
-    "end" time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
-    number integer DEFAULT 0 NOT NULL
+    "begin" time without time zone NOT NULL,
+    "end" time without time zone NOT NULL,
+    number integer NOT NULL
 );
 
 

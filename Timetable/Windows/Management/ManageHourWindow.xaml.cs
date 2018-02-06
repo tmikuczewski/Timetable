@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -19,14 +19,14 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet _timetableDataSet;
+		private TimetableDataSetMySql _timetableDataSet;
 		private HoursTableAdapter _hoursTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
 		private int _currentHourId;
-		private TimetableDataSet.HoursRow _currentHourRow;
+		private TimetableDataSetMySql.HoursRow _currentHourRow;
 
 		#endregion
 
@@ -102,7 +102,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 			_hoursTableAdapter = new HoursTableAdapter();
 
 			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
@@ -134,7 +134,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.HoursRow PrepareHour()
+		private TimetableDataSetMySql.HoursRow PrepareHour()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedHours().FirstOrDefault(), out _currentHourId))
 			{

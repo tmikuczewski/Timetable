@@ -1,11 +1,11 @@
-INSERT INTO days ("number", "name") VALUES 
+INSERT INTO `days` (`number`, `name`) VALUES 
 	(1, 'Poniedziałek'), 
 	(2, 'Wtorek'), 
 	(3, 'Środa'), 
 	(4, 'Czwartek'), 
 	(5, 'Piątek');
 
-INSERT INTO hours ("number", "begin", "end") VALUES 
+INSERT INTO `hours` (`number`, `begin`, `end`) VALUES 
 	(0, '07:30:00', '08:15:00'), 
 	(1, '08:30:00', '09:15:00'), 
 	(2, '09:30:00', '10:15:00'), 
@@ -15,7 +15,7 @@ INSERT INTO hours ("number", "begin", "end") VALUES
 	(6, '13:45:00', '14:30:00'), 
 	(7, '14:45:00', '15:30:00');
 
-INSERT INTO teachers ("pesel", "first_name", "last_name") VALUES 
+INSERT INTO `teachers` (`pesel`, `first_name`, `last_name`) VALUES 
 	('87070574060', 'Małgorzata', 'Sobczak'), 
 	('76072375427', 'Cecylia', 'Czarnecka'), 
 	('73061183812', 'Klimek', 'Wysocki'), 
@@ -117,14 +117,14 @@ INSERT INTO teachers ("pesel", "first_name", "last_name") VALUES
 	('55122644575', 'Świętosław', 'Nowak'), 
 	('81032333966', 'Tekla', 'Adamczyk');
 
-INSERT INTO classes ("year", "code_name", "tutor") VALUES 
+INSERT INTO `classes` (`year`, `code_name`, `tutor`) VALUES 
 	(1, 'A', '74050302443'), 
 	(1, 'B', '72021163839'), 
 	(2, 'A', '72010191942'), 
 	(2, 'B', '66102319994'), 
 	(3, NULL, '50111313661');
 
-INSERT INTO classrooms ("name", "administrator") VALUES 
+INSERT INTO `classrooms` (`name`, `administrator`) VALUES 
 	('009', '56062947065'), 
 	('010', '76112551879'), 
 	('110', '50111313661'), 
@@ -171,7 +171,7 @@ INSERT INTO classrooms ("name", "administrator") VALUES
 	('Aula C', '62050737831'), 
 	('404', '87091031504');
 
-INSERT INTO students ("pesel", "first_name", "last_name", "class") VALUES 
+INSERT INTO `students` (`pesel`, `first_name`, `last_name`, `class`) VALUES 
 	('00210100660', 'Róża', 'Adamska', 1), 
 	('00210108385', 'Agnieszka', 'Sobczak', 1), 
 	('00210116362', 'Matylda', 'Duda', 1), 
@@ -298,7 +298,7 @@ INSERT INTO students ("pesel", "first_name", "last_name", "class") VALUES
 	('97010527665', 'Kornelia', 'Walczak', 5), 
 	('97010543452', 'Franciszek', 'Gorski', 5);
 
-INSERT INTO subjects ("name") VALUES 
+INSERT INTO `subjects` (`name`) VALUES 
 	('Język polski'), 
 	('Język angielski'), 
 	('Język francuski'), 
@@ -320,7 +320,7 @@ INSERT INTO subjects ("name") VALUES
 	('Religia'), 
 	('Etyka');
 
-INSERT INTO lessons ("teacher", "subject", "class") VALUES 
+INSERT INTO `lessons` (`teacher`, `subject`, `class`) VALUES 
 	('87070574060', 1, 5), 
 	('72010191942', 2, 5), 
 	('83073107438', 3, 5), 
@@ -337,7 +337,7 @@ INSERT INTO lessons ("teacher", "subject", "class") VALUES
 	('56062947065', 18, 5), 
 	('79090588200', 20, 5);
 
-INSERT INTO lessons_places ("lesson", "classroom", "day", "hour") VALUES 
+INSERT INTO `lessons_places` (`lesson`, `classroom`, `day`, `hour`) VALUES 
 	(2, 6, 1, 1), 
 	(2, 6, 2, 4), 
 	(2, 6, 2, 5), 

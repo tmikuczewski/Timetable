@@ -49,7 +49,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.HourControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="hourRow">Obiekt typu <c>TimetableDataSet.HourControl</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public HourControl(TimetableDataSet.HoursRow hourRow)
+		public HourControl(TimetableDataSetMySql.HoursRow hourRow)
 		{
 			InitializeComponent();
 

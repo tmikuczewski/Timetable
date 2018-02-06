@@ -76,7 +76,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="studentRow">Obiekt typu <c>TimetableDataSet.StudentsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public PersonControl(TimetableDataSet.StudentsRow studentRow)
+		public PersonControl(TimetableDataSetMySql.StudentsRow studentRow)
 			: this(studentRow.Pesel, studentRow.FirstName, studentRow.LastName)
 		{
 			textBlockClass.Text = (studentRow.ClassesRow != null)
@@ -88,7 +88,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.PersonControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="teacherRow">Obiekt typu <c>TimetableDataSet.TeachersRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public PersonControl(TimetableDataSet.TeachersRow teacherRow)
+		public PersonControl(TimetableDataSetMySql.TeachersRow teacherRow)
 			: this(teacherRow.Pesel, teacherRow.FirstName, teacherRow.LastName)
 		{
 			textBlockClass.Text = (teacherRow.GetClassesRows().Any())

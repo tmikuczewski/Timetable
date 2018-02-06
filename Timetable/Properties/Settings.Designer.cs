@@ -32,5 +32,15 @@ namespace Timetable.Properties {
                 return ((string)(this["ConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("server=localhost;user id=root;database=timetable")]
+        public string ConnectionStringMySql {
+            get {
+                return ((string)(this["ConnectionStringMySql"]));
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -21,7 +21,7 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet _timetableDataSet;
+		private TimetableDataSetMySql _timetableDataSet;
 		private ClassesTableAdapter _classesTableAdapter;
 		private StudentsTableAdapter _studentsTableAdapter;
 		private TeachersTableAdapter _teachersTableAdapter;
@@ -31,9 +31,9 @@ namespace Timetable.Windows.Management
 		private readonly EntityType _entityType;
 
 		private string _currentPesel;
-		private TimetableDataSet.StudentsRow _currentStudentRow;
-		private TimetableDataSet.TeachersRow _currentTeacherRow;
-		private IList<TimetableDataSet.ClassesRow> _classesItemsSource;
+		private TimetableDataSetMySql.StudentsRow _currentStudentRow;
+		private TimetableDataSetMySql.TeachersRow _currentTeacherRow;
+		private IList<TimetableDataSetMySql.ClassesRow> _classesItemsSource;
 
 		#endregion
 
@@ -112,7 +112,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_studentsTableAdapter = new StudentsTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
@@ -184,7 +184,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.StudentsRow PrepareStudent()
+		private TimetableDataSetMySql.StudentsRow PrepareStudent()
 		{
 			_currentPesel = _callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
 
@@ -203,7 +203,7 @@ namespace Timetable.Windows.Management
 			return studentRow;
 		}
 
-		private TimetableDataSet.TeachersRow PrepareTeachert()
+		private TimetableDataSetMySql.TeachersRow PrepareTeachert()
 		{
 			_currentPesel = _callingWindow.GetPeselsOfMarkedPeople().FirstOrDefault();
 
@@ -324,7 +324,7 @@ namespace Timetable.Windows.Management
 				_timetableDataSet.Students.Rows.Add(_currentStudentRow);
 			}
 
-			SetOdbcUpdateStudentCommand(peselString, firstName, lastName);
+			//SetOdbcUpdateStudentCommand(peselString, firstName, lastName);
 
 			_studentsTableAdapter.Update(_timetableDataSet.Students);
 
@@ -335,21 +335,21 @@ namespace Timetable.Windows.Management
 
 		private void SetOdbcUpdateStudentCommand(string pesel, string firstName, string lastName)
 		{
-			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
 
-			OdbcCommand cmd = conn.CreateCommand();
+			//OdbcCommand cmd = conn.CreateCommand();
 
-			cmd.CommandText = "UPDATE students " +
-			                  "SET first_name = ?, last_name = ?, class = ? " +
-			                  "WHERE pesel = ?";
+			//cmd.CommandText = "UPDATE students " +
+			//                  "SET first_name = ?, last_name = ?, class = ? " +
+			//                  "WHERE pesel = ?";
 
-			cmd.Parameters.Add("first_name", OdbcType.Text).Value = firstName;
-			cmd.Parameters.Add("last_name", OdbcType.Text).Value = lastName;
-			cmd.Parameters.Add("class", OdbcType.Int).Value = comboBoxClass.SelectedValue ?? DBNull.Value;
-			cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
+			//cmd.Parameters.Add("first_name", OdbcType.Text).Value = firstName;
+			//cmd.Parameters.Add("last_name", OdbcType.Text).Value = lastName;
+			//cmd.Parameters.Add("class", OdbcType.Int).Value = comboBoxClass.SelectedValue ?? DBNull.Value;
+			//cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
 
-			_studentsTableAdapter.Adapter.UpdateCommand = cmd;
+			//_studentsTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private void SaveTeacher(string peselString, string firstName, string lastName)

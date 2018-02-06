@@ -4,7 +4,7 @@ using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -21,7 +21,7 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet _timetableDataSet;
+		private TimetableDataSetMySql _timetableDataSet;
 		private ClassesTableAdapter _classesTableAdapter;
 		private TeachersTableAdapter _teachersTableAdapter;
 
@@ -29,8 +29,8 @@ namespace Timetable.Windows.Management
 		private readonly ActionType _actionType;
 
 		private int _currentClassId;
-		private TimetableDataSet.ClassesRow _currentClassRow;
-		private IList<TimetableDataSet.TeachersRow> _teachersItemsSource;
+		private TimetableDataSetMySql.ClassesRow _currentClassRow;
+		private IList<TimetableDataSetMySql.TeachersRow> _teachersItemsSource;
 
 		#endregion
 
@@ -107,7 +107,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
 
@@ -156,7 +156,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.ClassesRow PrepareClass()
+		private TimetableDataSetMySql.ClassesRow PrepareClass()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedClasses().FirstOrDefault(), out _currentClassId))
 			{
@@ -232,7 +232,7 @@ namespace Timetable.Windows.Management
 				_timetableDataSet.Classes.Rows.Add(_currentClassRow);
 			}
 
-			SetOdbcUpdateClassCommand(_currentClassId, year, codeName);
+			//SetOdbcUpdateClassCommand(_currentClassId, year, codeName);
 
 			_classesTableAdapter.Update(_timetableDataSet.Classes);
 
@@ -243,21 +243,21 @@ namespace Timetable.Windows.Management
 
 		private void SetOdbcUpdateClassCommand(int id, int year, string codeName)
 		{
-			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
 
-			OdbcCommand cmd = conn.CreateCommand();
+			//OdbcCommand cmd = conn.CreateCommand();
 
-			cmd.CommandText = "UPDATE classes " +
-							  "SET year = ?, code_name = ?, tutor = ? " +
-							  "WHERE id = ?";
+			//cmd.CommandText = "UPDATE classes " +
+			//				  "SET year = ?, code_name = ?, tutor = ? " +
+			//				  "WHERE id = ?";
 
-			cmd.Parameters.Add("year", OdbcType.Int).Value = year;
-			cmd.Parameters.Add("code_name", OdbcType.Text).Value = codeName;
-			cmd.Parameters.Add("tutor", OdbcType.VarChar).Value = comboBoxTutor.SelectedValue ?? DBNull.Value;
-			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
+			//cmd.Parameters.Add("year", OdbcType.Int).Value = year;
+			//cmd.Parameters.Add("code_name", OdbcType.Text).Value = codeName;
+			//cmd.Parameters.Add("tutor", OdbcType.VarChar).Value = comboBoxTutor.SelectedValue ?? DBNull.Value;
+			//cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
-			_classesTableAdapter.Adapter.UpdateCommand = cmd;
+			//_classesTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private MessageBoxResult ShowErrorMessageBox(string message)

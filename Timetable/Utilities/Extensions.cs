@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using static Timetable.TimetableDataSet;
+using static Timetable.TimetableDataSetMySql;
 
 namespace Timetable.Utilities
 {

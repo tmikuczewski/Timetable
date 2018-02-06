@@ -49,7 +49,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.ClassroomControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="classroomRow">Obiekt typu <c>TimetableDataSet.ClassroomsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public ClassroomControl(TimetableDataSet.ClassroomsRow classroomRow)
+		public ClassroomControl(TimetableDataSetMySql.ClassroomsRow classroomRow)
 		{
 			InitializeComponent();
 

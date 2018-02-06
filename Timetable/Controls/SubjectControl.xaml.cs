@@ -47,7 +47,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.SubjectControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="subjectRow">Obiekt typu <c>TimetableDataSet.SubjectsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public SubjectControl(TimetableDataSet.SubjectsRow subjectRow)
+		public SubjectControl(TimetableDataSetMySql.SubjectsRow subjectRow)
 		{
 			InitializeComponent();
 

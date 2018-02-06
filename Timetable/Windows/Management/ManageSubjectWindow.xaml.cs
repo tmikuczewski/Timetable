@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -19,14 +19,14 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSet _timetableDataSet;
+		private TimetableDataSetMySql _timetableDataSet;
 		private SubjectsTableAdapter _subjectsTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
 		private int _currentSubjectId;
-		private TimetableDataSet.SubjectsRow _currentSubjectRow;
+		private TimetableDataSetMySql.SubjectsRow _currentSubjectRow;
 
 		#endregion
 
@@ -102,7 +102,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 			_subjectsTableAdapter = new SubjectsTableAdapter();
 
 			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
@@ -134,7 +134,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.SubjectsRow PrepareSubject()
+		private TimetableDataSetMySql.SubjectsRow PrepareSubject()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault(), out _currentSubjectId))
 			{

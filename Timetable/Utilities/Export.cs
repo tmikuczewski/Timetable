@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
-using Timetable.TimetableDataSetTableAdapters;
+using Timetable.TimetableDataSetMySqlTableAdapters;
 
 namespace Timetable.Utilities
 {
@@ -21,7 +21,7 @@ namespace Timetable.Utilities
 
 		#region Fields
 
-		private static TimetableDataSet _timetableDataSet;
+		private static TimetableDataSetMySql _timetableDataSet;
 		private static ClassesTableAdapter _classesTableAdapter;
 		private static ClassroomsTableAdapter _classroomsTableAdapter;
 		private static DaysTableAdapter _daysTableAdapter;
@@ -41,11 +41,11 @@ namespace Timetable.Utilities
 
 		#region Properties
 
-		private IList<TimetableDataSet.DaysRow> DaysList => _timetableDataSet.Days
+		private IList<TimetableDataSetMySql.DaysRow> DaysList => _timetableDataSet.Days
 			.OrderBy(d => d.Number)
 			.ToList();
 
-		private IList<TimetableDataSet.HoursRow> HoursList => _timetableDataSet.Hours
+		private IList<TimetableDataSetMySql.HoursRow> HoursList => _timetableDataSet.Hours
 			.OrderBy(d => d.Number)
 			.ToList();
 
@@ -93,7 +93,7 @@ namespace Timetable.Utilities
 		/// <param name="classRow">Obiekt klasy.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForClass(TimetableDataSetMySql.ClassesRow classRow, string filePath, ExportFileType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -112,7 +112,7 @@ namespace Timetable.Utilities
 		/// <param name="teacherRow">Obiekt nauczyciela.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForTeacher(TimetableDataSetMySql.TeachersRow teacherRow, string filePath, ExportFileType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -131,7 +131,7 @@ namespace Timetable.Utilities
 		/// <param name="classroomRow">Obiekt sali.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForClassroom(TimetableDataSetMySql.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -151,7 +151,7 @@ namespace Timetable.Utilities
 
 		private static void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSet();
+			_timetableDataSet = new TimetableDataSetMySql();
 
 			_classesTableAdapter = new ClassesTableAdapter();
 			_classroomsTableAdapter = new ClassroomsTableAdapter();
@@ -265,9 +265,9 @@ namespace Timetable.Utilities
 			range.VerticalAlignment = XlVAlign.xlVAlignCenter;
 		}
 
-		private void WriteTimetableForClass(TimetableDataSet.ClassesRow classRow)
+		private void WriteTimetableForClass(TimetableDataSetMySql.ClassesRow classRow)
 		{
-			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+			IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.LessonsRow.ClassId == classRow.Id);
 
 			foreach (var lessonsPlace in lessonsPlaces)
@@ -283,9 +283,9 @@ namespace Timetable.Utilities
 			}
 		}
 
-		private void WriteTimetableForTeacher(TimetableDataSet.TeachersRow teacherRow)
+		private void WriteTimetableForTeacher(TimetableDataSetMySql.TeachersRow teacherRow)
 		{
-			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+			IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.LessonsRow.TeacherPesel == teacherRow.Pesel);
 
 			foreach (var lessonsPlace in lessonsPlaces)
@@ -302,9 +302,9 @@ namespace Timetable.Utilities
 		}
 
 
-		private void WriteTimetableForClassroom(TimetableDataSet.ClassroomsRow classroomRow)
+		private void WriteTimetableForClassroom(TimetableDataSetMySql.ClassroomsRow classroomRow)
 		{
-			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+			IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.ClassroomId == classroomRow.Id);
 
 			foreach (var lessonsPlace in lessonsPlaces)

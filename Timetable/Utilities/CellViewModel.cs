@@ -146,7 +146,7 @@ namespace Timetable.Utilities
 		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="lessonsPlaceRow"></param>
-		public CellViewModel(TimetableDataSet.LessonsPlacesRow lessonsPlaceRow)
+		public CellViewModel(TimetableDataSetMySql.LessonsPlacesRow lessonsPlaceRow)
 		{
 			if (lessonsPlaceRow == null)
 				return;

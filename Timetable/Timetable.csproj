@@ -40,10 +40,14 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -98,6 +102,9 @@
     <Compile Include="Controls\DayControl.xaml.cs">
       <DependentUpon>DayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExpanderControl.xaml.cs">
+      <DependentUpon>ExpanderControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HourControl.xaml.cs">
       <DependentUpon>HourControl.xaml</DependentUpon>
     </Compile>
@@ -118,8 +125,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ExpanderControl.xaml.cs">
-      <DependentUpon>ExpanderControl.xaml</DependentUpon>
+    <Compile Include="TimetableDataSetMySql.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
     </Compile>
     <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Enums.cs" />
@@ -303,15 +312,28 @@
     </None>
     <None Include="TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-      <LastGenOutput>TimetableDataSet1.Designer.cs</LastGenOutput>
     </None>
     <None Include="TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
+    <None Include="TimetableDataSetMySql.xsc">
+      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
+    </None>
+    <None Include="TimetableDataSetMySql.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TimetableDataSetMySql.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="TimetableDataSetMySql.xss">
+      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plus.png" />

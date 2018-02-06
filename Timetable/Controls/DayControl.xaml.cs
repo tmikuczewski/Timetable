@@ -49,7 +49,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.DayControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="dayRow">Obiekt typu <c>TimetableDataSet.DaysRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public DayControl(TimetableDataSet.DaysRow dayRow)
+		public DayControl(TimetableDataSetMySql.DaysRow dayRow)
 		{
 			InitializeComponent();
 

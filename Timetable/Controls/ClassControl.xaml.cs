@@ -50,7 +50,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.ClassControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="classRow">Obiekt typu <c>TimetableDataSet.ClassesRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public ClassControl(TimetableDataSet.ClassesRow classRow)
+		public ClassControl(TimetableDataSetMySql.ClassesRow classRow)
 		{
 			InitializeComponent();
 
