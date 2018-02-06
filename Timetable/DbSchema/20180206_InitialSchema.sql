@@ -2,13 +2,14 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.1
--- Dumped by pg_dump version 9.5.1
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
--- Started on 2016-03-15 20:32:58
+-- Started on 2018-02-06 20:20:14
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -16,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 1 (class 3079 OID 12355)
+-- TOC entry 1 (class 3079 OID 12924)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
@@ -24,7 +25,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2199 (class 0 OID 0)
+-- TOC entry 2882 (class 0 OID 0)
 -- Dependencies: 1
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
@@ -39,7 +40,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 189 (class 1259 OID 24823)
+-- TOC entry 196 (class 1259 OID 16394)
 -- Name: classes; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -47,14 +48,14 @@ CREATE TABLE classes (
     id integer NOT NULL,
     year integer NOT NULL,
     code_name text,
-    tutor character varying(11) NOT NULL
+    tutor character varying(11)
 );
 
 
 ALTER TABLE classes OWNER TO postgres;
 
 --
--- TOC entry 188 (class 1259 OID 24821)
+-- TOC entry 197 (class 1259 OID 16400)
 -- Name: classes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -69,8 +70,8 @@ CREATE SEQUENCE classes_id_seq
 ALTER TABLE classes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2200 (class 0 OID 0)
--- Dependencies: 188
+-- TOC entry 2883 (class 0 OID 0)
+-- Dependencies: 197
 -- Name: classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -78,21 +79,21 @@ ALTER SEQUENCE classes_id_seq OWNED BY classes.id;
 
 
 --
--- TOC entry 183 (class 1259 OID 16699)
+-- TOC entry 198 (class 1259 OID 16402)
 -- Name: classrooms; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE classrooms (
     id integer NOT NULL,
     name text NOT NULL,
-    administrator character varying(11) NOT NULL
+    administrator character varying(11)
 );
 
 
 ALTER TABLE classrooms OWNER TO postgres;
 
 --
--- TOC entry 182 (class 1259 OID 16697)
+-- TOC entry 199 (class 1259 OID 16408)
 -- Name: classrooms_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -107,8 +108,8 @@ CREATE SEQUENCE classrooms_id_seq
 ALTER TABLE classrooms_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2201 (class 0 OID 0)
--- Dependencies: 182
+-- TOC entry 2884 (class 0 OID 0)
+-- Dependencies: 199
 -- Name: classrooms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -116,20 +117,21 @@ ALTER SEQUENCE classrooms_id_seq OWNED BY classrooms.id;
 
 
 --
--- TOC entry 185 (class 1259 OID 16721)
+-- TOC entry 200 (class 1259 OID 16410)
 -- Name: days; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE days (
     id integer NOT NULL,
-    name text NOT NULL
+    name text NOT NULL,
+    number integer DEFAULT 0 NOT NULL
 );
 
 
 ALTER TABLE days OWNER TO postgres;
 
 --
--- TOC entry 184 (class 1259 OID 16719)
+-- TOC entry 201 (class 1259 OID 16416)
 -- Name: days_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -144,8 +146,8 @@ CREATE SEQUENCE days_id_seq
 ALTER TABLE days_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2202 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2885 (class 0 OID 0)
+-- Dependencies: 201
 -- Name: days_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -153,20 +155,22 @@ ALTER SEQUENCE days_id_seq OWNED BY days.id;
 
 
 --
--- TOC entry 187 (class 1259 OID 16762)
+-- TOC entry 202 (class 1259 OID 16418)
 -- Name: hours; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE hours (
     id integer NOT NULL,
-    hour time without time zone NOT NULL
+    begin time without time zone NOT NULL,
+    "end" time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
+    number integer DEFAULT 0 NOT NULL
 );
 
 
 ALTER TABLE hours OWNER TO postgres;
 
 --
--- TOC entry 186 (class 1259 OID 16760)
+-- TOC entry 203 (class 1259 OID 16421)
 -- Name: hours_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -181,8 +185,8 @@ CREATE SEQUENCE hours_id_seq
 ALTER TABLE hours_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2203 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2886 (class 0 OID 0)
+-- Dependencies: 203
 -- Name: hours_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -190,7 +194,7 @@ ALTER SEQUENCE hours_id_seq OWNED BY hours.id;
 
 
 --
--- TOC entry 194 (class 1259 OID 24971)
+-- TOC entry 204 (class 1259 OID 16423)
 -- Name: lessons; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -205,7 +209,7 @@ CREATE TABLE lessons (
 ALTER TABLE lessons OWNER TO postgres;
 
 --
--- TOC entry 193 (class 1259 OID 24969)
+-- TOC entry 205 (class 1259 OID 16426)
 -- Name: lessons_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -220,8 +224,8 @@ CREATE SEQUENCE lessons_id_seq
 ALTER TABLE lessons_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2204 (class 0 OID 0)
--- Dependencies: 193
+-- TOC entry 2887 (class 0 OID 0)
+-- Dependencies: 205
 -- Name: lessons_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -229,7 +233,7 @@ ALTER SEQUENCE lessons_id_seq OWNED BY lessons.id;
 
 
 --
--- TOC entry 195 (class 1259 OID 25015)
+-- TOC entry 206 (class 1259 OID 16428)
 -- Name: lessons_places; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -244,7 +248,7 @@ CREATE TABLE lessons_places (
 ALTER TABLE lessons_places OWNER TO postgres;
 
 --
--- TOC entry 190 (class 1259 OID 24853)
+-- TOC entry 207 (class 1259 OID 16431)
 -- Name: students; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -252,14 +256,14 @@ CREATE TABLE students (
     pesel character varying(11) NOT NULL,
     first_name text NOT NULL,
     last_name text NOT NULL,
-    class integer NOT NULL
+    class integer
 );
 
 
 ALTER TABLE students OWNER TO postgres;
 
 --
--- TOC entry 192 (class 1259 OID 24906)
+-- TOC entry 208 (class 1259 OID 16437)
 -- Name: subjects; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -272,7 +276,7 @@ CREATE TABLE subjects (
 ALTER TABLE subjects OWNER TO postgres;
 
 --
--- TOC entry 191 (class 1259 OID 24904)
+-- TOC entry 209 (class 1259 OID 16443)
 -- Name: subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -287,8 +291,8 @@ CREATE SEQUENCE subjects_id_seq
 ALTER TABLE subjects_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2205 (class 0 OID 0)
--- Dependencies: 191
+-- TOC entry 2888 (class 0 OID 0)
+-- Dependencies: 209
 -- Name: subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -296,7 +300,7 @@ ALTER SEQUENCE subjects_id_seq OWNED BY subjects.id;
 
 
 --
--- TOC entry 181 (class 1259 OID 16680)
+-- TOC entry 210 (class 1259 OID 16445)
 -- Name: teachers; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -310,200 +314,56 @@ CREATE TABLE teachers (
 ALTER TABLE teachers OWNER TO postgres;
 
 --
--- TOC entry 2032 (class 2604 OID 24826)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2718 (class 2604 OID 16451)
+-- Name: classes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classes ALTER COLUMN id SET DEFAULT nextval('classes_id_seq'::regclass);
 
 
 --
--- TOC entry 2029 (class 2604 OID 16702)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2719 (class 2604 OID 16452)
+-- Name: classrooms id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classrooms ALTER COLUMN id SET DEFAULT nextval('classrooms_id_seq'::regclass);
 
 
 --
--- TOC entry 2030 (class 2604 OID 16724)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2720 (class 2604 OID 16453)
+-- Name: days id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY days ALTER COLUMN id SET DEFAULT nextval('days_id_seq'::regclass);
 
 
 --
--- TOC entry 2031 (class 2604 OID 16765)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2722 (class 2604 OID 16454)
+-- Name: hours id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY hours ALTER COLUMN id SET DEFAULT nextval('hours_id_seq'::regclass);
 
 
 --
--- TOC entry 2034 (class 2604 OID 24974)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2725 (class 2604 OID 16455)
+-- Name: lessons id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons ALTER COLUMN id SET DEFAULT nextval('lessons_id_seq'::regclass);
 
 
 --
--- TOC entry 2033 (class 2604 OID 24909)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 2726 (class 2604 OID 16456)
+-- Name: subjects id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY subjects ALTER COLUMN id SET DEFAULT nextval('subjects_id_seq'::regclass);
 
 
 --
--- TOC entry 2185 (class 0 OID 24823)
--- Dependencies: 189
--- Data for Name: classes; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY classes (id, year, code_name, tutor) FROM stdin;
-\.
-
-
---
--- TOC entry 2206 (class 0 OID 0)
--- Dependencies: 188
--- Name: classes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('classes_id_seq', 1, false);
-
-
---
--- TOC entry 2179 (class 0 OID 16699)
--- Dependencies: 183
--- Data for Name: classrooms; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY classrooms (id, name, administrator) FROM stdin;
-\.
-
-
---
--- TOC entry 2207 (class 0 OID 0)
--- Dependencies: 182
--- Name: classrooms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('classrooms_id_seq', 1, false);
-
-
---
--- TOC entry 2181 (class 0 OID 16721)
--- Dependencies: 185
--- Data for Name: days; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY days (id, name) FROM stdin;
-\.
-
-
---
--- TOC entry 2208 (class 0 OID 0)
--- Dependencies: 184
--- Name: days_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('days_id_seq', 1, false);
-
-
---
--- TOC entry 2183 (class 0 OID 16762)
--- Dependencies: 187
--- Data for Name: hours; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY hours (id, hour) FROM stdin;
-\.
-
-
---
--- TOC entry 2209 (class 0 OID 0)
--- Dependencies: 186
--- Name: hours_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('hours_id_seq', 1, false);
-
-
---
--- TOC entry 2190 (class 0 OID 24971)
--- Dependencies: 194
--- Data for Name: lessons; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY lessons (id, teacher, subject, class) FROM stdin;
-\.
-
-
---
--- TOC entry 2210 (class 0 OID 0)
--- Dependencies: 193
--- Name: lessons_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('lessons_id_seq', 1, false);
-
-
---
--- TOC entry 2191 (class 0 OID 25015)
--- Dependencies: 195
--- Data for Name: lessons_places; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY lessons_places (lesson, classroom, day, hour) FROM stdin;
-\.
-
-
---
--- TOC entry 2186 (class 0 OID 24853)
--- Dependencies: 190
--- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY students (pesel, first_name, last_name, class) FROM stdin;
-\.
-
-
---
--- TOC entry 2188 (class 0 OID 24906)
--- Dependencies: 192
--- Data for Name: subjects; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY subjects (id, name) FROM stdin;
-\.
-
-
---
--- TOC entry 2211 (class 0 OID 0)
--- Dependencies: 191
--- Name: subjects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('subjects_id_seq', 1, false);
-
-
---
--- TOC entry 2177 (class 0 OID 16680)
--- Dependencies: 181
--- Data for Name: teachers; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY teachers (pesel, first_name, last_name) FROM stdin;
-\.
-
-
---
--- TOC entry 2044 (class 2606 OID 24831)
--- Name: classes_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2728 (class 2606 OID 16458)
+-- Name: classes classes_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classes
@@ -511,8 +371,8 @@ ALTER TABLE ONLY classes
 
 
 --
--- TOC entry 2038 (class 2606 OID 16707)
--- Name: classrooms_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2730 (class 2606 OID 16460)
+-- Name: classrooms classrooms_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classrooms
@@ -520,8 +380,8 @@ ALTER TABLE ONLY classrooms
 
 
 --
--- TOC entry 2040 (class 2606 OID 16729)
--- Name: days_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2732 (class 2606 OID 16462)
+-- Name: days days_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY days
@@ -529,8 +389,8 @@ ALTER TABLE ONLY days
 
 
 --
--- TOC entry 2042 (class 2606 OID 16767)
--- Name: hours_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2734 (class 2606 OID 16464)
+-- Name: hours hours_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY hours
@@ -538,8 +398,8 @@ ALTER TABLE ONLY hours
 
 
 --
--- TOC entry 2050 (class 2606 OID 24976)
--- Name: lessons_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2736 (class 2606 OID 16466)
+-- Name: lessons lessons_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons
@@ -547,8 +407,8 @@ ALTER TABLE ONLY lessons
 
 
 --
--- TOC entry 2052 (class 2606 OID 25019)
--- Name: lessons_places_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2738 (class 2606 OID 16468)
+-- Name: lessons_places lessons_places_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons_places
@@ -556,8 +416,8 @@ ALTER TABLE ONLY lessons_places
 
 
 --
--- TOC entry 2046 (class 2606 OID 24860)
--- Name: students_pk_pesel; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2740 (class 2606 OID 16470)
+-- Name: students students_pk_pesel; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY students
@@ -565,8 +425,8 @@ ALTER TABLE ONLY students
 
 
 --
--- TOC entry 2048 (class 2606 OID 24914)
--- Name: subjects_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2742 (class 2606 OID 16472)
+-- Name: subjects subjects_pk_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY subjects
@@ -574,8 +434,8 @@ ALTER TABLE ONLY subjects
 
 
 --
--- TOC entry 2036 (class 2606 OID 16687)
--- Name: teachers_pk_pesel; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2744 (class 2606 OID 16474)
+-- Name: teachers teachers_pk_pesel; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY teachers
@@ -583,8 +443,8 @@ ALTER TABLE ONLY teachers
 
 
 --
--- TOC entry 2054 (class 2606 OID 24832)
--- Name: classes_fk_tutor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2745 (class 2606 OID 16475)
+-- Name: classes classes_fk_tutor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classes
@@ -592,8 +452,8 @@ ALTER TABLE ONLY classes
 
 
 --
--- TOC entry 2053 (class 2606 OID 24884)
--- Name: classrooms_fk_administrator; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2746 (class 2606 OID 16480)
+-- Name: classrooms classrooms_fk_administrator; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY classrooms
@@ -601,8 +461,8 @@ ALTER TABLE ONLY classrooms
 
 
 --
--- TOC entry 2058 (class 2606 OID 24987)
--- Name: lessons_fk_class; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2747 (class 2606 OID 16485)
+-- Name: lessons lessons_fk_class; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons
@@ -610,8 +470,8 @@ ALTER TABLE ONLY lessons
 
 
 --
--- TOC entry 2057 (class 2606 OID 24982)
--- Name: lessons_fk_subject; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2748 (class 2606 OID 16490)
+-- Name: lessons lessons_fk_subject; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons
@@ -619,8 +479,8 @@ ALTER TABLE ONLY lessons
 
 
 --
--- TOC entry 2056 (class 2606 OID 24977)
--- Name: lessons_fk_teacher; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2749 (class 2606 OID 16495)
+-- Name: lessons lessons_fk_teacher; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons
@@ -628,8 +488,8 @@ ALTER TABLE ONLY lessons
 
 
 --
--- TOC entry 2060 (class 2606 OID 25025)
--- Name: lessons_places_fk_classroom; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2750 (class 2606 OID 16500)
+-- Name: lessons_places lessons_places_fk_classroom; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons_places
@@ -637,8 +497,8 @@ ALTER TABLE ONLY lessons_places
 
 
 --
--- TOC entry 2061 (class 2606 OID 25030)
--- Name: lessons_places_fk_day; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2751 (class 2606 OID 16505)
+-- Name: lessons_places lessons_places_fk_day; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons_places
@@ -646,8 +506,8 @@ ALTER TABLE ONLY lessons_places
 
 
 --
--- TOC entry 2062 (class 2606 OID 25035)
--- Name: lessons_places_fk_hour; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2752 (class 2606 OID 16510)
+-- Name: lessons_places lessons_places_fk_hour; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons_places
@@ -655,8 +515,8 @@ ALTER TABLE ONLY lessons_places
 
 
 --
--- TOC entry 2059 (class 2606 OID 25020)
--- Name: lessons_places_fk_lesson; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2753 (class 2606 OID 16515)
+-- Name: lessons_places lessons_places_fk_lesson; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY lessons_places
@@ -664,29 +524,16 @@ ALTER TABLE ONLY lessons_places
 
 
 --
--- TOC entry 2055 (class 2606 OID 24861)
--- Name: students_fk_class; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2754 (class 2606 OID 16520)
+-- Name: students students_fk_class; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY students
     ADD CONSTRAINT students_fk_class FOREIGN KEY (class) REFERENCES classes(id);
 
 
---
--- TOC entry 2198 (class 0 OID 0)
--- Dependencies: 6
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
--- Completed on 2016-03-15 20:32:59
+-- Completed on 2018-02-06 20:20:14
 
 --
 -- PostgreSQL database dump complete
 --
-

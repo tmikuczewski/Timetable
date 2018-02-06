@@ -1,4 +1,21 @@
-INSERT INTO teachers VALUES 
+INSERT INTO days ("number", "name") VALUES 
+	(1, 'Poniedziałek'), 
+	(2, 'Wtorek'), 
+	(3, 'Środa'), 
+	(4, 'Czwartek'), 
+	(5, 'Piątek');
+
+INSERT INTO hours ("number", "begin", "end") VALUES 
+	(0, '07:30:00', '08:15:00'), 
+	(1, '08:30:00', '09:15:00'), 
+	(2, '09:30:00', '10:15:00'), 
+	(3, '10:30:00', '11:15:00'), 
+	(4, '11:45:00', '12:30:00'), 
+	(5, '12:45:00', '13:30:00'), 
+	(6, '13:45:00', '14:30:00'), 
+	(7, '14:45:00', '15:30:00');
+
+INSERT INTO teachers ("pesel", "first_name", "last_name") VALUES 
 	('87070574060', 'Małgorzata', 'Sobczak'), 
 	('76072375427', 'Cecylia', 'Czarnecka'), 
 	('73061183812', 'Klimek', 'Wysocki'), 
@@ -99,7 +116,15 @@ INSERT INTO teachers VALUES
 	('54040257737', 'Gabryjel', 'Sawicki'), 
 	('55122644575', 'Świętosław', 'Nowak'), 
 	('81032333966', 'Tekla', 'Adamczyk');
-INSERT INTO classrooms (name, administrator) VALUES 
+
+INSERT INTO classes ("year", "code_name", "tutor") VALUES 
+	(1, 'A', '74050302443'), 
+	(1, 'B', '72021163839'), 
+	(2, 'A', '72010191942'), 
+	(2, 'B', '66102319994'), 
+	(3, NULL, '50111313661');
+
+INSERT INTO classrooms ("name", "administrator") VALUES 
 	('009', '56062947065'), 
 	('010', '76112551879'), 
 	('110', '50111313661'), 
@@ -145,49 +170,8 @@ INSERT INTO classrooms (name, administrator) VALUES
 	('Aula B', '51050497276'), 
 	('Aula C', '62050737831'), 
 	('404', '87091031504');
-INSERT INTO days (name) VALUES 
-	('Poniedziałek'), 
-	('Wtorek'), 
-	('Środa'), 
-	('Czwartek'), 
-	('Piątek');
-INSERT INTO hours (hour) VALUES 
-	('07:30:00'), 
-	('08:30:00'), 
-	('09:30:00'), 
-	('10:30:00'), 
-	('11:45:00'), 
-	('12:45:00'), 
-	('13:45:00'), 
-	('14:45:00');
-INSERT INTO subjects (name) VALUES 
-	('Język polski'), 
-	('Język angielski'), 
-	('Język francuski'), 
-	('Język hiszpański'), 
-	('Język niemiecki'), 
-	('Matematyka'), 
-	('Informatyka'), 
-	('Fizyka i Astronomia'), 
-	('Chemia'), 
-	('Geografia'), 
-	('Biologia'), 
-	('Technika'), 
-	('Historia'), 
-	('Wiedza o Społeczeństwie'), 
-	('Edukacja Europejska'), 
-	('Podstawy Przedsiębiorczości'), 
-	('Wiedza o Kulturze'), 
-	('Wychowanie Fizyczne'), 
-	('Religia'), 
-	('Etyka');
-INSERT INTO classes (year, code_name, tutor) VALUES 
-	(1, 'A', '74050302443'), 
-	(1, 'B', '72021163839'), 
-	(2, 'A', '72010191942'), 
-	(2, 'B', '66102319994'), 
-	(3, NULL, '50111313661');
-INSERT INTO students VALUES 
+
+INSERT INTO students ("pesel", "first_name", "last_name", "class") VALUES 
 	('00210100660', 'Róża', 'Adamska', 1), 
 	('00210108385', 'Agnieszka', 'Sobczak', 1), 
 	('00210116362', 'Matylda', 'Duda', 1), 
@@ -313,3 +297,68 @@ INSERT INTO students VALUES
 	('97010523807', 'Zoja', 'Nowak', 5), 
 	('97010527665', 'Kornelia', 'Walczak', 5), 
 	('97010543452', 'Franciszek', 'Gorski', 5);
+
+INSERT INTO subjects ("name") VALUES 
+	('Język polski'), 
+	('Język angielski'), 
+	('Język francuski'), 
+	('Język hiszpański'), 
+	('Język niemiecki'), 
+	('Matematyka'), 
+	('Informatyka'), 
+	('Fizyka i Astronomia'), 
+	('Chemia'), 
+	('Geografia'), 
+	('Biologia'), 
+	('Technika'), 
+	('Historia'), 
+	('Wiedza o Społeczeństwie'), 
+	('Edukacja Europejska'), 
+	('Podstawy Przedsiębiorczości'), 
+	('Wiedza o Kulturze'), 
+	('Wychowanie Fizyczne'), 
+	('Religia'), 
+	('Etyka');
+
+INSERT INTO lessons("teacher", "subject", "class") VALUES 
+	('87070574060', 1, 5), 
+	('72010191942', 2, 5), 
+	('83073107438', 3, 5), 
+	('87092051509', 6, 5), 
+	('55041667321', 7, 5), 
+	('57120592348', 8, 5), 
+	('51010468441', 9, 5), 
+	('79122145249', 10, 5), 
+	('83092960001', 11, 5), 
+	('89110913503', 13, 5), 
+	('89110913503', 14, 5), 
+	('59120840681', 15, 5), 
+	('61032129585', 16, 5), 
+	('56062947065', 18, 5), 
+	('79090588200', 20, 5);
+
+INSERT INTO lessons_places("lesson", "classroom", "day", "hour") VALUES 
+	(2, 6, 1, 1), 
+	(2, 6, 2, 4), 
+	(2, 6, 2, 5), 
+	(2, 6, 4, 2), 
+	(2, 6, 4, 3), 
+	(3, 7, 1, 4), 
+	(3, 7, 4, 4), 
+	(4, 22, 5, 2), 
+	(5, 42, 1, 2), 
+	(5, 42, 1, 3), 
+	(5, 42, 3, 2), 
+	(5, 42, 3, 3), 
+	(5, 42, 5, 6), 
+	(6, 1, 5, 4), 
+	(7, 9, 2, 2), 
+	(8, 31, 3, 4), 
+	(9, 14, 3, 5), 
+	(10, 27, 5, 3), 
+	(11, 37, 2, 3), 
+	(12, 37, 4, 1), 
+	(13, 37, 3, 1), 
+	(14, 20, 2, 1), 
+	(15, 2, 1, 5), 
+	(15, 2, 1, 6);

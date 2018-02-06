@@ -89,6 +89,9 @@
     <Compile Include="Controls\CellControl.xaml.cs">
       <DependentUpon>CellControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ClassControl.xaml.cs">
+      <DependentUpon>ClassControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ClassroomControl.xaml.cs">
       <DependentUpon>ClassroomControl.xaml</DependentUpon>
     </Compile>
@@ -104,9 +107,6 @@
     <Compile Include="Controls\SubjectControl.xaml.cs">
       <DependentUpon>SubjectControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ClassControl.xaml.cs">
-      <DependentUpon>ClassControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PersonControl.xaml.cs">
       <DependentUpon>PersonControl.xaml</DependentUpon>
     </Compile>
@@ -118,16 +118,22 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExpanderControl.xaml.cs">
+      <DependentUpon>ExpanderControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Export.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\PercentageConverter.cs" />
     <Compile Include="Utilities\Pesel.cs" />
-    <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Windows\Management\ManageClassroomWindow.xaml.cs">
       <DependentUpon>ManageClassroomWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Management\ManageClassWindow.xaml.cs">
+      <DependentUpon>ManageClassWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Management\ManageDayWindow.xaml.cs">
       <DependentUpon>ManageDayWindow.xaml</DependentUpon>
@@ -135,26 +141,20 @@
     <Compile Include="Windows\Management\ManageHourWindow.xaml.cs">
       <DependentUpon>ManageHourWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Management\ManagePersonWindow.xaml.cs">
+      <DependentUpon>ManagePersonWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Management\ManagementGrid.xaml.cs">
       <DependentUpon>ManagementGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Management\ManageSubjectWindow.xaml.cs">
       <DependentUpon>ManageSubjectWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Management\ManageClassWindow.xaml.cs">
-      <DependentUpon>ManageClassWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Management\ManagePersonWindow.xaml.cs">
-      <DependentUpon>ManagePersonWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\Mapping\MappingGrid.xaml.cs">
       <DependentUpon>MappingGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Mapping\MappingWindow.xaml.cs">
       <DependentUpon>MappingWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\OperationsStackPanel.xaml.cs">
-      <DependentUpon>OperationsStackPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Planning\PlanningGrid.xaml.cs">
       <DependentUpon>PlanningGrid.xaml</DependentUpon>
@@ -165,7 +165,22 @@
     <Compile Include="Windows\Summary\SummaryGrid.xaml.cs">
       <DependentUpon>SummaryGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\OperationsStackPanel.xaml.cs">
+      <DependentUpon>OperationsStackPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Page Include="Controls\CellControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ClassControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -177,6 +192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ExpanderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\HourControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,21 +204,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\SubjectControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\ClassControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ExpanderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\PersonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SubjectControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TermCellControl.xaml">
       <SubType>Designer</SubType>
@@ -209,21 +220,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\MainWindow.xaml">
+    <Page Include="Windows\Management\ManageClassWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ExpanderControl.xaml.cs">
-      <DependentUpon>ExpanderControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Page Include="Windows\Management\ManageDayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -236,27 +236,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\Management\ManageSubjectWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\Management\ManageClassWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Windows\Management\ManagePersonWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Management\ManageSubjectWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Mapping\MappingWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Mapping\MappingGrid.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\OperationsStackPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -269,6 +261,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Summary\SummaryGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\OperationsStackPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -370,11 +370,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DbSchema\2016_04_18_Migration_NullableFields.sql" />
-    <Content Include="DbSchema\2016_04_24_Seed_Lessons_LessonsPlaces.sql" />
-    <Content Include="DbSchema\2018_02_06_Migration_NumberDaysHours.sql" />
-    <Content Include="DbSchema\timetable-schema.sql" />
-    <Content Include="DbSchema\timetable-seed.sql" />
+    <Content Include="DbSchema\20180206_InitialSchema.sql" />
+    <Content Include="DbSchema\20180206_InitialSeed.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
