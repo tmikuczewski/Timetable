@@ -1,14 +1,13 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Timetable.Utilities;
 
 namespace Timetable.Controls
 {
 	/// <summary>
-	///     Interaction logic for DayControl.xaml
+	///     Interaction logic for HourControl.xaml
 	/// </summary>
-	public partial class DayControl : UserControl
+	public partial class HourControl : UserControl
 	{
 		#region Constants and Statics
 
@@ -33,29 +32,31 @@ namespace Timetable.Controls
 		#region Constructors
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>Controls.DayControl</c>.
+		///     Konstruktor tworzący obiekt typu <c>Controls.HourControl</c>.
 		/// </summary>
-		public DayControl()
+		public HourControl()
 		{
 			InitializeComponent();
 
 			checkBox.Visibility = Visibility.Hidden;
 			textBlockId.FontWeight = FontWeights.Bold;
 			textBlockNumber.FontWeight = FontWeights.Bold;
-			textBlockName.FontWeight = FontWeights.Bold;
+			textBlockBegin.FontWeight = FontWeights.Bold;
+			textBlockEnd.FontWeight = FontWeights.Bold;
 		}
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>Controls.DayControl</c> na bazie przesłanych za pomocą parametru danych.
+		///     Konstruktor tworzący obiekt typu <c>Controls.HourControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
-		/// <param name="dayRow">Obiekt typu <c>TimetableDataSet.DaysRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public DayControl(TimetableDataSet.DaysRow dayRow)
+		/// <param name="hourRow">Obiekt typu <c>TimetableDataSet.HourControl</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public HourControl(TimetableDataSet.HoursRow hourRow)
 		{
 			InitializeComponent();
 
-			textBlockId.Text = dayRow.Id.ToString();
-			textBlockNumber.Text = dayRow.Number.ToString();
-			textBlockName.Text = dayRow.Name ?? string.Empty;
+			textBlockId.Text = hourRow.Id.ToString();
+			textBlockNumber.Text = hourRow.Number.ToString();
+			textBlockBegin.Text = hourRow.Begin.ToString(@"hh\:mm");
+			textBlockEnd.Text = hourRow.End.ToString(@"hh\:mm");
 		}
 
 		#endregion
@@ -79,7 +80,7 @@ namespace Timetable.Controls
 		#region Public methods
 
 		/// <summary>
-		///     Sprawdza, czy wybrany dzień jest zaznaczony.
+		///     Sprawdza, czy wybrana godzina jest zaznaczona.
 		/// </summary>
 		/// <returns></returns>
 		public bool IsChecked()
@@ -88,7 +89,7 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer ID dnia w kontrolce.
+		///     Zwraca numer ID godziny w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()

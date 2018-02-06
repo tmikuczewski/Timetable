@@ -181,6 +181,7 @@ namespace Timetable.Controls
 					break;
 				case ActionType.Change:
 					checkBox.Visibility = Visibility.Visible;
+					borderFirstRow.Padding = new Thickness(22, 0, 22, 0);
 					_actionType = actionType;
 					break;
 			}

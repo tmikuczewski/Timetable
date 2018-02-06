@@ -412,6 +412,20 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
+		///     Metoda zwracająca listę numerów ID zaznaczonych godzin.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedHours()
+		{
+			if (_currentEntityType != EntityType.Hour)
+				yield break;
+
+			foreach (HourControl hourControl in gridTabManagement.scrollViewerGrid.Children)
+				if (hourControl.IsChecked())
+					yield return hourControl.GetId();
+		}
+
+		/// <summary>
 		///     Metoda zwracająca listę numerów ID zaznaczonych lekcji.
 		/// </summary>
 		/// <returns></returns>
@@ -635,6 +649,9 @@ namespace Timetable.Windows
 				case 5:
 					entityType = EntityType.Day;
 					break;
+				case 6:
+					entityType = EntityType.Hour;
+					break;
 			}
 
 			return entityType;
@@ -687,7 +704,8 @@ namespace Timetable.Windows
 			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Classroom.ToString());
 			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Subject.ToString());
 			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Day.ToString());
-			stackPanelOperations.comboBoxManagementFilterEntityType.SelectedIndex = 5;
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Hour.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.SelectedIndex = 0;
 
 			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Class.ToString());
 			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Teacher.ToString());
@@ -771,6 +789,7 @@ namespace Timetable.Windows
 				case EntityType.Day:
 				case EntityType.Class:
 				case EntityType.Classroom:
+				case EntityType.Hour:
 				case EntityType.Lesson:
 				case EntityType.LessonsPlace:
 				case EntityType.Subject:
@@ -866,14 +885,17 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Day:
-					AddAllDaysToGrid(grid);
-					break;
 				case EntityType.Class:
 					AddAllClassesToGrid(grid);
 					break;
 				case EntityType.Classroom:
 					AddAllClassroomsToGrid(grid);
+					break;
+				case EntityType.Day:
+					AddAllDaysToGrid(grid);
+					break;
+				case EntityType.Hour:
+					AddAllHoursToGrid(grid);
 					break;
 				case EntityType.Lesson:
 					AddAllLessonsToGrid(grid);
@@ -1050,6 +1072,14 @@ namespace Timetable.Windows
 				AddEntityControlToGrid<DayControl, TimetableDataSet.DaysRow>(grid, dayRow);
 		}
 
+		private void AddAllHoursToGrid(Grid grid)
+		{
+			AddDescriptionControlToGrid<HourControl>(grid);
+
+			foreach (TimetableDataSet.HoursRow hourRow in HoursEnumerable)
+				AddEntityControlToGrid<HourControl, TimetableDataSet.HoursRow>(grid, hourRow);
+		}
+
 		private void AddAllLessonsToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<LessonControl>(grid);
@@ -1222,35 +1252,35 @@ namespace Timetable.Windows
 		{
 			CellControl cellControl = null;
 
+			var dayIndex = DaysEnumerable.ToList().IndexOf(DaysEnumerable.FirstOrDefault(d => d.Id == cell.DayId));
+			var hourIndex = HoursEnumerable.ToList().IndexOf(HoursEnumerable.FirstOrDefault(h => h.Id == cell.HourId));
+
 			switch (entityType)
 			{
 				case EntityType.None:
-					cellControl = new CellControl(this, cell.HourId % 2 != 0);
+					cellControl = new CellControl(this, hourIndex % 2 == 0);
 					break;
 				case EntityType.Class:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Class,
-						this, (cell.HourId % 2 != 0));
+						this, (hourIndex % 2 == 0));
 					break;
 				case EntityType.Teacher:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Teacher,
-						this, (cell.HourId % 2 != 0));
+						this, (hourIndex % 2 == 0));
 					break;
 				case EntityType.Classroom:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Classroom,
-						this, (cell.HourId % 2 != 0));
+						this, (hourIndex % 2 == 0));
 					break;
 			}
 
 			if (cellControl == null)
 				return;
 
-			var dayIndex = DaysEnumerable.ToList().IndexOf(DaysEnumerable.FirstOrDefault(d => d.Id == cell.DayId)) + 1;
-			var hourIndex = HoursEnumerable.ToList().IndexOf(HoursEnumerable.FirstOrDefault(h => h.Id == cell.HourId)) + 1;
-
 			cellControl.BorderThickness = CalculateCellControlBorderThickness(grid, dayIndex, hourIndex);
 
-			Grid.SetColumn(cellControl, dayIndex);
-			Grid.SetRow(cellControl, hourIndex);
+			Grid.SetColumn(cellControl, dayIndex + 1);
+			Grid.SetRow(cellControl, hourIndex + 1);
 
 			grid.Children.Add(cellControl);
 		}
@@ -1258,7 +1288,7 @@ namespace Timetable.Windows
 		private void AppendRemainingLessonToGrid(Grid grid, CellViewModel cell)
 		{
 			var cellControl = new CellControl(cell, ActionType.None, EntityType.Lesson, TimetableType.Lesson,
-				this, (grid.RowDefinitions.Count % 2 != 0));
+				this, (grid.RowDefinitions.Count % 2 == 0));
 			cellControl.Margin = CellControl.SEPARATOR_MARGIN;
 
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(CellControl.HEIGHT) });
@@ -1268,18 +1298,18 @@ namespace Timetable.Windows
 
 		private static Thickness CalculateCellControlBorderThickness(Grid grid, int dayIndex, int hourIndex)
 		{
-			if (dayIndex == grid.ColumnDefinitions.Count - 1
-				&& hourIndex == grid.RowDefinitions.Count - 1)
+			if ((dayIndex + 2) == grid.ColumnDefinitions.Count
+				&& (hourIndex + 2) == grid.RowDefinitions.Count)
 			{
 				return new Thickness(1, 1, 1, 1);
 			}
 
-			if (dayIndex == grid.ColumnDefinitions.Count - 1)
+			if ((dayIndex + 2) == grid.ColumnDefinitions.Count)
 			{
 				return new Thickness(1, 1, 1, 0);
 			}
 
-			if (hourIndex == grid.RowDefinitions.Count - 1)
+			if ((hourIndex + 2) == grid.RowDefinitions.Count)
 			{
 				return new Thickness(1, 1, 0, 1);
 			}

@@ -95,6 +95,9 @@
     <Compile Include="Controls\DayControl.xaml.cs">
       <DependentUpon>DayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HourControl.xaml.cs">
+      <DependentUpon>HourControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LessonControl.xaml.cs">
       <DependentUpon>LessonControl.xaml</DependentUpon>
     </Compile>
@@ -128,6 +131,9 @@
     </Compile>
     <Compile Include="Windows\Management\ManageDayWindow.xaml.cs">
       <DependentUpon>ManageDayWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Management\ManageHourWindow.xaml.cs">
+      <DependentUpon>ManageHourWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Management\ManagementGrid.xaml.cs">
       <DependentUpon>ManagementGrid.xaml</DependentUpon>
@@ -168,6 +174,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DayControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HourControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -215,6 +225,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\Management\ManageDayWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Management\ManageHourWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

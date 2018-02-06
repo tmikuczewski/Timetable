@@ -17,13 +17,13 @@
 				<RowDefinition />
 				<RowDefinition />
 			</Grid.RowDefinitions>
-			<Border BorderBrush="{x:Null}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Border x:Name="borderFirstRow" BorderBrush="{x:Null}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock x:Name="textBlockFirstRow" Text="FirstRow" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
 			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Border x:Name="borderSecondRow" BorderBrush="{x:Null}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock x:Name="textBlockSecondRow" Text="SecondRow" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
 			</Border>
-			<Border BorderBrush="{x:Null}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Border x:Name="borderThirdRow" BorderBrush="{x:Null}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock x:Name="textBlockThirdRow" Text="ThirdRow" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
 			</Border>
 		</Grid>

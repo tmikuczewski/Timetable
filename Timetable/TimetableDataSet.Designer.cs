@@ -5495,7 +5495,8 @@ namespace Timetable.TimetableDataSetTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.Odbc.OdbcParameter("Original_end", global::System.Data.Odbc.OdbcType.Time, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "end", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.InsertCommand = new global::System.Data.Odbc.OdbcCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO \"timetable\".\"public\".\"hours\" (\"begin\", \"end\", \"number\") VALUES (?)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO \"timetable\".\"public\".\"hours\" (\"begin\", \"end\", \"number\") VALUES (?, ?," +
+                " ?)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.Odbc.OdbcParameter("begin", global::System.Data.Odbc.OdbcType.Time, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "begin", global::System.Data.DataRowVersion.Current, false, null));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.Odbc.OdbcParameter("end", global::System.Data.Odbc.OdbcType.Time, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "end", global::System.Data.DataRowVersion.Current, false, null));

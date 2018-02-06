@@ -90,7 +90,7 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer id klasy w kontrolce.
+		///     Zwraca numer ID klasy w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()

@@ -88,7 +88,7 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer id sali w kontrolce.
+		///     Zwraca numer ID sali w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()

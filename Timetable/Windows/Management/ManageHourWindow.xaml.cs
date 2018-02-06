@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,9 +8,9 @@ using Timetable.Utilities;
 namespace Timetable.Windows.Management
 {
 	/// <summary>
-	///     Interaction logic for ManageDayWindow.xaml
+	///     Interaction logic for ManageHourWindow.xaml
 	/// </summary>
-	public partial class ManageDayWindow : Window
+	public partial class ManageHourWindow : Window
 	{
 		#region Constants and Statics
 
@@ -22,13 +20,13 @@ namespace Timetable.Windows.Management
 		#region Fields
 
 		private TimetableDataSet _timetableDataSet;
-		private DaysTableAdapter _daysTableAdapter;
+		private HoursTableAdapter _hoursTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
-		private int _currentDayId;
-		private TimetableDataSet.DaysRow _currentDayRow;
+		private int _currentHourId;
+		private TimetableDataSet.HoursRow _currentHourRow;
 
 		#endregion
 
@@ -41,9 +39,9 @@ namespace Timetable.Windows.Management
 		#region Constructors
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>ManageDayWindow</c>.
+		///     Konstruktor tworzący obiekt typu <c>ManageHourWindow</c>.
 		/// </summary>
-		public ManageDayWindow(MainWindow mainWindow, ActionType actionType)
+		public ManageHourWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
@@ -105,9 +103,9 @@ namespace Timetable.Windows.Management
 		private void InitDatabaseObjects()
 		{
 			_timetableDataSet = new TimetableDataSet();
-			_daysTableAdapter = new DaysTableAdapter();
+			_hoursTableAdapter = new HoursTableAdapter();
 
-			_daysTableAdapter.Fill(_timetableDataSet.Days);
+			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
 		}
 
 		private void PrepareEntity()
@@ -117,16 +115,16 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentDayRow = _timetableDataSet.Days.NewDaysRow();
+						_currentHourRow = _timetableDataSet.Hours.NewHoursRow();
 						break;
 					case ActionType.Change:
-						_currentDayRow = PrepareDay();
+						_currentHourRow = PrepareHour();
 						break;
 				}
 			}
 			catch (EntityDoesNotExistException)
 			{
-				ShowErrorMessageBox("Day with given ID number does not exist.");
+				ShowErrorMessageBox("Hour with given ID number does not exist.");
 				Close();
 			}
 			catch (Exception ex)
@@ -136,21 +134,21 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.DaysRow PrepareDay()
+		private TimetableDataSet.HoursRow PrepareHour()
 		{
-			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedDays().FirstOrDefault(), out _currentDayId))
+			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedHours().FirstOrDefault(), out _currentHourId))
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			var dayRow = _timetableDataSet.Days.FindById(_currentDayId);
+			var hourRow = _timetableDataSet.Hours.FindById(_currentHourId);
 
-			if (dayRow == null)
+			if (hourRow == null)
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			return dayRow;
+			return hourRow;
 		}
 
 		private void FillControls()
@@ -158,12 +156,13 @@ namespace Timetable.Windows.Management
 			switch (_actionType)
 			{
 				case ActionType.Change:
-					if (_currentDayRow == null)
+					if (_currentHourRow == null)
 						return;
 
-					textBoxId.Text = _currentDayRow.Id.ToString();
-					textBoxNumber.Text = _currentDayRow.Number.ToString();
-					textBoxName.Text = _currentDayRow.Name;
+					textBoxId.Text = _currentHourRow.Id.ToString();
+					textBoxNumber.Text = _currentHourRow.Number.ToString();
+					textBoxBegin.Text = _currentHourRow.Begin.ToString(@"hh\:mm");
+					textBoxEnd.Text = _currentHourRow.End.ToString(@"hh\:mm");
 					break;
 			}
 
@@ -174,11 +173,12 @@ namespace Timetable.Windows.Management
 		private void SaveEntity()
 		{
 			var numberString = textBoxNumber.Text.Trim();
-			var name = textBoxName.Text.Trim();
+			var beginString = textBoxBegin.Text.Trim();
+			var endString = textBoxEnd.Text.Trim();
 
 			try
 			{
-				SaveDay(numberString, name);
+				SaveDay(numberString, beginString, endString);
 			}
 			catch (FieldsNotFilledException)
 			{
@@ -186,7 +186,11 @@ namespace Timetable.Windows.Management
 			}
 			catch (FormatException)
 			{
-				ShowWarningMessageBox("Number is invalid.");
+				ShowWarningMessageBox("Some fields are invalid.");
+			}
+			catch (InvalidOperationException)
+			{
+				ShowWarningMessageBox("Begin is not before End.");
 			}
 			catch (Exception ex)
 			{
@@ -194,26 +198,36 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private void SaveDay(string numberString, string name)
+		private void SaveDay(string numberString, string beginString, string endString)
 		{
 			if (string.IsNullOrEmpty(numberString)
-				|| string.IsNullOrEmpty(name))
+				|| string.IsNullOrEmpty(beginString)
+				|| string.IsNullOrEmpty(endString))
 			{
 				throw new FieldsNotFilledException();
 			}
 
 			int number = int.Parse(numberString);
-			_currentDayRow.Number = number;
-			_currentDayRow.Name = name;
+			TimeSpan begin = TimeSpan.Parse(beginString);
+			TimeSpan end = TimeSpan.Parse(endString);
+
+			if (end <= begin)
+			{
+				throw new InvalidOperationException();
+			}
+
+			_currentHourRow.Number = number;
+			_currentHourRow.Begin = begin;
+			_currentHourRow.End = end;
 
 			if (_actionType == ActionType.Add)
 			{
-				_timetableDataSet.Days.Rows.Add(_currentDayRow);
+				_timetableDataSet.Hours.Rows.Add(_currentHourRow);
 			}
 
-			_daysTableAdapter.Update(_timetableDataSet.Days);
+			_hoursTableAdapter.Update(_timetableDataSet.Hours);
 
-			_callingWindow.RefreshViews(EntityType.Day);
+			_callingWindow.RefreshViews(EntityType.Hour);
 
 			Close();
 		}

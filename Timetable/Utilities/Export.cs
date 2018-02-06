@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -39,6 +40,14 @@ namespace Timetable.Utilities
 
 
 		#region Properties
+
+		private IList<TimetableDataSet.DaysRow> DaysList => _timetableDataSet.Days
+			.OrderBy(d => d.Number)
+			.ToList();
+
+		private IList<TimetableDataSet.HoursRow> HoursList => _timetableDataSet.Hours
+			.OrderBy(d => d.Number)
+			.ToList();
 
 		#endregion
 
@@ -90,9 +99,9 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			WriteTimeTableForClass(classRow);
-
 			SetHeader($"Klasa {classRow.ToFriendlyString()}");
+
+			WriteTimetableForClass(classRow);
 
 			Save(filePath, fileType);
 		}
@@ -109,9 +118,9 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			WriteTimeTableForTeacher(teacherRow);
-
 			SetHeader($"{teacherRow.LastName} {teacherRow.FirstName}");
+
+			WriteTimetableForTeacher(teacherRow);
 
 			Save(filePath, fileType);
 		}
@@ -128,9 +137,9 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			WriteTimeTableForClassroom(classroomRow);
-
 			SetHeader($"Sala {classroomRow.Name}");
+
+			WriteTimetableForClassroom(classroomRow);
 
 			Save(filePath, fileType);
 		}
@@ -152,15 +161,14 @@ namespace Timetable.Utilities
 			_lessonsPlacesTableAdapter = new LessonsPlacesTableAdapter();
 			_subjectsTableAdapter = new SubjectsTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
-
-			_daysTableAdapter.Fill(_timetableDataSet.Days);
-			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
 		}
 
 		private static void RefreshDatabaseObjects()
 		{
 			_classesTableAdapter.Fill(_timetableDataSet.Classes);
 			_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+			_daysTableAdapter.Fill(_timetableDataSet.Days);
+			_hoursTableAdapter.Fill(_timetableDataSet.Hours);
 			_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
 			_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
 			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
@@ -186,140 +194,144 @@ namespace Timetable.Utilities
 		{
 			Range range;
 
-			var dayId = 1;
+			var dayIndex = 0;
 
 			try
 			{
-				for (dayId = 1; dayId <= _timetableDataSet.Days.Count; dayId++)
+				for (dayIndex = 0; dayIndex < DaysList.Count; dayIndex++)
 				{
-					range = _xlWorkSheet.Cells[3, 1 + dayId];
-					_xlWorkSheet.Cells[3, 1 + dayId] = _timetableDataSet.Days.FirstOrDefault(d => d.Id == dayId)?.Name;
-					range.BorderAround(XlLineStyle.xlContinuous);
-					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
-				}
-			}
-			catch (Exception)
-			{
-				throw new EntityDoesNotExistException("Day with id=" + dayId + " does not exist.");
-			}
-
-			var hourId = 1;
-
-			try
-			{
-				for (hourId = 1; hourId <= _timetableDataSet.Hours.Count; hourId++)
-				{
-					range = _xlWorkSheet.Range["A" + (1 + hourId * 3), "A" + (1 + hourId * 3 + 2)];
+					range = _xlWorkSheet.Range["" + (char) ('B' + dayIndex) + "4", "" + (char) ('B' + dayIndex) + "6"];
 					range.Merge();
-					var beginHour = _timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.Begin;
-					var endHour = _timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.End;
-					_xlWorkSheet.Cells[1 + hourId * 3, 1] = beginHour.Value.ToString(@"hh\:mm") + " - " +
-					                                        endHour.Value.ToString(@"hh\:mm");
+					_xlWorkSheet.Cells[4, 2 + dayIndex] = DaysList.ElementAt(dayIndex).Name;
+					range.BorderAround(XlLineStyle.xlContinuous);
 					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
-					range.BorderAround(XlLineStyle.xlContinuous);
 				}
 			}
 			catch (Exception)
 			{
-				throw new EntityDoesNotExistException("Hour with id=" + hourId + " does not exist.");
+				throw new EntityDoesNotExistException("Day with ID = " + DaysList.ElementAt(dayIndex).Id + " does not exist.");
 			}
 
-			range = _xlWorkSheet.Range["B4", "F27"];
-			range.BorderAround(XlLineStyle.xlContinuous);
+			var hourIndex = 0;
+
+			try
+			{
+				for (hourIndex = 0; hourIndex < HoursList.Count; hourIndex++)
+				{
+					range = _xlWorkSheet.Range["A" + (4 + (1 + hourIndex) * 3), "A" + (4 + (1 + hourIndex) * 3 + 2)];
+					range.Merge();
+					var beginHour = HoursList.ElementAt(hourIndex).Begin;
+					var endHour = HoursList.ElementAt(hourIndex).End;
+					_xlWorkSheet.Cells[4 + (1 + hourIndex) * 3, 1] =
+						beginHour.ToString(@"hh\:mm") + " – " + endHour.ToString(@"hh\:mm");
+					range.BorderAround(XlLineStyle.xlContinuous);
+					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+				}
+			}
+			catch (Exception)
+			{
+				throw new EntityDoesNotExistException("Hour with ID = " + HoursList.ElementAt(hourIndex).Id + " does not exist.");
+			}
+
+			try
+			{
+				for (dayIndex = 0; dayIndex < DaysList.Count; dayIndex++)
+				{
+					for (hourIndex = 0; hourIndex < HoursList.Count; hourIndex++)
+					{
+						range = _xlWorkSheet.Range["" + (char) ('B' + dayIndex) + (7 + hourIndex * 3),
+							"" + (char) ('B' + dayIndex) + (7 + hourIndex * 3 + 2)];
+						range.BorderAround(XlLineStyle.xlContinuous);
+						range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+						range.VerticalAlignment = XlVAlign.xlVAlignCenter;
+					}
+				}
+			}
+			catch (Exception)
+			{
+				throw new EntityDoesNotExistException();
+			}
 		}
 
 		private void SetHeader(string header)
 		{
 			_xlWorkSheet.Cells[1, 1] = header;
-			var range = _xlWorkSheet.Range["A1", "F2"];
+			var range = _xlWorkSheet.Range["A1", (char) ('A' + DaysList.Count) + "3"];
 			range.Merge();
+			range.Font.Size = range.Font.Size + 6;
 			range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 			range.VerticalAlignment = XlVAlign.xlVAlignCenter;
-			range.Font.Size = range.Font.Size + 5;
 		}
 
-		private void WriteTimeTableForClass(TimetableDataSet.ClassesRow classRow)
+		private void WriteTimetableForClass(TimetableDataSet.ClassesRow classRow)
 		{
-			for (var day = 0; day < _timetableDataSet.Days.Count; day++)
+			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+				.Where(lp => lp.LessonsRow.ClassId == classRow.Id);
+
+			foreach (var lessonsPlace in lessonsPlaces)
 			{
-				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
-				{
-					var lessonsPlace = _timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.ClassId == classRow.Id);
+				var dayIndex = DaysList.IndexOf(DaysList.FirstOrDefault(d => d.Id == lessonsPlace.DayId));
+				var hourIndex = HoursList.IndexOf(HoursList.FirstOrDefault(h => h.Id == lessonsPlace.HourId));
 
-					if (lessonsPlace == null)
-						continue;
+				string firstRow = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+				string secondRow = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
+				string thirdRow = "s. " + lessonsPlace.ClassroomsRow?.Name;
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonsPlace.ClassroomsRow?.Name;
-
-					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
-						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
-					range.BorderAround(XlLineStyle.xlContinuous);
-				}
+				WriteLessonsPlaceCell(dayIndex, hourIndex, firstRow, secondRow, thirdRow);
 			}
 		}
 
-		private void WriteTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow)
+		private void WriteTimetableForTeacher(TimetableDataSet.TeachersRow teacherRow)
 		{
-			for (var day = 0; day < _timetableDataSet.Days.Count; day++)
+			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+				.Where(lp => lp.LessonsRow.TeacherPesel == teacherRow.Pesel);
+
+			foreach (var lessonsPlace in lessonsPlaces)
 			{
-				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
-				{
-					var lessonsPlace = _timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.TeacherPesel == teacherRow.Pesel);
+				var dayIndex = DaysList.IndexOf(DaysList.FirstOrDefault(d => d.Id == lessonsPlace.DayId));
+				var hourIndex = HoursList.IndexOf(HoursList.FirstOrDefault(h => h.Id == lessonsPlace.HourId));
 
-					if (lessonsPlace == null)
-						continue;
+				string firstRow = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+				string secondRow = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+				string thirdRow = "s. " + lessonsPlace.ClassroomsRow?.Name;
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonsPlace.ClassroomsRow?.Name;
-
-					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
-						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
-					range.BorderAround(XlLineStyle.xlContinuous);
-				}
+				WriteLessonsPlaceCell(dayIndex, hourIndex, firstRow, secondRow, thirdRow);
 			}
 		}
 
 
-		private void WriteTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow)
+		private void WriteTimetableForClassroom(TimetableDataSet.ClassroomsRow classroomRow)
 		{
-			for (var day = 0; day < _timetableDataSet.Days.Count; day++)
+			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlaces = _timetableDataSet.LessonsPlaces
+				.Where(lp => lp.ClassroomId == classroomRow.Id);
+
+			foreach (var lessonsPlace in lessonsPlaces)
 			{
-				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
-				{
-					var lessonsPlace = _timetableDataSet.LessonsPlaces
-						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.ClassroomId == classroomRow.Id);
+				var dayIndex = DaysList.IndexOf(DaysList.FirstOrDefault(d => d.Id == lessonsPlace.DayId));
+				var hourIndex = HoursList.IndexOf(HoursList.FirstOrDefault(h => h.Id == lessonsPlace.HourId));
 
-					if (lessonsPlace == null)
-						continue;
+				string firstRow = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+				string secondRow = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+				string thirdRow = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
-
-					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
-						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
-					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
-					range.BorderAround(XlLineStyle.xlContinuous);
-				}
+				WriteLessonsPlaceCell(dayIndex, hourIndex, firstRow, secondRow, thirdRow);
 			}
+		}
+
+		private void WriteLessonsPlaceCell(int dayIndex, int hourIndex, string firstRow, string secondRow, string thirdRow)
+		{
+			_xlWorkSheet.Cells[2 + dayIndex][7 + 3 * hourIndex + 0] = firstRow;
+			_xlWorkSheet.Cells[2 + dayIndex][7 + 3 * hourIndex + 1] = secondRow;
+			_xlWorkSheet.Cells[2 + dayIndex][7 + 3 * hourIndex + 2] = thirdRow;
 		}
 
 		private double MaxWidth()
 		{
 			double max = 0;
 
-			for (var i = 1; i < 10; i++)
+			for (var i = 1; i <= 1 + DaysList.Count; i++)
 			{
 				Range column = _xlWorkSheet.Columns[i];
 				max = (column.ColumnWidth > max) ? column.ColumnWidth : max;
@@ -334,7 +346,7 @@ namespace Timetable.Utilities
 
 			var max = MaxWidth();
 
-			for (var i = 2; i < 7; i++)
+			for (var i = 1; i <= 1 + DaysList.Count; i++)
 				_xlWorkSheet.Columns[i].ColumnWidth = max;
 
 			if (fileType.Equals(ExportFileType.XLS))

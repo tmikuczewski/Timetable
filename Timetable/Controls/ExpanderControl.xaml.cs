@@ -241,6 +241,8 @@ namespace Timetable.Controls
 					return _callingWindow.GetIdNumbersOfMarkedSubjects().Any();
 				case EntityType.Day:
 					return _callingWindow.GetIdNumbersOfMarkedDays().Any();
+				case EntityType.Hour:
+					return _callingWindow.GetIdNumbersOfMarkedHours().Any();
 				case EntityType.Lesson:
 					return _callingWindow.GetIdNumbersOfMarkedLessons().Any();
 				case EntityType.LessonsPlace:
@@ -252,40 +254,38 @@ namespace Timetable.Controls
 
 		private void ModifyEntities(ActionType actionType)
 		{
+			Window window;
+
 			switch (_callingWindow.GetCurrentEntityType())
 			{
 				case EntityType.Class:
-					var manageClassWindow = new ManageClassWindow(_callingWindow, actionType);
-					manageClassWindow.Owner = _callingWindow;
-					manageClassWindow.Show();
+					window = new ManageClassWindow(_callingWindow, actionType);
 					break;
 				case EntityType.Student:
 				case EntityType.Teacher:
-					var manageWindow = new ManagePersonWindow(_callingWindow, actionType);
-					manageWindow.Owner = _callingWindow;
-					manageWindow.Show();
+					window = new ManagePersonWindow(_callingWindow, actionType);
 					break;
 				case EntityType.Classroom:
-					var manageClassroomWindow = new ManageClassroomWindow(_callingWindow, actionType);
-					manageClassroomWindow.Owner = _callingWindow;
-					manageClassroomWindow.Show();
+					window = new ManageClassroomWindow(_callingWindow, actionType);
 					break;
 				case EntityType.Subject:
-					var manageSubjectWindow = new ManageSubjectWindow(_callingWindow, actionType);
-					manageSubjectWindow.Owner = _callingWindow;
-					manageSubjectWindow.Show();
+					window = new ManageSubjectWindow(_callingWindow, actionType);
 					break;
 				case EntityType.Day:
-					var manageDayWindow = new ManageDayWindow(_callingWindow, actionType);
-					manageDayWindow.Owner = _callingWindow;
-					manageDayWindow.Show();
+					window = new ManageDayWindow(_callingWindow, actionType);
+					break;
+				case EntityType.Hour:
+					window = new ManageHourWindow(_callingWindow, actionType);
 					break;
 				case EntityType.Lesson:
-					var mappingWindow = new MappingWindow(_callingWindow, actionType);
-					mappingWindow.Owner = _callingWindow;
-					mappingWindow.Show();
+					window = new MappingWindow(_callingWindow, actionType);
 					break;
+				default:
+					return;
 			}
+
+			window.Owner = _callingWindow;
+			window.Show();
 		}
 
 		private void RemoveEntities()
@@ -309,6 +309,9 @@ namespace Timetable.Controls
 					break;
 				case EntityType.Day:
 					RemoveDays();
+					break;
+				case EntityType.Hour:
+					RemoveHours();
 					break;
 				case EntityType.Lesson:
 					RemoveLessons();
@@ -349,8 +352,8 @@ namespace Timetable.Controls
 					if (lessons.Any())
 					{
 						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
-						                    $"is assigned to {lessons.Count} lesson" +
-						                    $"{((lessons.Count == 1) ? string.Empty : "s")}.");
+											$"is assigned to {lessons.Count} lesson" +
+											$"{((lessons.Count == 1) ? string.Empty : "s")}.");
 						continue;
 					}
 
@@ -361,8 +364,8 @@ namespace Timetable.Controls
 					if (students.Any())
 					{
 						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
-						                    $"is assigned to {students.Count} student" +
-						                    $"{((students.Count == 1) ? string.Empty : "s")}.");
+											$"is assigned to {students.Count} student" +
+											$"{((students.Count == 1) ? string.Empty : "s")}.");
 						continue;
 					}
 
@@ -389,7 +392,7 @@ namespace Timetable.Controls
 			OdbcCommand cmd = conn.CreateCommand();
 
 			cmd.CommandText = "DELETE FROM classes " +
-			                  "WHERE id = ?";
+							  "WHERE id = ?";
 
 			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
@@ -542,7 +545,7 @@ namespace Timetable.Controls
 					{
 						ShowErrorMessageBox($"Classroom {classroomRow.Name} " +
 											$"is assigned to {lessonsPlaces.Count} lesson" +
-						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
+											$"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
 						continue;
 					}
 
@@ -606,7 +609,7 @@ namespace Timetable.Controls
 					{
 						ShowErrorMessageBox($"Subject {subjectRow.Name} " +
 											$"is assigned to {lessons.Count} lesson" +
-						                    $"{((lessons.Count == 1) ? string.Empty : "s")}.");
+											$"{((lessons.Count == 1) ? string.Empty : "s")}.");
 						continue;
 					}
 
@@ -652,8 +655,8 @@ namespace Timetable.Controls
 					if (lessonsPlaces.Any())
 					{
 						ShowErrorMessageBox($"Day {dayRow.Name} " +
-						                    $"is assigned to {lessonsPlaces.Count} lesson" +
-						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
+											$"is assigned to {lessonsPlaces.Count} lesson" +
+											$"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
 						continue;
 					}
 
@@ -663,6 +666,53 @@ namespace Timetable.Controls
 				}
 
 				_callingWindow.RefreshViews(EntityType.Day);
+			}
+			catch (Exception ex)
+			{
+				ShowErrorMessageBox(ex.ToString());
+			}
+		}
+
+		private void RemoveHours()
+		{
+			try
+			{
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked hours?") != MessageBoxResult.Yes)
+					return;
+
+				_hoursTableAdapter.Fill(_timetableDataSet.Hours);
+				_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+
+				foreach (var id in _callingWindow.GetIdNumbersOfMarkedHours())
+				{
+					int hourId;
+
+					if (!int.TryParse(id, out hourId))
+						continue;
+
+					var hourRow = _timetableDataSet.Hours.FindById(hourId);
+
+					if (hourRow == null)
+						continue;
+
+					var lessonsPlaces = _timetableDataSet.LessonsPlaces
+						.Where(lp => lp.HourId == hourId)
+						.ToList();
+
+					if (lessonsPlaces.Any())
+					{
+						ShowErrorMessageBox($"Hour {hourRow.Begin:hh\\:mm} – {hourRow.End:hh\\:mm} " +
+						                    $"is assigned to {lessonsPlaces.Count} lesson" +
+						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
+						continue;
+					}
+
+					hourRow.Delete();
+
+					_hoursTableAdapter.Update(_timetableDataSet.Hours);
+				}
+
+				_callingWindow.RefreshViews(EntityType.Hour);
 			}
 			catch (Exception ex)
 			{
@@ -704,9 +754,9 @@ namespace Timetable.Controls
 						ShowErrorMessageBox($"Lesson with the following attributes:{SEPARATOR}" +
 											$"subject:\t{lessonRow.SubjectsRow.Name}{SEPARATOR}" +
 											$"class:\t{lessonRow.ClassesRow.ToFriendlyString()}\n" +
-						                    $"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
+											$"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
 											$"has {lessonsPlaces.Count} occurrence" +
-						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
+											$"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
 						continue;
 					}
 
