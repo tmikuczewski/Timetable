@@ -6,9 +6,9 @@ using Timetable.Utilities;
 namespace Timetable.Controls
 {
 	/// <summary>
-	///     Interaction logic for ClassroomControl.xaml
+	///     Interaction logic for DayControl.xaml
 	/// </summary>
-	public partial class ClassroomControl : UserControl
+	public partial class DayControl : UserControl
 	{
 		#region Constants and Statics
 
@@ -33,29 +33,29 @@ namespace Timetable.Controls
 		#region Constructors
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>Controls.ClassroomControl</c>.
+		///     Konstruktor tworzący obiekt typu <c>Controls.DayControl</c>.
 		/// </summary>
-		public ClassroomControl()
+		public DayControl()
 		{
 			InitializeComponent();
 
 			checkBox.Visibility = Visibility.Hidden;
 			textBlockId.FontWeight = FontWeights.Bold;
+			textBlockNumber.FontWeight = FontWeights.Bold;
 			textBlockName.FontWeight = FontWeights.Bold;
-			textBlockAdministrator.FontWeight = FontWeights.Bold;
 		}
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>Controls.ClassroomControl</c> na bazie przesłanych za pomocą parametru danych.
+		///     Konstruktor tworzący obiekt typu <c>Controls.DayControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
-		/// <param name="classroomRow">Obiekt typu <c>TimetableDataSet.ClassroomsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public ClassroomControl(TimetableDataSet.ClassroomsRow classroomRow)
+		/// <param name="dayRow">Obiekt typu <c>TimetableDataSet.DaysRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
+		public DayControl(TimetableDataSet.DaysRow dayRow)
 		{
 			InitializeComponent();
 
-			textBlockId.Text = classroomRow.Id.ToString();
-			textBlockName.Text = classroomRow.Name ?? string.Empty;
-			textBlockAdministrator.Text = classroomRow.TeachersRow?.ToFriendlyString();
+			textBlockId.Text = dayRow.Id.ToString();
+			textBlockNumber.Text = dayRow.Number.ToString();
+			textBlockName.Text = dayRow.Name ?? string.Empty;
 		}
 
 		#endregion
@@ -79,7 +79,7 @@ namespace Timetable.Controls
 		#region Public methods
 
 		/// <summary>
-		///     Sprawdza, czy wybrana sala jest zaznaczona.
+		///     Sprawdza, czy wybrany dzień jest zaznaczony.
 		/// </summary>
 		/// <returns></returns>
 		public bool IsChecked()
@@ -88,7 +88,7 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca numer id sali w kontrolce.
+		///     Zwraca numer id dnia w kontrolce.
 		/// </summary>
 		/// <returns></returns>
 		public string GetId()

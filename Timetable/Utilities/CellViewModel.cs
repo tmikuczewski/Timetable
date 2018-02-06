@@ -1,4 +1,6 @@
-﻿namespace Timetable.Utilities
+﻿using System;
+
+namespace Timetable.Utilities
 {
 	/// <summary>
 	///     Klasa przechowująca informacje o zaplanowanej lekcji.
@@ -55,7 +57,32 @@
 		/// <summary>
 		///     
 		/// </summary>
+		public int DayNumber { get; set; }
+
+		/// <summary>
+		///     
+		/// </summary>
+		public string DayName { get; set; }
+
+		/// <summary>
+		///     
+		/// </summary>
 		public int HourId { get; set; }
+
+		/// <summary>
+		///     
+		/// </summary>
+		public int HourNumber { get; set; }
+
+		/// <summary>
+		///     
+		/// </summary>
+		public TimeSpan HourBegin { get; set; }
+
+		/// <summary>
+		///     
+		/// </summary>
+		public TimeSpan HourEnd { get; set; }
 
 		/// <summary>
 		///     
@@ -124,8 +151,20 @@
 			if (lessonsPlaceRow == null)
 				return;
 
-			DayId = lessonsPlaceRow.DayId;
-			HourId = lessonsPlaceRow.HourId;
+			if (lessonsPlaceRow.DaysRow != null)
+			{
+				DayId = lessonsPlaceRow.DaysRow.Id;
+				DayNumber = lessonsPlaceRow.DaysRow.Number;
+				DayName = lessonsPlaceRow.DaysRow.Name;
+			}
+
+			if (lessonsPlaceRow.HoursRow != null)
+			{
+				HourId = lessonsPlaceRow.HoursRow.Id;
+				HourNumber = lessonsPlaceRow.HoursRow.Number;
+				HourBegin = lessonsPlaceRow.HoursRow.Begin;
+				HourEnd = lessonsPlaceRow.HoursRow.End;
+			}
 
 			if (lessonsPlaceRow.ClassroomsRow != null)
 			{

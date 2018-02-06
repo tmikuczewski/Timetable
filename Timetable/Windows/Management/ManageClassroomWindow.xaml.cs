@@ -10,7 +10,7 @@ using Timetable.Utilities;
 namespace Timetable.Windows.Management
 {
 	/// <summary>
-	///     Interaction logic for ManageClassroomsWindow.xaml
+	///     Interaction logic for ManageClassroomWindow.xaml
 	/// </summary>
 	public partial class ManageClassroomWindow : Window
 	{
@@ -203,10 +203,6 @@ namespace Timetable.Windows.Management
 			catch (FieldsNotFilledException)
 			{
 				ShowWarningMessageBox("Name is required.");
-			}
-			catch (FormatException)
-			{
-				ShowWarningMessageBox("Name is invalid.");
 			}
 			catch (Exception ex)
 			{

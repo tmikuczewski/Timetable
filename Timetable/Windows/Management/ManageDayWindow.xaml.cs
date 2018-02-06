@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,9 +10,9 @@ using Timetable.Utilities;
 namespace Timetable.Windows.Management
 {
 	/// <summary>
-	///     Interaction logic for ManageSubjectWindow.xaml
+	///     Interaction logic for ManageDayWindow.xaml
 	/// </summary>
-	public partial class ManageSubjectWindow : Window
+	public partial class ManageDayWindow : Window
 	{
 		#region Constants and Statics
 
@@ -20,13 +22,13 @@ namespace Timetable.Windows.Management
 		#region Fields
 
 		private TimetableDataSet _timetableDataSet;
-		private SubjectsTableAdapter _subjectsTableAdapter;
+		private DaysTableAdapter _daysTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
-		private int _currentSubjectId;
-		private TimetableDataSet.SubjectsRow _currentSubjectRow;
+		private int _currentDayId;
+		private TimetableDataSet.DaysRow _currentDayRow;
 
 		#endregion
 
@@ -39,9 +41,9 @@ namespace Timetable.Windows.Management
 		#region Constructors
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
+		///     Konstruktor tworzący obiekt typu <c>ManageDayWindow</c>.
 		/// </summary>
-		public ManageSubjectWindow(MainWindow mainWindow, ActionType actionType)
+		public ManageDayWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
@@ -103,9 +105,9 @@ namespace Timetable.Windows.Management
 		private void InitDatabaseObjects()
 		{
 			_timetableDataSet = new TimetableDataSet();
-			_subjectsTableAdapter = new SubjectsTableAdapter();
+			_daysTableAdapter = new DaysTableAdapter();
 
-			_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+			_daysTableAdapter.Fill(_timetableDataSet.Days);
 		}
 
 		private void PrepareEntity()
@@ -115,16 +117,16 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentSubjectRow = _timetableDataSet.Subjects.NewSubjectsRow();
+						_currentDayRow = _timetableDataSet.Days.NewDaysRow();
 						break;
 					case ActionType.Change:
-						_currentSubjectRow = PrepareSubject();
+						_currentDayRow = PrepareDay();
 						break;
 				}
 			}
 			catch (EntityDoesNotExistException)
 			{
-				ShowErrorMessageBox("Subject with given ID number does not exist.");
+				ShowErrorMessageBox("Day with given ID number does not exist.");
 				Close();
 			}
 			catch (Exception ex)
@@ -134,21 +136,21 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.SubjectsRow PrepareSubject()
+		private TimetableDataSet.DaysRow PrepareDay()
 		{
-			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedSubjects().FirstOrDefault(), out _currentSubjectId))
+			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedDays().FirstOrDefault(), out _currentDayId))
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			var subjectRowe = _timetableDataSet.Subjects.FindById(_currentSubjectId);
+			var dayRow = _timetableDataSet.Days.FindById(_currentDayId);
 
-			if (subjectRowe == null)
+			if (dayRow == null)
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			return subjectRowe;
+			return dayRow;
 		}
 
 		private void FillControls()
@@ -156,11 +158,12 @@ namespace Timetable.Windows.Management
 			switch (_actionType)
 			{
 				case ActionType.Change:
-					if (_currentSubjectRow == null)
+					if (_currentDayRow == null)
 						return;
 
-					textBoxId.Text = _currentSubjectRow.Id.ToString();
-					textBoxName.Text = _currentSubjectRow.Name;
+					textBoxId.Text = _currentDayRow.Id.ToString();
+					textBoxNumber.Text = _currentDayRow.Number.ToString();
+					textBoxName.Text = _currentDayRow.Name;
 					break;
 			}
 
@@ -170,15 +173,20 @@ namespace Timetable.Windows.Management
 
 		private void SaveEntity()
 		{
+			var numberString = textBoxNumber.Text.Trim();
 			var name = textBoxName.Text.Trim();
 
 			try
 			{
-				SaveSubject(name);
+				SaveDay(numberString, name);
 			}
 			catch (FieldsNotFilledException)
 			{
-				ShowWarningMessageBox("Name is required.");
+				ShowWarningMessageBox("All fields are required.");
+			}
+			catch (FormatException)
+			{
+				ShowWarningMessageBox("Number is invalid.");
 			}
 			catch (Exception ex)
 			{
@@ -186,23 +194,25 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private void SaveSubject(string name)
+		private void SaveDay(string numberString, string name)
 		{
 			if (string.IsNullOrEmpty(name))
 			{
 				throw new FieldsNotFilledException();
 			}
 
-			_currentSubjectRow.Name = name;
+			int number = int.Parse(numberString);
+			_currentDayRow.Number = number;
+			_currentDayRow.Name = name;
 
 			if (_actionType == ActionType.Add)
 			{
-				_timetableDataSet.Subjects.Rows.Add(_currentSubjectRow);
+				_timetableDataSet.Days.Rows.Add(_currentDayRow);
 			}
 
-			_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
+			_daysTableAdapter.Update(_timetableDataSet.Days);
 
-			_callingWindow.RefreshViews(EntityType.Subject);
+			_callingWindow.RefreshViews(EntityType.Day);
 
 			Close();
 		}

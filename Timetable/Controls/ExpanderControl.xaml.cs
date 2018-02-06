@@ -239,6 +239,8 @@ namespace Timetable.Controls
 					return _callingWindow.GetIdNumbersOfMarkedClassrooms().Any();
 				case EntityType.Subject:
 					return _callingWindow.GetIdNumbersOfMarkedSubjects().Any();
+				case EntityType.Day:
+					return _callingWindow.GetIdNumbersOfMarkedDays().Any();
 				case EntityType.Lesson:
 					return _callingWindow.GetIdNumbersOfMarkedLessons().Any();
 				case EntityType.LessonsPlace:
@@ -273,6 +275,11 @@ namespace Timetable.Controls
 					manageSubjectWindow.Owner = _callingWindow;
 					manageSubjectWindow.Show();
 					break;
+				case EntityType.Day:
+					var manageDayWindow = new ManageDayWindow(_callingWindow, actionType);
+					manageDayWindow.Owner = _callingWindow;
+					manageDayWindow.Show();
+					break;
 				case EntityType.Lesson:
 					var mappingWindow = new MappingWindow(_callingWindow, actionType);
 					mappingWindow.Owner = _callingWindow;
@@ -299,6 +306,9 @@ namespace Timetable.Controls
 					break;
 				case EntityType.Subject:
 					RemoveSubjects();
+					break;
+				case EntityType.Day:
+					RemoveDays();
 					break;
 				case EntityType.Lesson:
 					RemoveLessons();
@@ -606,6 +616,53 @@ namespace Timetable.Controls
 				}
 
 				_callingWindow.RefreshViews(EntityType.Subject);
+			}
+			catch (Exception ex)
+			{
+				ShowErrorMessageBox(ex.ToString());
+			}
+		}
+
+		private void RemoveDays()
+		{
+			try
+			{
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked days?") != MessageBoxResult.Yes)
+					return;
+
+				_daysTableAdapter.Fill(_timetableDataSet.Days);
+				_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+
+				foreach (var id in _callingWindow.GetIdNumbersOfMarkedDays())
+				{
+					int dayId;
+
+					if (!int.TryParse(id, out dayId))
+						continue;
+
+					var dayRow = _timetableDataSet.Days.FindById(dayId);
+
+					if (dayRow == null)
+						continue;
+
+					var lessonsPlaces = _timetableDataSet.LessonsPlaces
+						.Where(lp => lp.DayId == dayId)
+						.ToList();
+
+					if (lessonsPlaces.Any())
+					{
+						ShowErrorMessageBox($"Day {dayRow.Name} " +
+						                    $"is assigned to {lessonsPlaces.Count} lesson" +
+						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
+						continue;
+					}
+
+					dayRow.Delete();
+
+					_daysTableAdapter.Update(_timetableDataSet.Days);
+				}
+
+				_callingWindow.RefreshViews(EntityType.Day);
 			}
 			catch (Exception ex)
 			{
