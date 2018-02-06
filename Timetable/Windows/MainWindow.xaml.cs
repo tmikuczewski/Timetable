@@ -58,10 +58,10 @@ namespace Timetable.Windows
 		private IEnumerable<string> ClassroomsFriendlyNamesEnumerable => ClassroomsEnumerable.Select(cr => cr.Name);
 
 		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => _timetableDataSet.Days
-			.OrderBy(d => d.Id);
+			.OrderBy(d => d.Number);
 
 		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => _timetableDataSet.Hours
-			.OrderBy(d => d.Id);
+			.OrderBy(d => d.Number);
 
 		private IEnumerable<int> LessonsDistinctIdsEnumerable => _timetableDataSet.LessonsPlaces
 			.Select(lp => lp.LessonId).Distinct();
@@ -71,8 +71,8 @@ namespace Timetable.Windows
 			.ThenBy(l => l.ClassesRow.ToFriendlyString());
 
 		private IOrderedEnumerable<TimetableDataSet.LessonsPlacesRow> LessonsPlacesEnumerable => _timetableDataSet.LessonsPlaces
-			.OrderBy(lp => lp.DayId)
-			.ThenBy(lp => lp.HourId);
+			.OrderBy(lp => lp.DaysRow.Number)
+			.ThenBy(lp => lp.HoursRow.Number);
 
 		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
 			.OrderBy(s => s.LastName)
@@ -1108,7 +1108,7 @@ namespace Timetable.Windows
 			for (var j = 1; j <= hoursList.Count; j++)
 			{
 				var hourRow = hoursList.ElementAt(j - 1);
-				string hourName = (hourRow != null) ? $"{j}" : $"{j}";
+				string hourName = (hourRow != null) ? $"{hourRow.Number}" : $"{j}";
 
 				var cellControl = new TermCellControl(hourName);
 				Grid.SetColumn(cellControl, 0);

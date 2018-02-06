@@ -211,9 +211,10 @@ namespace Timetable.Utilities
 				{
 					range = _xlWorkSheet.Range["A" + (1 + hourId * 3), "A" + (1 + hourId * 3 + 2)];
 					range.Merge();
-					var beginHour = _timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.Hour;
+					var beginHour = _timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.Begin;
+					var endHour = _timetableDataSet.Hours.FirstOrDefault(h => h.Id == hourId)?.End;
 					_xlWorkSheet.Cells[1 + hourId * 3, 1] = beginHour.Value.ToString(@"hh\:mm") + " - " +
-														   beginHour.Value.Add(TimeSpan.FromMinutes(45)).ToString(@"hh\:mm");
+					                                        endHour.Value.ToString(@"hh\:mm");
 					range.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					range.VerticalAlignment = XlVAlign.xlVAlignCenter;
 					range.BorderAround(XlLineStyle.xlContinuous);

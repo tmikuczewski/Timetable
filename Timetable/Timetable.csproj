@@ -344,6 +344,7 @@
   <ItemGroup>
     <Content Include="DbSchema\2016_04_18_Migration_NullableFields.sql" />
     <Content Include="DbSchema\2016_04_24_Seed_Lessons_LessonsPlaces.sql" />
+    <Content Include="DbSchema\2018_02_06_Migration_NumberDaysHours.sql" />
     <Content Include="DbSchema\timetable-schema.sql" />
     <Content Include="DbSchema\timetable-seed.sql" />
   </ItemGroup>
