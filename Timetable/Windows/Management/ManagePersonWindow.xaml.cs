@@ -126,7 +126,7 @@ namespace Timetable.Windows.Management
 		{
 			switch (_entityType)
 			{
-				case EntityType.Students:
+				case EntityType.Student:
 					labelClass.Visibility = Visibility.Visible;
 					comboBoxClass.Visibility = Visibility.Visible;
 
@@ -151,21 +151,21 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						if (_entityType == EntityType.Students)
+						if (_entityType == EntityType.Student)
 						{
 							_currentStudentRow = _timetableDataSet.Students.NewStudentsRow();
 						}
-						else if (_entityType == EntityType.Teachers)
+						else if (_entityType == EntityType.Teacher)
 						{
 							_currentTeacherRow = _timetableDataSet.Teachers.NewTeachersRow();
 						}
 						break;
 					case ActionType.Change:
-						if (_entityType == EntityType.Students)
+						if (_entityType == EntityType.Student)
 						{
 							_currentStudentRow = PrepareStudent();
 						}
-						else if (_entityType == EntityType.Teachers)
+						else if (_entityType == EntityType.Teacher)
 						{
 							_currentTeacherRow = PrepareTeachert();
 						}
@@ -227,7 +227,7 @@ namespace Timetable.Windows.Management
 			switch (_actionType)
 			{
 				case ActionType.Change:
-					if (_entityType == EntityType.Students)
+					if (_entityType == EntityType.Student)
 					{
 						if (_currentStudentRow == null)
 							return;
@@ -237,7 +237,7 @@ namespace Timetable.Windows.Management
 						textBoxLastName.Text = _currentStudentRow.LastName;
 						comboBoxClass.SelectedValue = _currentStudentRow.ClassId;
 					}
-					else if (_entityType == EntityType.Teachers)
+					else if (_entityType == EntityType.Teacher)
 					{
 						if (_currentTeacherRow == null)
 							return;
@@ -273,11 +273,11 @@ namespace Timetable.Windows.Management
 
 			try
 			{
-				if (_entityType == EntityType.Students)
+				if (_entityType == EntityType.Student)
 				{
 					SaveStudent(peselString, firstName, lastName);
 				}
-				else if (_entityType == EntityType.Teachers)
+				else if (_entityType == EntityType.Teacher)
 				{
 					SaveTeacher(peselString, firstName, lastName);
 				}
@@ -328,7 +328,7 @@ namespace Timetable.Windows.Management
 
 			_studentsTableAdapter.Update(_timetableDataSet.Students);
 
-			_callingWindow.RefreshViews(EntityType.Students);
+			_callingWindow.RefreshViews(EntityType.Student);
 
 			Close();
 		}
@@ -377,7 +377,7 @@ namespace Timetable.Windows.Management
 
 			_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 
-			_callingWindow.RefreshViews(EntityType.Teachers);
+			_callingWindow.RefreshViews(EntityType.Teacher);
 
 			Close();
 		}

@@ -245,7 +245,7 @@ namespace Timetable.Windows.Mapping
 
 			_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 
-			_callingWindow.RefreshViews(EntityType.Lessons);
+			_callingWindow.RefreshViews(EntityType.Lesson);
 
 			Close();
 		}

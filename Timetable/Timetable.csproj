@@ -89,6 +89,9 @@
     <Compile Include="Controls\CellControl.xaml.cs">
       <DependentUpon>CellControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ClassroomControl.xaml.cs">
+      <DependentUpon>ClassroomControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LessonControl.xaml.cs">
       <DependentUpon>LessonControl.xaml</DependentUpon>
     </Compile>
@@ -105,9 +108,9 @@
       <DependentUpon>TermCellControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="TimetableDataSet.Designer.cs">
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
@@ -117,8 +120,8 @@
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
-    <Compile Include="Windows\ClassroomsHelperWindow.xaml.cs">
-      <DependentUpon>ClassroomsHelperWindow.xaml</DependentUpon>
+    <Compile Include="Windows\Management\ManageClassroomsWindow.xaml.cs">
+      <DependentUpon>ManageClassroomsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Management\ManagementGrid.xaml.cs">
       <DependentUpon>ManagementGrid.xaml</DependentUpon>
@@ -154,6 +157,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ClassroomControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\LessonControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -178,7 +185,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\ClassroomsHelperWindow.xaml">
+    <Page Include="Windows\Management\ManageClassroomsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

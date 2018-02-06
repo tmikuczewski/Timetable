@@ -47,24 +47,6 @@ namespace Timetable.Windows
 
 		#region Properties
 
-		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => _timetableDataSet.Days
-			.OrderBy(d => d.Id);
-
-		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => _timetableDataSet.Hours
-			.OrderBy(d => d.Id);
-
-		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
-			.OrderBy(s => s.LastName)
-			.ThenBy(s => s.FirstName);
-
-		private IEnumerable<string> StudentsFriendlyNamesEnumerable => StudentsEnumerable.Select(c => c.ToFriendlyString(true));
-
-		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => _timetableDataSet.Teachers
-			.OrderBy(s => s.LastName)
-			.ThenBy(s => s.FirstName);
-
-		private IEnumerable<string> TeachersFriendlyNamesEnumerable => TeachersEnumerable.Select(c => c.ToFriendlyString(true));
-
 		private IOrderedEnumerable<TimetableDataSet.ClassesRow> ClassesEnumerable => _timetableDataSet.Classes
 			.OrderBy(c => c.ToFriendlyString());
 
@@ -75,9 +57,14 @@ namespace Timetable.Windows
 
 		private IEnumerable<string> ClassroomsFriendlyNamesEnumerable => ClassroomsEnumerable.Select(cr => cr.Name);
 
+		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => _timetableDataSet.Days
+			.OrderBy(d => d.Id);
 
-		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => _timetableDataSet.Subjects
-			.OrderBy(s => s.Name);
+		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => _timetableDataSet.Hours
+			.OrderBy(d => d.Id);
+
+		private IEnumerable<int> LessonsDistinctIdsEnumerable => _timetableDataSet.LessonsPlaces
+			.Select(lp => lp.LessonId).Distinct();
 
 		private IOrderedEnumerable<TimetableDataSet.LessonsRow> LessonsEnumerable => _timetableDataSet.Lessons
 			.OrderBy(l => l.SubjectsRow.Name)
@@ -87,8 +74,20 @@ namespace Timetable.Windows
 			.OrderBy(lp => lp.DayId)
 			.ThenBy(lp => lp.HourId);
 
-		private IEnumerable<int> LessonsDistinctIdsEnumerable => _timetableDataSet.LessonsPlaces
-			.Select(lp => lp.LessonId).Distinct();
+		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
+			.OrderBy(s => s.LastName)
+			.ThenBy(s => s.FirstName);
+
+		private IEnumerable<string> StudentsFriendlyNamesEnumerable => StudentsEnumerable.Select(c => c.ToFriendlyString(true));
+
+		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => _timetableDataSet.Subjects
+			.OrderBy(s => s.Name);
+
+		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => _timetableDataSet.Teachers
+			.OrderBy(s => s.LastName)
+			.ThenBy(s => s.FirstName);
+
+		private IEnumerable<string> TeachersFriendlyNamesEnumerable => TeachersEnumerable.Select(c => c.ToFriendlyString(true));
 
 		#endregion
 
@@ -141,15 +140,15 @@ namespace Timetable.Windows
 					break;
 				case 1:
 					_mainWindowTabType = MainWindowTabType.Mapping;
-					_currentEntityType = EntityType.Lessons;
+					_currentEntityType = EntityType.Lesson;
 					break;
 				case 2:
 					_mainWindowTabType = MainWindowTabType.Planning;
-					_currentEntityType = EntityType.LessonsPlaces;
+					_currentEntityType = EntityType.LessonsPlace;
 					break;
 				case 3:
 					_mainWindowTabType = MainWindowTabType.Summary;
-					_currentEntityType = EntityType.LessonsPlaces;
+					_currentEntityType = EntityType.LessonsPlace;
 					break;
 			}
 
@@ -334,7 +333,7 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
-		///     Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku podsumowania.
+		///     Metoda zwracająca informację o aktualnie wyświetlanej grupie encji w widoku pogdlądu.
 		/// </summary>
 		/// <returns></returns>
 		public EntityType GetSummaryEntityType()
@@ -343,25 +342,45 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
+		///     Metoda zwracająca listę numerów ID zaznaczonych klas.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<string> GetIdNumbersOfMarkedClasses()
+		{
+			if (_currentEntityType != EntityType.Class)
+				yield break;
+
+			foreach (ClassControl classControl in gridTabManagement.scrollViewerGrid.Children)
+				if (classControl.IsChecked())
+					yield return classControl.GetId();
+		}
+
+		/// <summary>
 		///     Metoda zwracająca listę numerów PESEL zaznaczonych osób.
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<string> GetPeselsOfMarkedPeople()
 		{
+			if (_currentEntityType != EntityType.Student || _currentEntityType != EntityType.Teacher)
+				yield break;
+
 			foreach (PersonControl personControl in gridTabManagement.scrollViewerGrid.Children)
 				if (personControl.IsChecked())
 					yield return personControl.Pesel;
 		}
 
 		/// <summary>
-		///     Metoda zwracająca listę numerów ID zaznaczonych klas.
+		///     Metoda zwracająca listę numerów ID zaznaczonych sal.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<string> GetIdNumbersOfMarkedClasses()
+		public IEnumerable<string> GetIdNumbersOfMarkedClassrooms()
 		{
-			foreach (ClassControl classControl in gridTabManagement.scrollViewerGrid.Children)
-				if (classControl.IsChecked())
-					yield return classControl.GetId();
+			if (_currentEntityType != EntityType.Classroom)
+				yield break;
+
+			foreach (ClassroomControl classroomControl in gridTabManagement.scrollViewerGrid.Children)
+				if (classroomControl.IsChecked())
+					yield return classroomControl.GetId();
 		}
 
 		/// <summary>
@@ -370,6 +389,9 @@ namespace Timetable.Windows
 		/// <returns></returns>
 		public IEnumerable<string> GetIdNumbersOfMarkedSubjects()
 		{
+			if (_currentEntityType != EntityType.Subject)
+				yield break;
+
 			foreach (SubjectControl subjectControl in gridTabManagement.scrollViewerGrid.Children)
 				if (subjectControl.IsChecked())
 					yield return subjectControl.GetId();
@@ -381,6 +403,9 @@ namespace Timetable.Windows
 		/// <returns></returns>
 		public IEnumerable<string> GetIdNumbersOfMarkedLessons()
 		{
+			if (_currentEntityType != EntityType.Lesson)
+				yield break;
+
 			foreach (LessonControl lessonControl in gridTabMapping.scrollViewerGrid.Children)
 				if (lessonControl.IsChecked())
 					yield return lessonControl.GetId();
@@ -392,6 +417,9 @@ namespace Timetable.Windows
 		/// <returns></returns>
 		public IEnumerable<CellViewModel> GetCollectionOfMarkedLessonsPlaces()
 		{
+			if (_currentEntityType != EntityType.LessonsPlace)
+				yield break;
+
 			foreach (var cellControl in gridTabPlanning.gridPlanning.Children)
 			{
 				if (cellControl is CellControl)
@@ -403,14 +431,14 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
-		///     Metoda zwracająca numer ID klasy wyświetlanej w widoku podsumowania.
+		///     Metoda zwracająca numer ID klasy wyświetlanej w widoku pogdlądu.
 		/// </summary>
 		/// <returns></returns>
 		public int? GetSummaryClassId()
 		{
 			int? currentSummaryClassId = null;
 
-			if (_currentSummaryEntityType == EntityType.Classes
+			if (_currentSummaryEntityType == EntityType.Class
 				&& stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex != -1)
 			{
 				currentSummaryClassId = ClassesEnumerable
@@ -421,14 +449,14 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
-		///     Metoda zwracająca numer PESEL nauczyciela wyświetlanego w widoku podsumowania.
+		///     Metoda zwracająca numer PESEL nauczyciela wyświetlanego w widoku pogdlądu.
 		/// </summary>
 		/// <returns></returns>
 		public string GetSummaryTeacherPesel()
 		{
 			string currentSummaryTeacherPesel = null;
 
-			if (_currentSummaryEntityType == EntityType.Teachers
+			if (_currentSummaryEntityType == EntityType.Teacher
 				&& stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex != -1)
 			{
 				currentSummaryTeacherPesel = TeachersEnumerable
@@ -439,14 +467,14 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
-		///     Metoda zwracająca numer ID sali wyświetlanej w widoku podsumowania.
+		///     Metoda zwracająca numer ID sali wyświetlanej w widoku pogdlądu.
 		/// </summary>
 		/// <returns></returns>
 		public int? GetSummaryClassroomId()
 		{
 			int? currentSummaryClassroomId = null;
 
-			if (_currentSummaryEntityType == EntityType.Classrooms
+			if (_currentSummaryEntityType == EntityType.Classroom
 			    && stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex != -1)
 			{
 				currentSummaryClassroomId = ClassroomsEnumerable
@@ -469,15 +497,15 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					lessonsPlacesRows = LessonsPlacesEnumerable
 						.Where(lp => lp.LessonsRow.ClassId == (int) objectId);
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					lessonsPlacesRows = LessonsPlacesEnumerable
 						.Where(lp => lp.LessonsRow.TeacherPesel == (string) objectId);
 					break;
-				case EntityType.Classrooms:
+				case EntityType.Classroom:
 					lessonsPlacesRows = LessonsPlacesEnumerable
 						.Where(lp => lp.ClassroomId == (int) objectId);
 					break;
@@ -492,12 +520,12 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					lessonsRows = LessonsEnumerable
 						.Where(l => l.ClassId == (int) objectId)
 						.Where(l => !LessonsDistinctIdsEnumerable.Contains(l.Id));
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					lessonsRows = LessonsEnumerable
 						.Where(l => l.TeacherPesel == (string) objectId)
 						.Where(l => !LessonsDistinctIdsEnumerable.Contains(l.Id));
@@ -535,26 +563,32 @@ namespace Timetable.Windows
 		{
 			switch (changedDataEntityType)
 			{
-				case EntityType.Students:
-					_studentsTableAdapter.Fill(_timetableDataSet.Students);
-					break;
-				case EntityType.Teachers:
-					_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
-					break;
-				case EntityType.Classes:
+				case EntityType.Class:
 					_classesTableAdapter.Fill(_timetableDataSet.Classes);
 					break;
-				case EntityType.Classrooms:
+				case EntityType.Classroom:
 					_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
 					break;
-				case EntityType.Subjects:
-					_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+				case EntityType.Day:
+					_daysTableAdapter.Fill(_timetableDataSet.Days);
 					break;
-				case EntityType.Lessons:
+				case EntityType.Hour:
+					_hoursTableAdapter.Fill(_timetableDataSet.Hours);
+					break;
+				case EntityType.Lesson:
 					_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
 					break;
-				case EntityType.LessonsPlaces:
+				case EntityType.LessonsPlace:
 					_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
+					break;
+				case EntityType.Student:
+					_studentsTableAdapter.Fill(_timetableDataSet.Students);
+					break;
+				case EntityType.Subject:
+					_subjectsTableAdapter.Fill(_timetableDataSet.Subjects);
+					break;
+				case EntityType.Teacher:
+					_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 					break;
 			}
 		}
@@ -570,16 +604,19 @@ namespace Timetable.Windows
 			switch (stackPanelOperations.comboBoxManagementFilterEntityType.SelectedIndex)
 			{
 				case 0:
-					entityType = EntityType.Students;
+					entityType = EntityType.Class;
 					break;
 				case 1:
-					entityType = EntityType.Teachers;
+					entityType = EntityType.Student;
 					break;
 				case 2:
-					entityType = EntityType.Classes;
+					entityType = EntityType.Teacher;
 					break;
 				case 3:
-					entityType = EntityType.Subjects;
+					entityType = EntityType.Classroom;
+					break;
+				case 4:
+					entityType = EntityType.Subject;
 					break;
 			}
 
@@ -593,10 +630,10 @@ namespace Timetable.Windows
 			switch (stackPanelOperations.comboBoxPlanningFilterEntityType.SelectedIndex)
 			{
 				case 0:
-					entityType = EntityType.Classes;
+					entityType = EntityType.Class;
 					break;
 				case 1:
-					entityType = EntityType.Teachers;
+					entityType = EntityType.Teacher;
 					break;
 			}
 
@@ -610,13 +647,13 @@ namespace Timetable.Windows
 			switch (stackPanelOperations.comboBoxSummaryFilterEntityType.SelectedIndex)
 			{
 				case 0:
-					entityType = EntityType.Classes;
+					entityType = EntityType.Class;
 					break;
 				case 1:
-					entityType = EntityType.Teachers;
+					entityType = EntityType.Teacher;
 					break;
 				case 2:
-					entityType = EntityType.Classrooms;
+					entityType = EntityType.Classroom;
 					break;
 			}
 
@@ -627,24 +664,21 @@ namespace Timetable.Windows
 		{
 			stackPanelOperations.CallingWindow = this;
 
-			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Students.ToString());
-			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Teachers.ToString());
-			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Classes.ToString());
-			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Subjects.ToString());
-			stackPanelOperations.comboBoxManagementFilterEntityType.SelectedIndex = 0;
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Class.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Student.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Teacher.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Classroom.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.Items.Add(EntityType.Subject.ToString());
+			stackPanelOperations.comboBoxManagementFilterEntityType.SelectedIndex = 3;
 
-			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Classes.ToString());
-			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Teachers.ToString());
+			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Class.ToString());
+			stackPanelOperations.comboBoxPlanningFilterEntityType.Items.Add(EntityType.Teacher.ToString());
 			stackPanelOperations.comboBoxPlanningFilterEntityType.SelectedIndex = 0;
 
-			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Classes.ToString());
-			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Teachers.ToString());
-			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Classrooms.ToString());
+			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Class.ToString());
+			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Teacher.ToString());
+			stackPanelOperations.comboBoxSummaryFilterEntityType.Items.Add(EntityType.Classroom.ToString());
 			stackPanelOperations.comboBoxSummaryFilterEntityType.SelectedIndex = 0;
-
-			_currentEntityType = EntityType.Students;
-			_currentPlanningEntityType = EntityType.Classes;
-			_currentSummaryEntityType = EntityType.Classes;
 		}
 
 		private void FillExpanders()
@@ -656,20 +690,20 @@ namespace Timetable.Windows
 			stackPanelOperations.expanderOperation.Content = stackPanel;
 
 			var stackPanelPlanning = new StackPanel();
-			stackPanelPlanning.Children.Add(new ExpanderControl(this, ActionType.RemoveLessonPlace, ActionType.Remove.ToString()));
+			stackPanelPlanning.Children.Add(new ExpanderControl(this, ActionType.RemoveLessonsPlace, ActionType.Remove.ToString()));
 			stackPanelOperations.expanderPlanning.Content = stackPanelPlanning;
 
-			var stackPanelExport = new StackPanel();
-			stackPanelExport.Children.Add(new ExpanderControl(this, ActionType.XLS, "Excel"));
-			stackPanelExport.Children.Add(new ExpanderControl(this, ActionType.PDF, "PDF"));
-			stackPanelOperations.expanderExport.Content = stackPanelExport;
+			var stackPanelSummary = new StackPanel();
+			stackPanelSummary.Children.Add(new ExpanderControl(this, ActionType.XLS, "Excel"));
+			stackPanelSummary.Children.Add(new ExpanderControl(this, ActionType.PDF, "PDF"));
+			stackPanelOperations.expanderSummary.Content = stackPanelSummary;
 		}
 
 		private void RefreshCurrentTabView(bool forceRefresh = false)
 		{
 			stackPanelOperations.expanderOperation.IsExpanded = false;
 			stackPanelOperations.expanderPlanning.IsExpanded = false;
-			stackPanelOperations.expanderExport.IsExpanded = false;
+			stackPanelOperations.expanderSummary.IsExpanded = false;
 
 			switch (_mainWindowTabType)
 			{
@@ -679,7 +713,7 @@ namespace Timetable.Windows
 					stackPanelOperations.gridSummaryFilter.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
-					stackPanelOperations.expanderExport.Visibility = Visibility.Collapsed;
+					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
 					RefreshManagementTabView();
 					break;
 				case MainWindowTabType.Mapping:
@@ -688,7 +722,7 @@ namespace Timetable.Windows
 					stackPanelOperations.gridSummaryFilter.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
-					stackPanelOperations.expanderExport.Visibility = Visibility.Collapsed;
+					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
 					RefreshMappingTabView();
 					break;
 				case MainWindowTabType.Planning:
@@ -697,7 +731,7 @@ namespace Timetable.Windows
 					stackPanelOperations.gridSummaryFilter.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Visible;
-					stackPanelOperations.expanderExport.Visibility = Visibility.Collapsed;
+					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
 					RefreshPlanningTabView(forceRefresh);
 					break;
 				case MainWindowTabType.Summary:
@@ -706,7 +740,7 @@ namespace Timetable.Windows
 					stackPanelOperations.gridSummaryFilter.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
-					stackPanelOperations.expanderExport.Visibility = Visibility.Visible;
+					stackPanelOperations.expanderSummary.Visibility = Visibility.Visible;
 					RefreshSummaryTabView(forceRefresh);
 					break;
 			}
@@ -716,12 +750,12 @@ namespace Timetable.Windows
 		{
 			switch (changedDataEntityType)
 			{
-				case EntityType.Teachers:
-				case EntityType.Classes:
-				case EntityType.Classrooms:
-				case EntityType.Subjects:
-				case EntityType.Lessons:
-				case EntityType.LessonsPlaces:
+				case EntityType.Class:
+				case EntityType.Classroom:
+				case EntityType.Lesson:
+				case EntityType.LessonsPlace:
+				case EntityType.Subject:
+				case EntityType.Teacher:
 					if (_mainWindowTabType != MainWindowTabType.Planning)
 					{
 						RefreshPlanningTabView(true);
@@ -743,7 +777,7 @@ namespace Timetable.Windows
 
 		private void RefreshMappingTabView(bool forceRefresh = false)
 		{
-			FillScrollViewerGridForView(MainWindowTabType.Mapping, EntityType.Lessons);
+			FillScrollViewerGridForView(MainWindowTabType.Mapping, EntityType.Lesson);
 		}
 
 		private void RefreshPlanningTabView(bool forceRefresh = false)
@@ -813,20 +847,23 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Students:
-					AddAllStudentsToGrid(grid);
-					break;
-				case EntityType.Teachers:
-					AddAllTeachersToGrid(grid);
-					break;
-				case EntityType.Classes:
+				case EntityType.Class:
 					AddAllClassesToGrid(grid);
 					break;
-				case EntityType.Subjects:
+				case EntityType.Classroom:
+					AddAllClassroomsToGrid(grid);
+					break;
+				case EntityType.Lesson:
+					AddAllLessonsToGrid(grid);
+					break;
+				case EntityType.Student:
+					AddAllStudentsToGrid(grid);
+					break;
+				case EntityType.Subject:
 					AddAllSubjectsToGrid(grid);
 					break;
-				case EntityType.Lessons:
-					AddAllLessonsToGrid(grid);
+				case EntityType.Teacher:
+					AddAllTeachersToGrid(grid);
 					break;
 			}
 		}
@@ -876,15 +913,15 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					entityComboBox.ItemsSource = ClassessFriendlyNamesEnumerable;
 					entityComboBox.SelectedIndex = (entityComboBox.Items.Count > 0) ? 0 : -1;
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					entityComboBox.ItemsSource = TeachersFriendlyNamesEnumerable;
 					entityComboBox.SelectedIndex = (entityComboBox.Items.Count > 0) ? 0 : -1;
 					break;
-				case EntityType.Classrooms:
+				case EntityType.Classroom:
 					entityComboBox.ItemsSource = ClassroomsFriendlyNamesEnumerable;
 					entityComboBox.SelectedIndex = (entityComboBox.Items.Count > 0) ? 0 : -1;
 					break;
@@ -936,13 +973,13 @@ namespace Timetable.Windows
 
 			switch (entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					currentId = ClassesEnumerable.ElementAt(selectedIndex).Id;
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					currentId = TeachersEnumerable.ElementAt(selectedIndex).Pesel;
 					break;
-				case EntityType.Classrooms:
+				case EntityType.Classroom:
 					currentId = ClassroomsEnumerable.ElementAt(selectedIndex).Id;
 					break;
 			}
@@ -967,28 +1004,36 @@ namespace Timetable.Windows
 
 		#region Management & Mapping - subcontrols
 
-		private void AddAllStudentsToGrid(Grid grid)
-		{
-			AddDescriptionControlToGrid<PersonControl>(grid);
-
-			foreach (TimetableDataSet.StudentsRow studentRow in StudentsEnumerable)
-				AddEntityControlToGrid<PersonControl, TimetableDataSet.StudentsRow>(grid, studentRow);
-		}
-
-		private void AddAllTeachersToGrid(Grid grid)
-		{
-			AddDescriptionControlToGrid<PersonControl>(grid);
-
-			foreach (TimetableDataSet.TeachersRow teacherRow in TeachersEnumerable)
-				AddEntityControlToGrid<PersonControl, TimetableDataSet.TeachersRow>(grid, teacherRow);
-		}
-
 		private void AddAllClassesToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<ClassControl>(grid);
 
 			foreach (TimetableDataSet.ClassesRow classRow in ClassesEnumerable)
 				AddEntityControlToGrid<ClassControl, TimetableDataSet.ClassesRow>(grid, classRow);
+		}
+
+		private void AddAllClassroomsToGrid(Grid grid)
+		{
+			AddDescriptionControlToGrid<ClassroomControl>(grid);
+
+			foreach (TimetableDataSet.ClassroomsRow classroomRow in ClassroomsEnumerable)
+				AddEntityControlToGrid<ClassroomControl, TimetableDataSet.ClassroomsRow>(grid, classroomRow);
+		}
+
+		private void AddAllLessonsToGrid(Grid grid)
+		{
+			AddDescriptionControlToGrid<LessonControl>(grid);
+
+			foreach (TimetableDataSet.LessonsRow lessonRow in LessonsEnumerable)
+				AddEntityControlToGrid<LessonControl, TimetableDataSet.LessonsRow>(grid, lessonRow);
+		}
+
+		private void AddAllStudentsToGrid(Grid grid)
+		{
+			AddDescriptionControlToGrid<PersonControl>(grid);
+
+			foreach (TimetableDataSet.StudentsRow studentRow in StudentsEnumerable)
+				AddEntityControlToGrid<PersonControl, TimetableDataSet.StudentsRow>(grid, studentRow);
 		}
 
 		private void AddAllSubjectsToGrid(Grid grid)
@@ -999,12 +1044,12 @@ namespace Timetable.Windows
 				AddEntityControlToGrid<SubjectControl, TimetableDataSet.SubjectsRow>(grid, subjectRow);
 		}
 
-		private void AddAllLessonsToGrid(Grid grid)
+		private void AddAllTeachersToGrid(Grid grid)
 		{
-			AddDescriptionControlToGrid<LessonControl>(grid);
+			AddDescriptionControlToGrid<PersonControl>(grid);
 
-			foreach (TimetableDataSet.LessonsRow lessonRow in LessonsEnumerable)
-				AddEntityControlToGrid<LessonControl, TimetableDataSet.LessonsRow>(grid, lessonRow);
+			foreach (TimetableDataSet.TeachersRow teacherRow in TeachersEnumerable)
+				AddEntityControlToGrid<PersonControl, TimetableDataSet.TeachersRow>(grid, teacherRow);
 		}
 
 		private void AddDescriptionControlToGrid<TControl>(Grid grid)
@@ -1090,18 +1135,18 @@ namespace Timetable.Windows
 
 					switch (entityType)
 					{
-						case EntityType.Classes:
+						case EntityType.Class:
 							cell.ClassId = (int) objectId;
 							break;
-						case EntityType.Teachers:
+						case EntityType.Teacher:
 							cell.TeacherPesel = (string) objectId;
 							break;
-						case EntityType.Classrooms:
+						case EntityType.Classroom:
 							cell.ClassroomId = (int) objectId;
 							break;
 					}
 
-					AddLessonPlaceToGrid(grid, cell, actionType, entityType);
+					AddLessonsPlaceToGrid(grid, cell, actionType, entityType);
 				}
 			}
 		}
@@ -1115,11 +1160,11 @@ namespace Timetable.Windows
 
 			var actionType = (tabType == MainWindowTabType.Planning) ? ActionType.Change : ActionType.None;
 
-			foreach (var lessonPlace in allLessonsPlaces)
+			foreach (var lessonsPlace in allLessonsPlaces)
 			{
-				var cell = new CellViewModel(lessonPlace);
+				var cell = new CellViewModel(lessonsPlace);
 
-				AddLessonPlaceToGrid(grid, cell, actionType, entityType);
+				AddLessonsPlaceToGrid(grid, cell, actionType, entityType);
 			}
 		}
 
@@ -1143,7 +1188,7 @@ namespace Timetable.Windows
 			}
 		}
 
-		private void AddLessonPlaceToGrid(Grid grid, CellViewModel cell, ActionType actionType, EntityType entityType)
+		private void AddLessonsPlaceToGrid(Grid grid, CellViewModel cell, ActionType actionType, EntityType entityType)
 		{
 			CellControl cellControl = null;
 
@@ -1152,15 +1197,15 @@ namespace Timetable.Windows
 				case EntityType.None:
 					cellControl = new CellControl(this, cell.HourId % 2 != 0);
 					break;
-				case EntityType.Classes:
+				case EntityType.Class:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Class,
 						this, (cell.HourId % 2 != 0));
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Teacher,
 						this, (cell.HourId % 2 != 0));
 					break;
-				case EntityType.Classrooms:
+				case EntityType.Classroom:
 					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Classroom,
 						this, (cell.HourId % 2 != 0));
 					break;
@@ -1179,7 +1224,7 @@ namespace Timetable.Windows
 
 		private void AppendRemainingLessonToGrid(Grid grid, CellViewModel cell)
 		{
-			var cellControl = new CellControl(cell, ActionType.None, EntityType.Lessons, TimetableType.Lesson,
+			var cellControl = new CellControl(cell, ActionType.None, EntityType.Lesson, TimetableType.Lesson,
 				this, (grid.RowDefinitions.Count % 2 != 0));
 			cellControl.Margin = CellControl.SEPARATOR_MARGIN;
 

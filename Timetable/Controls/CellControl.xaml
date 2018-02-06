@@ -13,9 +13,9 @@
 	<Grid>
 		<Grid>
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition/>
-				<RowDefinition/>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
 			<Border BorderBrush="{x:Null}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock x:Name="textBlockFirstRow" Text="FirstRow" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" TextAlignment="Center" />

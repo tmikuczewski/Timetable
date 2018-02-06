@@ -40,7 +40,7 @@ namespace Timetable.Windows.Planning
 		private readonly int _hourId;
 		private int _currentLessonId;
 		private int _currentClassroomId;
-		private TimetableDataSet.LessonsPlacesRow _currentLessonPlaceRow;
+		private TimetableDataSet.LessonsPlacesRow _currentLessonsPlaceRow;
 		private TimetableDataSet.TeachersRow _teacherRow;
 		private TimetableDataSet.ClassesRow _classRow;
 		private TimetableDataSet.DaysRow _dayRow;
@@ -190,11 +190,11 @@ namespace Timetable.Windows.Planning
 
 			switch (_entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					_classRow = _timetableDataSet.Classes.FindById(_classId ?? -1);
 					_availableLessons = _plannedLessons.Where(l => l.ClassId == _classId);
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					_teacherRow = _timetableDataSet.Teachers.FindByPesel(_teacherPesel);
 					_availableLessons = _plannedLessons.Where(l => l.TeacherPesel == _teacherPesel);
 					break;
@@ -208,10 +208,10 @@ namespace Timetable.Windows.Planning
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentLessonPlaceRow = _timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
+						_currentLessonsPlaceRow = _timetableDataSet.LessonsPlaces.NewLessonsPlacesRow();
 						break;
 					case ActionType.Change:
-						_currentLessonPlaceRow = PrepareLessonPlace();
+						_currentLessonsPlaceRow = PrepareLessonsPlace();
 						break;
 				}
 			}
@@ -227,7 +227,7 @@ namespace Timetable.Windows.Planning
 			}
 		}
 
-		private TimetableDataSet.LessonsPlacesRow PrepareLessonPlace()
+		private TimetableDataSet.LessonsPlacesRow PrepareLessonsPlace()
 		{
 			var lessonsPlaceRow = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
@@ -249,14 +249,14 @@ namespace Timetable.Windows.Planning
 
 			switch (_entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					if (_classRow == null)
 						return;
 
 					labelDetails.Text += $"Class:";
 					textBoxDetails.Text += $"{_classRow.ToFriendlyString()}";
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					if (_teacherRow == null)
 						return;
 
@@ -270,21 +270,21 @@ namespace Timetable.Windows.Planning
 		{
 			_unavailableLessonsPlaces = _timetableDataSet.LessonsPlaces
 				.Where(lp => lp.DayId == _dayId && lp.HourId == _hourId)
-				.Where(lp => lp.LessonId != _currentLessonPlaceRow?.LessonsRow?.Id);
+				.Where(lp => lp.LessonId != _currentLessonsPlaceRow?.LessonsRow?.Id);
 		}
 
 		private void UpdateAvailableLessons()
 		{
 			switch (_entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					var unavailableTeachers = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.TeacherPesel);
 
 					_availableLessons = _availableLessons.Where(l => !unavailableTeachers.Contains(l.TeacherPesel))
 						.OrderBy(l => l.SubjectName);
 
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					var unavailableClasses = _unavailableLessonsPlaces.Select(lp => lp.LessonsRow.ClassId);
 
 					_availableLessons = _availableLessons.Where(l => (l.ClassId != null) && !unavailableClasses.Contains(l.ClassId ?? -1))
@@ -299,12 +299,12 @@ namespace Timetable.Windows.Planning
 		{
 			switch (_entityType)
 			{
-				case EntityType.Classes:
+				case EntityType.Class:
 					comboBoxLessons.ItemsSource = _availableLessons;
 					comboBoxLessons.DisplayMemberPath = "SubjectTeacher";
 					comboBoxLessons.SelectedValuePath = "Id";
 					break;
-				case EntityType.Teachers:
+				case EntityType.Teacher:
 					comboBoxLessons.ItemsSource = _availableLessons;
 					comboBoxLessons.DisplayMemberPath = "SubjectClass";
 					comboBoxLessons.SelectedValuePath = "Id";
@@ -330,13 +330,13 @@ namespace Timetable.Windows.Planning
 			switch (_actionType)
 			{
 				case ActionType.Change:
-					if (_currentLessonPlaceRow == null)
+					if (_currentLessonsPlaceRow == null)
 						return;
 
-					var currentLessonIndex = _availableLessons.ToList().FindIndex(l => l.Id == _currentLessonPlaceRow.LessonId);
+					var currentLessonIndex = _availableLessons.ToList().FindIndex(l => l.Id == _currentLessonsPlaceRow.LessonId);
 					comboBoxLessons.SelectedIndex = currentLessonIndex;
 
-					comboBoxClassrooms.SelectedValue = _currentLessonPlaceRow.ClassroomId;
+					comboBoxClassrooms.SelectedValue = _currentLessonsPlaceRow.ClassroomId;
 					break;
 			}
 
@@ -348,7 +348,7 @@ namespace Timetable.Windows.Planning
 		{
 			try
 			{
-				SaveLessonPlace();
+				SaveLessonsPlace();
 			}
 			catch (FieldsNotFilledException)
 			{
@@ -360,7 +360,7 @@ namespace Timetable.Windows.Planning
 			}
 		}
 
-		private void SaveLessonPlace()
+		private void SaveLessonsPlace()
 		{
 			if (comboBoxLessons.SelectedValue == null
 				|| comboBoxClassrooms.SelectedValue == null)
@@ -371,8 +371,8 @@ namespace Timetable.Windows.Planning
 			if (int.TryParse(comboBoxLessons.SelectedValue.ToString(), out _currentLessonId)
 				&& int.TryParse(comboBoxClassrooms.SelectedValue.ToString(), out _currentClassroomId))
 			{
-				_currentLessonPlaceRow.LessonId = _currentLessonId;
-				_currentLessonPlaceRow.ClassroomId = _currentClassroomId;
+				_currentLessonsPlaceRow.LessonId = _currentLessonId;
+				_currentLessonsPlaceRow.ClassroomId = _currentClassroomId;
 			}
 			else
 			{
@@ -382,14 +382,14 @@ namespace Timetable.Windows.Planning
 
 			if (_actionType == ActionType.Add)
 			{
-				_currentLessonPlaceRow.DayId = _dayId;
-				_currentLessonPlaceRow.HourId = _hourId;
-				_timetableDataSet.LessonsPlaces.Rows.Add(_currentLessonPlaceRow);
+				_currentLessonsPlaceRow.DayId = _dayId;
+				_currentLessonsPlaceRow.HourId = _hourId;
+				_timetableDataSet.LessonsPlaces.Rows.Add(_currentLessonsPlaceRow);
 			}
 
 			_lessonsPlacesTableAdapter.Update(_timetableDataSet.LessonsPlaces);
 
-			_callingWindow.RefreshViews(EntityType.LessonsPlaces);
+			_callingWindow.RefreshViews(EntityType.LessonsPlace);
 
 			Close();
 		}

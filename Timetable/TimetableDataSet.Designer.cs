@@ -1099,7 +1099,6 @@ namespace Timetable {
                 this.columnId.Unique = true;
                 this.columnName.AllowDBNull = false;
                 this.columnName.MaxLength = 4095;
-                this.columnAdministratorPesel.AllowDBNull = false;
                 this.columnAdministratorPesel.MaxLength = 11;
             }
             
@@ -3458,7 +3457,12 @@ namespace Timetable {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string AdministratorPesel {
                 get {
-                    return ((string)(this[this.tableClassrooms.AdministratorPeselColumn]));
+                    if (this.IsAdministratorPeselNull()) {
+                        return null;
+                    }
+                    else {
+                        return ((string)(this[this.tableClassrooms.AdministratorPeselColumn]));
+                    }
                 }
                 set {
                     this[this.tableClassrooms.AdministratorPeselColumn] = value;
@@ -3474,6 +3478,18 @@ namespace Timetable {
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["Teachers_Classrooms"]);
                 }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsAdministratorPeselNull() {
+                return this.IsNull(this.tableClassrooms.AdministratorPeselColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetAdministratorPeselNull() {
+                this[this.tableClassrooms.AdministratorPeselColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

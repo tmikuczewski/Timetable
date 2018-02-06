@@ -10,9 +10,9 @@ using Timetable.Utilities;
 namespace Timetable.Windows.Management
 {
 	/// <summary>
-	///     Interaction logic for ManageClassWindow.xaml
+	///     Interaction logic for ManageClassroomsWindow.xaml
 	/// </summary>
-	public partial class ManageClassWindow : Window
+	public partial class ManageClassroomWindow : Window
 	{
 		#region Constants and Statics
 
@@ -22,14 +22,14 @@ namespace Timetable.Windows.Management
 		#region Fields
 
 		private TimetableDataSet _timetableDataSet;
-		private ClassesTableAdapter _classesTableAdapter;
+		private ClassroomsTableAdapter _classroomsTableAdapter;
 		private TeachersTableAdapter _teachersTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
-		private int _currentClassId;
-		private TimetableDataSet.ClassesRow _currentClassRow;
+		private int _currentClassroomId;
+		private TimetableDataSet.ClassroomsRow _currentClassroomRow;
 		private IList<TimetableDataSet.TeachersRow> _teachersItemsSource;
 
 		#endregion
@@ -43,9 +43,9 @@ namespace Timetable.Windows.Management
 		#region Constructors
 
 		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>ManageClassWindow</c>.
+		///     Konstruktor tworzący obiekt typu <c>ManageClassroomWindow</c>.
 		/// </summary>
-		public ManageClassWindow(MainWindow mainWindow, ActionType actionType)
+		public ManageClassroomWindow(MainWindow mainWindow, ActionType actionType)
 		{
 			InitializeComponent();
 
@@ -54,6 +54,7 @@ namespace Timetable.Windows.Management
 		}
 
 		#endregion
+
 
 		#region Events
 
@@ -108,10 +109,10 @@ namespace Timetable.Windows.Management
 		private void InitDatabaseObjects()
 		{
 			_timetableDataSet = new TimetableDataSet();
-			_classesTableAdapter = new ClassesTableAdapter();
+			_classroomsTableAdapter = new ClassroomsTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
 
-			_classesTableAdapter.Fill(_timetableDataSet.Classes);
+			_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
 			_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
 		}
 
@@ -126,8 +127,8 @@ namespace Timetable.Windows.Management
 			emptyTeacherRow["Pesel"] = DBNull.Value;
 			_teachersItemsSource.Insert(0, emptyTeacherRow);
 
-			comboBoxTutor.ItemsSource = _teachersItemsSource;
-			comboBoxTutor.SelectedValuePath = "Pesel";
+			comboBoxAdministrator.ItemsSource = _teachersItemsSource;
+			comboBoxAdministrator.SelectedValuePath = "Pesel";
 		}
 
 		private void PrepareEntity()
@@ -137,10 +138,10 @@ namespace Timetable.Windows.Management
 				switch (_actionType)
 				{
 					case ActionType.Add:
-						_currentClassRow = _timetableDataSet.Classes.NewClassesRow();
+						_currentClassroomRow = _timetableDataSet.Classrooms.NewClassroomsRow();
 						break;
 					case ActionType.Change:
-						_currentClassRow = PrepareClass();
+						_currentClassroomRow = PrepareClassroom();
 						break;
 				}
 			}
@@ -156,21 +157,21 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSet.ClassesRow PrepareClass()
+		private TimetableDataSet.ClassroomsRow PrepareClassroom()
 		{
-			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedClasses().FirstOrDefault(), out _currentClassId))
+			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedClassrooms().FirstOrDefault(), out _currentClassroomId))
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			var classRow = _timetableDataSet.Classes.FindById(_currentClassId);
+			var classroomRow = _timetableDataSet.Classrooms.FindById(_currentClassroomId);
 
-			if (classRow == null)
+			if (classroomRow == null)
 			{
 				throw new EntityDoesNotExistException();
 			}
 
-			return classRow;
+			return classroomRow;
 		}
 
 		private void FillControls()
@@ -178,13 +179,12 @@ namespace Timetable.Windows.Management
 			switch (_actionType)
 			{
 				case ActionType.Change:
-					if (_currentClassRow == null)
+					if (_currentClassroomRow == null)
 						return;
 
-					textBoxId.Text = _currentClassRow.Id.ToString();
-					textBoxYear.Text = _currentClassRow.Year.ToString();
-					textBoxCodeName.Text = _currentClassRow.CodeName;
-					comboBoxTutor.SelectedValue = _currentClassRow.TutorPesel;
+					textBoxId.Text = _currentClassroomRow.Id.ToString();
+					textBoxName.Text = _currentClassroomRow.Name;
+					comboBoxAdministrator.SelectedValue = _currentClassroomRow.AdministratorPesel;
 					break;
 			}
 
@@ -194,20 +194,19 @@ namespace Timetable.Windows.Management
 
 		private void SaveEntity()
 		{
-			var yearString = textBoxYear.Text.Trim();
-			var codeName = textBoxCodeName.Text.Trim();
+			var name = textBoxName.Text.Trim();
 
 			try
 			{
-				SaveClass(yearString, codeName);
+				SaveClassroom(name);
 			}
 			catch (FieldsNotFilledException)
 			{
-				ShowWarningMessageBox("Year is required.");
+				ShowWarningMessageBox("Name is required.");
 			}
 			catch (FormatException)
 			{
-				ShowWarningMessageBox("Year is invalid.");
+				ShowWarningMessageBox("Name is invalid.");
 			}
 			catch (Exception ex)
 			{
@@ -215,49 +214,46 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private void SaveClass(string yearString, string codeName)
+		private void SaveClassroom(string name)
 		{
-			if (string.IsNullOrEmpty(yearString))
+			if (string.IsNullOrEmpty(name))
 			{
 				throw new FieldsNotFilledException();
 			}
 
-			int year = int.Parse(yearString);
-			_currentClassRow.Year = year;
-			_currentClassRow.CodeName = codeName;
-			_currentClassRow["TutorPesel"] = comboBoxTutor.SelectedValue ?? DBNull.Value;
+			_currentClassroomRow.Name = name;
+			_currentClassroomRow["AdministratorPesel"] = comboBoxAdministrator.SelectedValue ?? DBNull.Value;
 
 			if (_actionType == ActionType.Add)
 			{
-				_timetableDataSet.Classes.Rows.Add(_currentClassRow);
+				_timetableDataSet.Classrooms.Rows.Add(_currentClassroomRow);
 			}
 
-			SetOdbcUpdateClassCommand(_currentClassId, year, codeName);
+			SetOdbcUpdateClassroomCommand(_currentClassroomId, name);
 
-			_classesTableAdapter.Update(_timetableDataSet.Classes);
+			_classroomsTableAdapter.Update(_timetableDataSet.Classrooms);
 
-			_callingWindow.RefreshViews(EntityType.Class);
+			_callingWindow.RefreshViews(EntityType.Classroom);
 
 			Close();
 		}
 
-		private void SetOdbcUpdateClassCommand(int id, int year, string codeName)
+		private void SetOdbcUpdateClassroomCommand(int id, string name)
 		{
 			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
 				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
 
 			OdbcCommand cmd = conn.CreateCommand();
 
-			cmd.CommandText = "UPDATE classes " +
-							  "SET year = ?, code_name = ?, tutor = ? " +
-							  "WHERE id = ?";
+			cmd.CommandText = "UPDATE classrooms " +
+							  "SET name = ?, administrator = ? " +
+			                  "WHERE id = ?";
 
-			cmd.Parameters.Add("year", OdbcType.Int).Value = year;
-			cmd.Parameters.Add("code_name", OdbcType.Text).Value = codeName;
-			cmd.Parameters.Add("tutor", OdbcType.VarChar).Value = comboBoxTutor.SelectedValue ?? DBNull.Value;
+			cmd.Parameters.Add("name", OdbcType.Text).Value = name;
+			cmd.Parameters.Add("administrator", OdbcType.VarChar).Value = comboBoxAdministrator.SelectedValue ?? DBNull.Value;
 			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
-			_classesTableAdapter.Adapter.UpdateCommand = cmd;
+			_classroomsTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private MessageBoxResult ShowErrorMessageBox(string message)

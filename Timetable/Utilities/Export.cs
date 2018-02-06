@@ -244,15 +244,15 @@ namespace Timetable.Utilities
 			{
 				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
 				{
-					var lessonPlace = _timetableDataSet.LessonsPlaces
+					var lessonsPlace = _timetableDataSet.LessonsPlaces
 						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.ClassId == classRow.Id);
 
-					if (lessonPlace == null)
+					if (lessonsPlace == null)
 						continue;
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonPlace.ClassroomsRow?.Name;
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonsPlace.ClassroomsRow?.Name;
 
 					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
 						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
@@ -269,15 +269,15 @@ namespace Timetable.Utilities
 			{
 				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
 				{
-					var lessonPlace = _timetableDataSet.LessonsPlaces
+					var lessonsPlace = _timetableDataSet.LessonsPlaces
 						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.LessonsRow.TeacherPesel == teacherRow.Pesel);
 
-					if (lessonPlace == null)
+					if (lessonsPlace == null)
 						continue;
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonPlace.ClassroomsRow?.Name;
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = "s. " + lessonsPlace.ClassroomsRow?.Name;
 
 					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
 						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];
@@ -295,15 +295,15 @@ namespace Timetable.Utilities
 			{
 				for (var hour = 0; hour < _timetableDataSet.Hours.Count; hour++)
 				{
-					var lessonPlace = _timetableDataSet.LessonsPlaces
+					var lessonsPlace = _timetableDataSet.LessonsPlaces
 						.FirstOrDefault(lp => lp.DayId == day + 1 && lp.HourId == hour + 1 && lp.ClassroomId == classroomRow.Id);
 
-					if (lessonPlace == null)
+					if (lessonsPlace == null)
 						continue;
 
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonPlace.LessonsRow?.SubjectsRow?.Name;
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
-					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = lessonPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 0] = lessonsPlace.LessonsRow?.SubjectsRow?.Name;
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 1] = "kl. " + lessonsPlace.LessonsRow?.ClassesRow?.ToFriendlyString();
+					_xlWorkSheet.Cells[2 + day][4 + 3 * hour + 2] = lessonsPlace.LessonsRow?.TeachersRow?.ToFriendlyString();
 
 					var range = _xlWorkSheet.Range["" + (char) ('B' + day) + (4 + hour * 3),
 						"" + (char) ('B' + day) + (4 + hour * 3 + 2)];

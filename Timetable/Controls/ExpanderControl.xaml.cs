@@ -8,10 +8,8 @@ using Microsoft.Win32;
 using Timetable.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 using Timetable.Windows;
-using ManageClassWindow = Timetable.Windows.Management.ManageClassWindow;
-using ManagePersonWindow = Timetable.Windows.Management.ManagePersonWindow;
-using ManageSubjectWindow = Timetable.Windows.Management.ManageSubjectWindow;
-using MappingWindow = Timetable.Windows.Mapping.MappingWindow;
+using Timetable.Windows.Management;
+using Timetable.Windows.Mapping;
 
 namespace Timetable.Controls
 {
@@ -127,7 +125,7 @@ namespace Timetable.Controls
 			});
 		}
 
-		private async void RemoveLessonPlaceButton_Click(object sender, RoutedEventArgs e)
+		private async void RemoveLessonsPlaceButton_Click(object sender, RoutedEventArgs e)
 		{
 			_callingWindow.stackPanelOperations.expanderPlanning.IsExpanded = false;
 
@@ -142,7 +140,7 @@ namespace Timetable.Controls
 
 		private async void XlsButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.stackPanelOperations.expanderExport.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderSummary.IsExpanded = false;
 
 			await Task.Factory.StartNew(() =>
 			{
@@ -155,7 +153,7 @@ namespace Timetable.Controls
 
 		private async void PdfButton_Click(object sender, RoutedEventArgs e)
 		{
-			_callingWindow.stackPanelOperations.expanderExport.IsExpanded = false;
+			_callingWindow.stackPanelOperations.expanderSummary.IsExpanded = false;
 
 			await Task.Factory.StartNew(() =>
 			{
@@ -197,9 +195,9 @@ namespace Timetable.Controls
 					image.Source = Properties.Resources.delete.ToBitmapImage();
 					button.Click += RemoveButton_Click;
 					break;
-				case ActionType.RemoveLessonPlace:
+				case ActionType.RemoveLessonsPlace:
 					image.Source = Properties.Resources.delete.ToBitmapImage();
-					button.Click += RemoveLessonPlaceButton_Click;
+					button.Click += RemoveLessonsPlaceButton_Click;
 					break;
 				case ActionType.XLS:
 					image.Source = Properties.Resources.excel.ToBitmapImage();
@@ -232,16 +230,18 @@ namespace Timetable.Controls
 		{
 			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case EntityType.Students:
-				case EntityType.Teachers:
-					return _callingWindow.GetPeselsOfMarkedPeople().Any();
-				case EntityType.Classes:
+				case EntityType.Class:
 					return _callingWindow.GetIdNumbersOfMarkedClasses().Any();
-				case EntityType.Subjects:
+				case EntityType.Student:
+				case EntityType.Teacher:
+					return _callingWindow.GetPeselsOfMarkedPeople().Any();
+				case EntityType.Classroom:
+					return _callingWindow.GetIdNumbersOfMarkedClassrooms().Any();
+				case EntityType.Subject:
 					return _callingWindow.GetIdNumbersOfMarkedSubjects().Any();
-				case EntityType.Lessons:
+				case EntityType.Lesson:
 					return _callingWindow.GetIdNumbersOfMarkedLessons().Any();
-				case EntityType.LessonsPlaces:
+				case EntityType.LessonsPlace:
 					return _callingWindow.GetCollectionOfMarkedLessonsPlaces().Any();
 			}
 
@@ -252,23 +252,28 @@ namespace Timetable.Controls
 		{
 			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case EntityType.Students:
-				case EntityType.Teachers:
-					var manageWindow = new ManagePersonWindow(_callingWindow, actionType);
-					manageWindow.Owner = _callingWindow;
-					manageWindow.Show();
-					break;
-				case EntityType.Classes:
+				case EntityType.Class:
 					var manageClassWindow = new ManageClassWindow(_callingWindow, actionType);
 					manageClassWindow.Owner = _callingWindow;
 					manageClassWindow.Show();
 					break;
-				case EntityType.Subjects:
+				case EntityType.Student:
+				case EntityType.Teacher:
+					var manageWindow = new ManagePersonWindow(_callingWindow, actionType);
+					manageWindow.Owner = _callingWindow;
+					manageWindow.Show();
+					break;
+				case EntityType.Classroom:
+					var manageClassroomWindow = new ManageClassroomWindow(_callingWindow, actionType);
+					manageClassroomWindow.Owner = _callingWindow;
+					manageClassroomWindow.Show();
+					break;
+				case EntityType.Subject:
 					var manageSubjectWindow = new ManageSubjectWindow(_callingWindow, actionType);
 					manageSubjectWindow.Owner = _callingWindow;
 					manageSubjectWindow.Show();
 					break;
-				case EntityType.Lessons:
+				case EntityType.Lesson:
 					var mappingWindow = new MappingWindow(_callingWindow, actionType);
 					mappingWindow.Owner = _callingWindow;
 					mappingWindow.Show();
@@ -280,25 +285,105 @@ namespace Timetable.Controls
 		{
 			switch (_callingWindow.GetCurrentEntityType())
 			{
-				case EntityType.Students:
-					RemoveStudents();
-					break;
-				case EntityType.Teachers:
-					RemoveTeachers();
-					break;
-				case EntityType.Classes:
+				case EntityType.Class:
 					RemoveClasses();
 					break;
-				case EntityType.Subjects:
+				case EntityType.Student:
+					RemoveStudents();
+					break;
+				case EntityType.Teacher:
+					RemoveTeachers();
+					break;
+				case EntityType.Classroom:
+					RemoveClassrooms();
+					break;
+				case EntityType.Subject:
 					RemoveSubjects();
 					break;
-				case EntityType.Lessons:
+				case EntityType.Lesson:
 					RemoveLessons();
 					break;
-				case EntityType.LessonsPlaces:
+				case EntityType.LessonsPlace:
 					RemoveLessonsPlaces();
 					break;
 			}
+		}
+
+		private void RemoveClasses()
+		{
+			try
+			{
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked classes?") != MessageBoxResult.Yes)
+					return;
+
+				_classesTableAdapter.Fill(_timetableDataSet.Classes);
+				_lessonsTableAdapter.Fill(_timetableDataSet.Lessons);
+				_studentsTableAdapter.Fill(_timetableDataSet.Students);
+
+				foreach (var id in _callingWindow.GetIdNumbersOfMarkedClasses())
+				{
+					int classId;
+
+					if (!int.TryParse(id, out classId))
+						continue;
+
+					var classRow = _timetableDataSet.Classes.FindById(classId);
+
+					if (classRow == null)
+						continue;
+
+					var lessons = _timetableDataSet.Lessons
+						.Where(s => s.ClassId == classId)
+						.ToList();
+
+					if (lessons.Any())
+					{
+						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
+						                    $"is assigned to {lessons.Count} lesson" +
+						                    $"{((lessons.Count == 1) ? string.Empty : "s")}.");
+						continue;
+					}
+
+					var students = _timetableDataSet.Students
+						.Where(s => s.ClassId == classId)
+						.ToList();
+
+					if (students.Any())
+					{
+						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
+						                    $"is assigned to {students.Count} student" +
+						                    $"{((students.Count == 1) ? string.Empty : "s")}.");
+						continue;
+					}
+
+					classRow.Delete();
+
+					SetOdbcDeleteClassCommand(classId);
+
+					_classesTableAdapter.Update(_timetableDataSet.Classes);
+				}
+
+				_callingWindow.RefreshViews(EntityType.Class);
+			}
+			catch (Exception ex)
+			{
+				ShowErrorMessageBox(ex.ToString());
+			}
+		}
+
+		private void SetOdbcDeleteClassCommand(int id)
+		{
+			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
+				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
+
+			OdbcCommand cmd = conn.CreateCommand();
+
+			cmd.CommandText = "DELETE FROM classes " +
+			                  "WHERE id = ?";
+
+			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
+
+			_classesTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveStudents()
@@ -324,7 +409,7 @@ namespace Timetable.Controls
 					_studentsTableAdapter.Update(_timetableDataSet.Students);
 				}
 
-				_callingWindow.RefreshViews(EntityType.Students);
+				_callingWindow.RefreshViews(EntityType.Student);
 			}
 			catch (Exception ex)
 			{
@@ -374,7 +459,7 @@ namespace Timetable.Controls
 
 					if (classes.Any())
 					{
-						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the tutor of classes:{SEPARATOR}" +
+						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the tutor of the following classes:{SEPARATOR}" +
 											$"{string.Join(SEPARATOR, classes.Select(c => c.ToFriendlyString()))}");
 						continue;
 					}
@@ -386,7 +471,7 @@ namespace Timetable.Controls
 
 					if (classrooms.Any())
 					{
-						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the administrator of classrooms:{SEPARATOR}" +
+						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} is the administrator of the following classrooms:{SEPARATOR}" +
 											$"{string.Join(SEPARATOR, classrooms.Select(cr => cr.Name))}");
 						continue;
 					}
@@ -400,7 +485,7 @@ namespace Timetable.Controls
 					if (lessons.Any())
 					{
 						ShowErrorMessageBox($"{teacherRow.ToFriendlyString()} has the following lessons:{SEPARATOR}" +
-											$"{string.Join(SEPARATOR, lessons.Select(l => l.SubjectsRow.Name))}");
+											$"{string.Join(SEPARATOR, lessons.Select(l => l.SubjectsRow.Name + " - " + l.ClassesRow.ToFriendlyString()))}");
 						continue;
 					}
 
@@ -409,7 +494,7 @@ namespace Timetable.Controls
 					_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 				}
 
-				_callingWindow.RefreshViews(EntityType.Teachers);
+				_callingWindow.RefreshViews(EntityType.Teacher);
 			}
 			catch (Exception ex)
 			{
@@ -417,57 +502,48 @@ namespace Timetable.Controls
 			}
 		}
 
-		private void RemoveClasses()
+		private void RemoveClassrooms()
 		{
 			try
 			{
-				if (ShowConfirmationMessageBox("Are you sure you want to remove marked classes?") != MessageBoxResult.Yes)
+				if (ShowConfirmationMessageBox("Are you sure you want to remove marked classrooms?") != MessageBoxResult.Yes)
 					return;
 
-				_classesTableAdapter.Fill(_timetableDataSet.Classes);
-				_studentsTableAdapter.Fill(_timetableDataSet.Students);
-				_teachersTableAdapter.Fill(_timetableDataSet.Teachers);
+				_classroomsTableAdapter.Fill(_timetableDataSet.Classrooms);
+				_lessonsPlacesTableAdapter.Fill(_timetableDataSet.LessonsPlaces);
 
-				foreach (var id in _callingWindow.GetIdNumbersOfMarkedClasses())
+				foreach (var id in _callingWindow.GetIdNumbersOfMarkedClassrooms())
 				{
-					int classId;
+					int classroomId;
 
-					if (!int.TryParse(id, out classId))
+					if (!int.TryParse(id, out classroomId))
 						continue;
 
-					var classRow = _timetableDataSet.Classes.FindById(classId);
+					var classroomRow = _timetableDataSet.Classrooms.FindById(classroomId);
 
-					if (classRow == null)
+					if (classroomRow == null)
 						continue;
 
-					var students = _timetableDataSet.Students
-						.Where(s => s.ClassId == classId)
+					var lessonsPlaces = _timetableDataSet.LessonsPlaces
+						.Where(lp => lp.ClassroomId == classroomId)
 						.ToList();
 
-					if (students.Any())
+					if (lessonsPlaces.Any())
 					{
-						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
-											$"has {students.Count} assigned students.");
+						ShowErrorMessageBox($"Classroom {classroomRow.Name} " +
+											$"is assigned to {lessonsPlaces.Count} lesson" +
+						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
 						continue;
 					}
 
-					var tutor = _timetableDataSet.Teachers.FindByPesel(classRow.TutorPesel);
+					classroomRow.Delete();
 
-					if (tutor != null)
-					{
-						ShowErrorMessageBox($"Class {classRow.ToFriendlyString()} " +
-											$"is assigned to the teacher: {tutor.ToFriendlyString()}.");
-						continue;
-					}
+					SetOdbcDeleteClassroomCommand(classroomId);
 
-					classRow.Delete();
-
-					SetOdbcDeleteClassCommand(classId);
-
-					_classesTableAdapter.Update(_timetableDataSet.Classes);
+					_classroomsTableAdapter.Update(_timetableDataSet.Classrooms);
 				}
 
-				_callingWindow.RefreshViews(EntityType.Classes);
+				_callingWindow.RefreshViews(EntityType.Classroom);
 			}
 			catch (Exception ex)
 			{
@@ -475,19 +551,19 @@ namespace Timetable.Controls
 			}
 		}
 
-		private void SetOdbcDeleteClassCommand(int id)
+		private void SetOdbcDeleteClassroomCommand(int id)
 		{
 			OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
 				.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
 
 			OdbcCommand cmd = conn.CreateCommand();
 
-			cmd.CommandText = "DELETE FROM classes " +
+			cmd.CommandText = "DELETE FROM classrooms " +
 							  "WHERE id = ?";
 
 			cmd.Parameters.Add("id", OdbcType.Int).Value = id;
 
-			_classesTableAdapter.Adapter.DeleteCommand = cmd;
+			_classroomsTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveSubjects()
@@ -519,7 +595,8 @@ namespace Timetable.Controls
 					if (lessons.Any())
 					{
 						ShowErrorMessageBox($"Subject {subjectRow.Name} " +
-											$"is assigned to {lessons.Count} lessons.");
+											$"is assigned to {lessons.Count} lesson" +
+						                    $"{((lessons.Count == 1) ? string.Empty : "s")}.");
 						continue;
 					}
 
@@ -528,7 +605,7 @@ namespace Timetable.Controls
 					_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 				}
 
-				_callingWindow.RefreshViews(EntityType.Subjects);
+				_callingWindow.RefreshViews(EntityType.Subject);
 			}
 			catch (Exception ex)
 			{
@@ -568,10 +645,11 @@ namespace Timetable.Controls
 					if (lessonsPlaces.Any())
 					{
 						ShowErrorMessageBox($"Lesson with the following attributes:{SEPARATOR}" +
-											$"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
 											$"subject:\t{lessonRow.SubjectsRow.Name}{SEPARATOR}" +
 											$"class:\t{lessonRow.ClassesRow.ToFriendlyString()}\n" +
-											$"has {lessonsPlaces.Count} occurrences on the timetable.");
+						                    $"teacher:\t{lessonRow.TeachersRow.ToFriendlyString()}{SEPARATOR}" +
+											$"has {lessonsPlaces.Count} occurrence" +
+						                    $"{((lessonsPlaces.Count == 1) ? string.Empty : "s")} on the timetable.");
 						continue;
 					}
 
@@ -580,7 +658,7 @@ namespace Timetable.Controls
 					_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 				}
 
-				_callingWindow.RefreshViews(EntityType.Lessons);
+				_callingWindow.RefreshViews(EntityType.Lesson);
 			}
 			catch (Exception ex)
 			{
@@ -609,22 +687,22 @@ namespace Timetable.Controls
 					if (cellViewModel.LessonId == null || cellViewModel.ClassroomId == null)
 						continue;
 
-					var lessonPlaceRow = _timetableDataSet.LessonsPlaces
+					var lessonsPlaceRow = _timetableDataSet.LessonsPlaces
 						.FindByLessonIdClassroomIdDayIdHourId(
 						(int) cellViewModel.LessonId,
 						(int) cellViewModel.ClassroomId,
 						cellViewModel.DayId,
 						cellViewModel.HourId);
 
-					if (lessonPlaceRow == null)
+					if (lessonsPlaceRow == null)
 						continue;
 
-					lessonPlaceRow.Delete();
+					lessonsPlaceRow.Delete();
 
 					_lessonsPlacesTableAdapter.Update(_timetableDataSet.LessonsPlaces);
 				}
 
-				_callingWindow.RefreshViews(EntityType.LessonsPlaces);
+				_callingWindow.RefreshViews(EntityType.LessonsPlace);
 			}
 			catch (Exception ex)
 			{
@@ -644,7 +722,7 @@ namespace Timetable.Controls
 			var classRow = _timetableDataSet.Classes.FirstOrDefault(c => c.Id == classId.Value);
 
 			if (classRow == null)
-				throw new EntityDoesNotExistException("Class with id=" + classId.Value + " does not exists");
+				throw new EntityDoesNotExistException("Class with ID = " + classId.Value + " does not exists");
 
 			return classRow;
 		}
@@ -661,7 +739,7 @@ namespace Timetable.Controls
 			var teacherRow = _timetableDataSet.Teachers.FirstOrDefault(t => t.Pesel == teacherPesel);
 
 			if (teacherRow == null)
-				throw new EntityDoesNotExistException("Teacher with PESEL=" + teacherPesel + " does not exists");
+				throw new EntityDoesNotExistException("Teacher with PESEL = " + teacherPesel + " does not exists");
 
 			return teacherRow;
 		}
@@ -679,7 +757,7 @@ namespace Timetable.Controls
 
 			if (classroomRow == null)
 			{
-				throw new EntityDoesNotExistException("Classroom with id=" + classroomId.Value + " does not exists");
+				throw new EntityDoesNotExistException("Classroom with ID  = " + classroomId.Value + " does not exists");
 			}
 
 			return classroomRow;
@@ -704,15 +782,15 @@ namespace Timetable.Controls
 			{
 				switch (entityType)
 				{
-					case EntityType.Classes:
+					case EntityType.Class:
 						classRow = GetCurrentClass();
 						saveFileDialog.FileName = $"Klasa {classRow.ToFriendlyString()} ({date})";
 						break;
-					case EntityType.Teachers:
+					case EntityType.Teacher:
 						teacherRow = GetCurrentTeacher();
 						saveFileDialog.FileName = $"{teacherRow.LastName} {teacherRow.FirstName} ({date})";
 						break;
-					case EntityType.Classrooms:
+					case EntityType.Classroom:
 						classroomRow = GetCurrentClassroom();
 						saveFileDialog.FileName = $"Sala {classroomRow.Name} ({date})";
 						break;
@@ -741,13 +819,13 @@ namespace Timetable.Controls
 
 					switch (entityType)
 					{
-						case EntityType.Classes:
+						case EntityType.Class:
 							_exportEngine.SaveTimeTableForClass(classRow, saveFileDialog.FileName, fileType);
 							break;
-						case EntityType.Teachers:
+						case EntityType.Teacher:
 							_exportEngine.SaveTimeTableForTeacher(teacherRow, saveFileDialog.FileName, fileType);
 							break;
-						case EntityType.Classrooms:
+						case EntityType.Classroom:
 							_exportEngine.SaveTimeTableForClassroom(classroomRow, saveFileDialog.FileName, fileType);
 							break;
 					}

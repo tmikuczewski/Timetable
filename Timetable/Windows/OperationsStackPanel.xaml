@@ -42,7 +42,7 @@
 				<TextBlock Text="Operation" TextAlignment="Center" VerticalAlignment="Center" Margin="4,0,0,0" />
 			</Expander.Header>
 		</Expander>
-		<Expander x:Name="expanderExport" FontSize="14" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" MinHeight="30" Margin="10,4,0,0" Visibility="Collapsed">
+		<Expander x:Name="expanderSummary" FontSize="14" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" MinHeight="30" Margin="10,4,0,0" Visibility="Collapsed">
 			<Expander.Header>
 				<TextBlock Text="Export" TextAlignment="Center" VerticalAlignment="Center" Margin="4,0,0,0" />
 			</Expander.Header>

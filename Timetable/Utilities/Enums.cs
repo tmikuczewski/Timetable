@@ -21,7 +21,7 @@
 		Planning,
 
 		/// <summary>
-		///     Zakładka 'Podsumowanie'.
+		///     Zakładka 'Podgląd'.
 		/// </summary>
 		Summary
 	}
@@ -37,39 +37,49 @@
 		None,
 
 		/// <summary>
-		///     Lista studentów.
+		///     Klasa.
 		/// </summary>
-		Students,
+		Class,
 
 		/// <summary>
-		///     Lista nauczycieli.
+		///     Sala.
 		/// </summary>
-		Teachers,
+		Classroom,
 
 		/// <summary>
-		///     Lista klas.
+		///     Dzień.
 		/// </summary>
-		Classes,
+		Day,
 
 		/// <summary>
-		///     Lista sal.
+		///     Godzina.
 		/// </summary>
-		Classrooms,
+		Hour,
 
 		/// <summary>
-		///     Lista przedmiotów.
+		///     Lekcja.
 		/// </summary>
-		Subjects,
+		Lesson,
 
 		/// <summary>
-		///     Lista lekcji.
+		///     Zajęcia.
 		/// </summary>
-		Lessons,
+		LessonsPlace,
 
 		/// <summary>
-		///     Lista zajęć.
+		///     Student.
 		/// </summary>
-		LessonsPlaces
+		Student,
+
+		/// <summary>
+		///     Przedmiot.
+		/// </summary>
+		Subject,
+
+		/// <summary>
+		///     Nauczyciel.
+		/// </summary>
+		Teacher,
 	}
 
 	/// <summary>
@@ -131,7 +141,7 @@
 		/// <summary>
 		///     Akcja 'Usuń'.
 		/// </summary>
-		RemoveLessonPlace,
+		RemoveLessonsPlace,
 
 		/// <summary>
 		///     Akcja 'XLS'.

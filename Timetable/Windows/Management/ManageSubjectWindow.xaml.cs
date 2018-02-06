@@ -202,7 +202,7 @@ namespace Timetable.Windows.Management
 
 			_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 
-			_callingWindow.RefreshViews(EntityType.Subjects);
+			_callingWindow.RefreshViews(EntityType.Subject);
 
 			Close();
 		}

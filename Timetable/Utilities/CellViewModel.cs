@@ -118,34 +118,34 @@
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
-		/// <param name="lessonPlaceRow"></param>
-		public CellViewModel(TimetableDataSet.LessonsPlacesRow lessonPlaceRow)
+		/// <param name="lessonsPlaceRow"></param>
+		public CellViewModel(TimetableDataSet.LessonsPlacesRow lessonsPlaceRow)
 		{
-			if (lessonPlaceRow == null)
+			if (lessonsPlaceRow == null)
 				return;
 
-			DayId = lessonPlaceRow.DayId;
-			HourId = lessonPlaceRow.HourId;
+			DayId = lessonsPlaceRow.DayId;
+			HourId = lessonsPlaceRow.HourId;
 
-			if (lessonPlaceRow.ClassroomsRow != null)
+			if (lessonsPlaceRow.ClassroomsRow != null)
 			{
-				ClassroomId = lessonPlaceRow.ClassroomId;
-				ClassroomName = lessonPlaceRow.ClassroomsRow?.Name;
+				ClassroomId = lessonsPlaceRow.ClassroomId;
+				ClassroomName = lessonsPlaceRow.ClassroomsRow?.Name;
 			}
 
-			if (lessonPlaceRow.LessonsRow != null)
+			if (lessonsPlaceRow.LessonsRow != null)
 			{
-				ClassId = lessonPlaceRow.LessonsRow.ClassId;
-				ClassCodeName = lessonPlaceRow.LessonsRow.ClassesRow?.CodeName;
-				ClassFriendlyName = lessonPlaceRow.LessonsRow.ClassesRow?.ToFriendlyString();
-				ClassYear = lessonPlaceRow.LessonsRow.ClassesRow?.Year;
-				LessonId = lessonPlaceRow.LessonId;
-				TeacherFirstName = lessonPlaceRow.LessonsRow.TeachersRow?.FirstName;
-				TeacherFriendlyName = lessonPlaceRow.LessonsRow.TeachersRow?.ToFriendlyString();
-				TeacherLastName = lessonPlaceRow.LessonsRow.TeachersRow?.LastName;
-				TeacherPesel = lessonPlaceRow.LessonsRow.TeacherPesel;
-				SubjectId = lessonPlaceRow.LessonsRow.SubjectId;
-				SubjectName = lessonPlaceRow.LessonsRow.SubjectsRow?.Name;
+				ClassId = lessonsPlaceRow.LessonsRow.ClassId;
+				ClassCodeName = lessonsPlaceRow.LessonsRow.ClassesRow?.CodeName;
+				ClassFriendlyName = lessonsPlaceRow.LessonsRow.ClassesRow?.ToFriendlyString();
+				ClassYear = lessonsPlaceRow.LessonsRow.ClassesRow?.Year;
+				LessonId = lessonsPlaceRow.LessonId;
+				TeacherFirstName = lessonsPlaceRow.LessonsRow.TeachersRow?.FirstName;
+				TeacherFriendlyName = lessonsPlaceRow.LessonsRow.TeachersRow?.ToFriendlyString();
+				TeacherLastName = lessonsPlaceRow.LessonsRow.TeachersRow?.LastName;
+				TeacherPesel = lessonsPlaceRow.LessonsRow.TeacherPesel;
+				SubjectId = lessonsPlaceRow.LessonsRow.SubjectId;
+				SubjectName = lessonsPlaceRow.LessonsRow.SubjectsRow?.Name;
 			}
 		}
 
