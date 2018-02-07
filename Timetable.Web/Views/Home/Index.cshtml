@@ -1,0 +1,58 @@
+﻿@model Timetable.Web.ViewModels.HomeViewModel
+
+@{
+	ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+	<h1>Timetable</h1>
+	<p class="lead">Platforma .NET, Paweł Moniewski, Gliwice 2018.</p>
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<h2>Classes</h2>
+		<table class="table">
+			<tbody class="searchable">
+			@foreach (var item in Model.Classess)
+			{
+				<tr>
+					<td>
+						@Html.ActionLink(item.year + " " + item.code_name, "Class", "Timetable", new { id = item.id }, null)
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-4">
+		<h2>Teachers</h2>
+		<table class="table">
+			<tbody class="searchable">
+			@foreach (var item in Model.Teachers)
+			{
+				<tr>
+					<td>
+						@Html.ActionLink(item.first_name + " " + item.last_name, "Teacher", "Timetable", new { pesel = item.pesel }, null)
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-4">
+		<h2>Classrooms</h2>
+		<table class="table">
+			<tbody class="searchable">
+			@foreach (var item in Model.Classrooms)
+			{
+				<tr>
+					<td>
+						@Html.ActionLink(item.name, "Classroom", "Timetable", new { id = item.id }, null)
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</div>
+</div>

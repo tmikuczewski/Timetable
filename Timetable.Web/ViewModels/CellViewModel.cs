@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Timetable.DAL.Model;
 
-namespace Timetable.Utilities
+namespace Timetable.Web.ViewModels
 {
-	/// <summary>
-	///     Klasa przechowująca informacje o zaplanowanej lekcji.
-	/// </summary>
 	public class CellViewModel
 	{
 		#region Constants and Statics
@@ -150,45 +151,45 @@ namespace Timetable.Utilities
 		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="lessonsPlaceRow"></param>
-		public CellViewModel(TimetableDataSetMySql.LessonsPlacesRow lessonsPlaceRow)
+		public CellViewModel(lessons_places lessonsPlaceRow)
 		{
 			if (lessonsPlaceRow == null)
 				return;
 
-			if (lessonsPlaceRow.DaysRow != null)
+			if (lessonsPlaceRow.days != null)
 			{
-				DayId = lessonsPlaceRow.DaysRow.Id;
-				DayNumber = lessonsPlaceRow.DaysRow.Number;
-				DayName = lessonsPlaceRow.DaysRow.Name;
+				DayId = lessonsPlaceRow.days.id;
+				DayNumber = lessonsPlaceRow.days.number;
+				DayName = lessonsPlaceRow.days.name;
 			}
 
-			if (lessonsPlaceRow.HoursRow != null)
+			if (lessonsPlaceRow.hours != null)
 			{
-				HourId = lessonsPlaceRow.HoursRow.Id;
-				HourNumber = lessonsPlaceRow.HoursRow.Number;
-				HourBegin = lessonsPlaceRow.HoursRow.Begin;
-				HourEnd = lessonsPlaceRow.HoursRow.End;
+				HourId = lessonsPlaceRow.hours.id;
+				HourNumber = lessonsPlaceRow.hours.number;
+				HourBegin = lessonsPlaceRow.hours.begin;
+				HourEnd = lessonsPlaceRow.hours.end;
 			}
 
-			if (lessonsPlaceRow.ClassroomsRow != null)
+			if (lessonsPlaceRow.classrooms != null)
 			{
-				ClassroomId = lessonsPlaceRow.ClassroomsRow.Id;
-				ClassroomName = lessonsPlaceRow.ClassroomsRow.Name;
+				ClassroomId = lessonsPlaceRow.classrooms.id;
+				ClassroomName = lessonsPlaceRow.classrooms.name;
 			}
 
-			if (lessonsPlaceRow.LessonsRow != null)
+			if (lessonsPlaceRow.lessons != null)
 			{
-				ClassId = lessonsPlaceRow.LessonsRow.ClassId;
-				ClassCodeName = lessonsPlaceRow.LessonsRow.ClassesRow?.CodeName;
-				ClassFriendlyName = lessonsPlaceRow.LessonsRow.ClassesRow?.ToFriendlyString();
-				ClassYear = lessonsPlaceRow.LessonsRow.ClassesRow?.Year;
-				LessonId = lessonsPlaceRow.LessonId;
-				TeacherFirstName = lessonsPlaceRow.LessonsRow.TeachersRow?.FirstName;
-				TeacherFriendlyName = lessonsPlaceRow.LessonsRow.TeachersRow?.ToFriendlyString();
-				TeacherLastName = lessonsPlaceRow.LessonsRow.TeachersRow?.LastName;
-				TeacherPesel = lessonsPlaceRow.LessonsRow.TeacherPesel;
-				SubjectId = lessonsPlaceRow.LessonsRow.SubjectId;
-				SubjectName = lessonsPlaceRow.LessonsRow.SubjectsRow?.Name;
+				ClassId = lessonsPlaceRow.lessons._class;
+				ClassCodeName = lessonsPlaceRow.lessons.classes?.code_name;
+				ClassFriendlyName = lessonsPlaceRow.lessons.classes?.year + " " + lessonsPlaceRow.lessons.classes?.code_name;
+				ClassYear = lessonsPlaceRow.lessons.classes?.year;
+				LessonId = lessonsPlaceRow.lesson;
+				TeacherFirstName = lessonsPlaceRow.lessons.teachers?.first_name;
+				TeacherFriendlyName = lessonsPlaceRow.lessons.teachers?.first_name + " " + lessonsPlaceRow.lessons.teachers?.last_name;
+				TeacherLastName = lessonsPlaceRow.lessons.teachers?.last_name;
+				TeacherPesel = lessonsPlaceRow.lessons.teacher;
+				SubjectId = lessonsPlaceRow.lessons.subject;
+				SubjectName = lessonsPlaceRow.lessons.subjects?.name;
 			}
 		}
 
@@ -213,5 +214,6 @@ namespace Timetable.Utilities
 		#region Private methods
 
 		#endregion
+
 	}
 }

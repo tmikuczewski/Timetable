@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Timetable.Service.Services.HoursService" CodeBehind="HoursService.svc.cs" %>

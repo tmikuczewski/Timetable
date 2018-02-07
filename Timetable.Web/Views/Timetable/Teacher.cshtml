@@ -1,0 +1,43 @@
+﻿@using Timetable.Web.ViewModels
+@model TimetableViewModel
+@{
+	ViewBag.Title = Model.CurrentTeacher.first_name + " " + Model.CurrentTeacher.last_name;
+}
+<h2>@ViewBag.Title</h2>
+<br />
+
+<table class="table">
+	<tr>
+		<th>
+			&nbsp;
+		</th>
+		@foreach (var day in Model.Days)
+		{
+			<th style="text-align: center; font-weight: bold;">
+				@day.name
+			</th>
+		}
+	</tr>
+@foreach (var hour in Model.Hours)
+{
+	<tr>
+		<td style="text-align: center; font-weight: bold;">
+			@hour.number
+		</td>
+	@foreach (var day in Model.Days)
+	{
+		<td style="text-align: center;">
+			@{
+				CellViewModel cell = @Model.LessonsPlaces.FirstOrDefault(lp => lp.DayId == day.id && lp.HourId == hour.id && lp.TeacherPesel == Model.CurrentTeacher.pesel);
+				string firstRow = (cell != null) ? cell.SubjectName : " ";
+				string secondRow = (cell != null) ? "kl. " + cell.ClassFriendlyName : " ";
+				string thirdRow = (cell != null) ? "s. " + cell.ClassroomName : " ";
+				<p>@firstRow</p>
+				<p>@Html.ActionLink(secondRow ?? " ", "Class", "Timetable", new { id = cell?.ClassId }, null)</p>
+				<p>@Html.ActionLink(thirdRow ?? " ", "Classroom", "Timetable", new { id = cell?.ClassroomId }, null)</p>
+			}
+		</td>
+	}
+	</tr>
+}
+</table>

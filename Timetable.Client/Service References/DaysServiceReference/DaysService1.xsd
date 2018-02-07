@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Timetable.DAL.Model" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Timetable.DAL.Model" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8463/Services/DaysService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfdays">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="days" nillable="true" type="tns:days" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfdays" nillable="true" type="tns:ArrayOfdays" />
+  <xs:complexType name="days">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons_places" nillable="true" type="tns:ArrayOflessons_places" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="number" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="days" nillable="true" type="tns:days" />
+  <xs:complexType name="ArrayOflessons_places">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="lessons_places" nillable="true" type="tns:lessons_places" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOflessons_places" nillable="true" type="tns:ArrayOflessons_places" />
+  <xs:complexType name="lessons_places">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="classroom" type="xs:int" />
+      <xs:element minOccurs="0" name="classrooms" nillable="true" type="tns:classrooms" />
+      <xs:element minOccurs="0" name="day" type="xs:int" />
+      <xs:element minOccurs="0" name="days" nillable="true" type="tns:days" />
+      <xs:element minOccurs="0" name="hour" type="xs:int" />
+      <xs:element minOccurs="0" name="hours" nillable="true" type="tns:hours" />
+      <xs:element minOccurs="0" name="lesson" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons" nillable="true" type="tns:lessons" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="lessons_places" nillable="true" type="tns:lessons_places" />
+  <xs:complexType name="classrooms">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="administrator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons_places" nillable="true" type="tns:ArrayOflessons_places" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="teachers" nillable="true" type="tns:teachers" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="classrooms" nillable="true" type="tns:classrooms" />
+  <xs:complexType name="teachers">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="classes" nillable="true" type="tns:ArrayOfclasses" />
+      <xs:element minOccurs="0" name="classrooms" nillable="true" type="tns:ArrayOfclassrooms" />
+      <xs:element minOccurs="0" name="first_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="last_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="lessons" nillable="true" type="tns:ArrayOflessons" />
+      <xs:element minOccurs="0" name="pesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="teachers" nillable="true" type="tns:teachers" />
+  <xs:complexType name="ArrayOfclasses">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="classes" nillable="true" type="tns:classes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfclasses" nillable="true" type="tns:ArrayOfclasses" />
+  <xs:complexType name="classes">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="code_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons" nillable="true" type="tns:ArrayOflessons" />
+      <xs:element minOccurs="0" name="students" nillable="true" type="tns:ArrayOfstudents" />
+      <xs:element minOccurs="0" name="teachers" nillable="true" type="tns:teachers" />
+      <xs:element minOccurs="0" name="tutor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="year" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="classes" nillable="true" type="tns:classes" />
+  <xs:complexType name="ArrayOflessons">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="lessons" nillable="true" type="tns:lessons" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOflessons" nillable="true" type="tns:ArrayOflessons" />
+  <xs:complexType name="lessons">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="_class" type="xs:int" />
+      <xs:element minOccurs="0" name="classes" nillable="true" type="tns:classes" />
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons_places" nillable="true" type="tns:ArrayOflessons_places" />
+      <xs:element minOccurs="0" name="subject" type="xs:int" />
+      <xs:element minOccurs="0" name="subjects" nillable="true" type="tns:subjects" />
+      <xs:element minOccurs="0" name="teacher" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="teachers" nillable="true" type="tns:teachers" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="lessons" nillable="true" type="tns:lessons" />
+  <xs:complexType name="subjects">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons" nillable="true" type="tns:ArrayOflessons" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="subjects" nillable="true" type="tns:subjects" />
+  <xs:complexType name="ArrayOfstudents">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="students" nillable="true" type="tns:students" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfstudents" nillable="true" type="tns:ArrayOfstudents" />
+  <xs:complexType name="students">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="_class" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="classes" nillable="true" type="tns:classes" />
+      <xs:element minOccurs="0" name="first_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="last_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="students" nillable="true" type="tns:students" />
+  <xs:complexType name="ArrayOfclassrooms">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="classrooms" nillable="true" type="tns:classrooms" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfclassrooms" nillable="true" type="tns:ArrayOfclassrooms" />
+  <xs:complexType name="hours">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="begin" type="ser:duration" />
+      <xs:element minOccurs="0" name="end" type="ser:duration" />
+      <xs:element minOccurs="0" name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="lessons_places" nillable="true" type="tns:ArrayOflessons_places" />
+      <xs:element minOccurs="0" name="number" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="hours" nillable="true" type="tns:hours" />
+</xs:schema>
