@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetMySqlTableAdapters;
+using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -21,14 +20,14 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSetMySql _timetableDataSet;
+		private TimetableDataSet _timetableDataSet;
 		private DaysTableAdapter _daysTableAdapter;
 
 		private readonly MainWindow _callingWindow;
 		private readonly ActionType _actionType;
 
 		private int _currentDayId;
-		private TimetableDataSetMySql.DaysRow _currentDayRow;
+		private TimetableDataSet.DaysRow _currentDayRow;
 
 		#endregion
 
@@ -104,7 +103,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSetMySql();
+			_timetableDataSet = new TimetableDataSet();
 			_daysTableAdapter = new DaysTableAdapter();
 
 			_daysTableAdapter.Fill(_timetableDataSet.Days);
@@ -136,7 +135,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSetMySql.DaysRow PrepareDay()
+		private TimetableDataSet.DaysRow PrepareDay()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedDays().FirstOrDefault(), out _currentDayId))
 			{

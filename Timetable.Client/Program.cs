@@ -47,5 +47,4 @@ namespace Timetable.Client
 			Console.ReadKey();
 		}
 	}
-
 }

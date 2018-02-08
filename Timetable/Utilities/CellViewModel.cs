@@ -1,4 +1,5 @@
 ﻿using System;
+using Timetable.DAL.DataSet.MySql;
 
 namespace Timetable.Utilities
 {
@@ -150,7 +151,7 @@ namespace Timetable.Utilities
 		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="lessonsPlaceRow"></param>
-		public CellViewModel(TimetableDataSetMySql.LessonsPlacesRow lessonsPlaceRow)
+		public CellViewModel(TimetableDataSet.LessonsPlacesRow lessonsPlaceRow)
 		{
 			if (lessonsPlaceRow == null)
 				return;

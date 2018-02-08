@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetMySqlTableAdapters;
+using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management
@@ -21,7 +21,7 @@ namespace Timetable.Windows.Management
 
 		#region Fields
 
-		private TimetableDataSetMySql _timetableDataSet;
+		private TimetableDataSet _timetableDataSet;
 		private ClassroomsTableAdapter _classroomsTableAdapter;
 		private TeachersTableAdapter _teachersTableAdapter;
 
@@ -29,8 +29,8 @@ namespace Timetable.Windows.Management
 		private readonly ActionType _actionType;
 
 		private int _currentClassroomId;
-		private TimetableDataSetMySql.ClassroomsRow _currentClassroomRow;
-		private IList<TimetableDataSetMySql.TeachersRow> _teachersItemsSource;
+		private TimetableDataSet.ClassroomsRow _currentClassroomRow;
+		private IList<TimetableDataSet.TeachersRow> _teachersItemsSource;
 
 		#endregion
 
@@ -108,7 +108,7 @@ namespace Timetable.Windows.Management
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSetMySql();
+			_timetableDataSet = new TimetableDataSet();
 			_classroomsTableAdapter = new ClassroomsTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
 
@@ -157,7 +157,7 @@ namespace Timetable.Windows.Management
 			}
 		}
 
-		private TimetableDataSetMySql.ClassroomsRow PrepareClassroom()
+		private TimetableDataSet.ClassroomsRow PrepareClassroom()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedClassrooms().FirstOrDefault(), out _currentClassroomId))
 			{
@@ -225,31 +225,11 @@ namespace Timetable.Windows.Management
 				_timetableDataSet.Classrooms.Rows.Add(_currentClassroomRow);
 			}
 
-			//SetOdbcUpdateClassroomCommand(_currentClassroomId, name);
-
 			_classroomsTableAdapter.Update(_timetableDataSet.Classrooms);
 
 			_callingWindow.RefreshViews(EntityType.Classroom);
 
 			Close();
-		}
-
-		private void SetOdbcUpdateClassroomCommand(int id, string name)
-		{
-			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
-
-			//OdbcCommand cmd = conn.CreateCommand();
-
-			//cmd.CommandText = "UPDATE classrooms " +
-			//				  "SET name = ?, administrator = ? " +
-			//                  "WHERE id = ?";
-
-			//cmd.Parameters.Add("name", OdbcType.Text).Value = name;
-			//cmd.Parameters.Add("administrator", OdbcType.VarChar).Value = comboBoxAdministrator.SelectedValue ?? DBNull.Value;
-			//cmd.Parameters.Add("id", OdbcType.Int).Value = id;
-
-			//_classroomsTableAdapter.Adapter.UpdateCommand = cmd;
 		}
 
 		private MessageBoxResult ShowErrorMessageBox(string message)

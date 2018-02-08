@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Timetable.DAL.Model;
+using Timetable.DAL.Model.MySql;
 
 namespace Timetable.Service.ViewModels
 {

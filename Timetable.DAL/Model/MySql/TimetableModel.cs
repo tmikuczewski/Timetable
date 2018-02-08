@@ -1,17 +1,13 @@
+using System.Data.Entity;
 using MySql.Data.Entity;
 
-namespace Timetable.DAL.Model
+namespace Timetable.DAL.Model.MySql
 {
-	using System;
-	using System.Data.Entity;
-	using System.ComponentModel.DataAnnotations.Schema;
-	using System.Linq;
-
 	[DbConfigurationType(typeof(MySqlEFConfiguration))]
 	public partial class TimetableModel : DbContext
 	{
 		public TimetableModel()
-			: base("name=TimetableModelMySql")
+			: base("name=Timetable.DAL.Properties.Settings.TimetableConnectionStringMySql")
 		{
 		}
 

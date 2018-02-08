@@ -59,23 +59,72 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\classes.cs" />
-    <Compile Include="Model\classrooms.cs" />
-    <Compile Include="Model\days.cs" />
-    <Compile Include="Model\hours.cs" />
-    <Compile Include="Model\lessons.cs" />
-    <Compile Include="Model\lessons_places.cs" />
-    <Compile Include="Model\students.cs" />
-    <Compile Include="Model\subjects.cs" />
-    <Compile Include="Model\teachers.cs" />
-    <Compile Include="Model\TimetableModel.cs" />
+    <Compile Include="DataSet\MySql\TimetableDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DataSet\PostgreSql\TimetableDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Model\MySql\classes.cs" />
+    <Compile Include="Model\MySql\classrooms.cs" />
+    <Compile Include="Model\MySql\days.cs" />
+    <Compile Include="Model\MySql\hours.cs" />
+    <Compile Include="Model\MySql\lessons.cs" />
+    <Compile Include="Model\MySql\lessons_places.cs" />
+    <Compile Include="Model\MySql\students.cs" />
+    <Compile Include="Model\MySql\subjects.cs" />
+    <Compile Include="Model\MySql\teachers.cs" />
+    <Compile Include="Model\MySql\TimetableModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DataSet\MySql\TimetableDataSet.xsc">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet\MySql\TimetableDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DataSet\MySql\TimetableDataSet.xss">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet\PostgreSql\TimetableDataSet.xsc">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet\PostgreSql\TimetableDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DataSet\PostgreSql\TimetableDataSet.xss">
+      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Model\PostgreSql\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DbSchema\MySql\20180206_InitialSchema.sql" />
+    <Content Include="DbSchema\MySql\20180206_InitialSeed.sql" />
+    <Content Include="DbSchema\PostgreSql\20180206_InitialSchema.sql" />
+    <Content Include="DbSchema\PostgreSql\20180206_InitialSeed.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

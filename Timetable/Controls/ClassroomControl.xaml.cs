@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Timetable.DAL.DataSet.MySql;
 using Timetable.Utilities;
 
 namespace Timetable.Controls
@@ -49,7 +50,7 @@ namespace Timetable.Controls
 		///     Konstruktor tworzący obiekt typu <c>Controls.ClassroomControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
 		/// <param name="classroomRow">Obiekt typu <c>TimetableDataSet.ClassroomsRow</c> wypełniający danymi pola tekstowe kontrolek.</param>
-		public ClassroomControl(TimetableDataSetMySql.ClassroomsRow classroomRow)
+		public ClassroomControl(TimetableDataSet.ClassroomsRow classroomRow)
 		{
 			InitializeComponent();
 

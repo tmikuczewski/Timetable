@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Timetable.Controls;
-using Timetable.TimetableDataSetMySqlTableAdapters;
+using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows
@@ -22,7 +23,7 @@ namespace Timetable.Windows
 
 		#region Fields
 
-		private TimetableDataSetMySql _timetableDataSet;
+		private TimetableDataSet _timetableDataSet;
 		private ClassesTableAdapter _classesTableAdapter;
 		private ClassroomsTableAdapter _classroomsTableAdapter;
 		private DaysTableAdapter _daysTableAdapter;
@@ -47,43 +48,43 @@ namespace Timetable.Windows
 
 		#region Properties
 
-		private IOrderedEnumerable<TimetableDataSetMySql.ClassesRow> ClassesEnumerable => _timetableDataSet.Classes
+		private IOrderedEnumerable<TimetableDataSet.ClassesRow> ClassesEnumerable => _timetableDataSet.Classes
 			.OrderBy(c => c.ToFriendlyString());
 
 		private IEnumerable<string> ClassessFriendlyNamesEnumerable => ClassesEnumerable.Select(c => c.ToFriendlyString());
 
-		private IOrderedEnumerable<TimetableDataSetMySql.ClassroomsRow> ClassroomsEnumerable => _timetableDataSet.Classrooms
+		private IOrderedEnumerable<TimetableDataSet.ClassroomsRow> ClassroomsEnumerable => _timetableDataSet.Classrooms
 			.OrderBy(cr => cr.Name);
 
 		private IEnumerable<string> ClassroomsFriendlyNamesEnumerable => ClassroomsEnumerable.Select(cr => cr.Name);
 
-		private IOrderedEnumerable<TimetableDataSetMySql.DaysRow> DaysEnumerable => _timetableDataSet.Days
+		private IOrderedEnumerable<TimetableDataSet.DaysRow> DaysEnumerable => _timetableDataSet.Days
 			.OrderBy(d => d.Number);
 
-		private IOrderedEnumerable<TimetableDataSetMySql.HoursRow> HoursEnumerable => _timetableDataSet.Hours
+		private IOrderedEnumerable<TimetableDataSet.HoursRow> HoursEnumerable => _timetableDataSet.Hours
 			.OrderBy(d => d.Number);
 
 		private IEnumerable<int> LessonsDistinctIdsEnumerable => _timetableDataSet.LessonsPlaces
 			.Select(lp => lp.LessonId).Distinct();
 
-		private IOrderedEnumerable<TimetableDataSetMySql.LessonsRow> LessonsEnumerable => _timetableDataSet.Lessons
+		private IOrderedEnumerable<TimetableDataSet.LessonsRow> LessonsEnumerable => _timetableDataSet.Lessons
 			.OrderBy(l => l.SubjectsRow.Name)
 			.ThenBy(l => l.ClassesRow.ToFriendlyString());
 
-		private IOrderedEnumerable<TimetableDataSetMySql.LessonsPlacesRow> LessonsPlacesEnumerable => _timetableDataSet.LessonsPlaces
+		private IOrderedEnumerable<TimetableDataSet.LessonsPlacesRow> LessonsPlacesEnumerable => _timetableDataSet.LessonsPlaces
 			.OrderBy(lp => lp.DaysRow.Number)
 			.ThenBy(lp => lp.HoursRow.Number);
 
-		private IOrderedEnumerable<TimetableDataSetMySql.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
+		private IOrderedEnumerable<TimetableDataSet.StudentsRow> StudentsEnumerable => _timetableDataSet.Students
 			.OrderBy(s => s.LastName)
 			.ThenBy(s => s.FirstName);
 
 		private IEnumerable<string> StudentsFriendlyNamesEnumerable => StudentsEnumerable.Select(c => c.ToFriendlyString(true));
 
-		private IOrderedEnumerable<TimetableDataSetMySql.SubjectsRow> SubjectsEnumerable => _timetableDataSet.Subjects
+		private IOrderedEnumerable<TimetableDataSet.SubjectsRow> SubjectsEnumerable => _timetableDataSet.Subjects
 			.OrderBy(s => s.Name);
 
-		private IOrderedEnumerable<TimetableDataSetMySql.TeachersRow> TeachersEnumerable => _timetableDataSet.Teachers
+		private IOrderedEnumerable<TimetableDataSet.TeachersRow> TeachersEnumerable => _timetableDataSet.Teachers
 			.OrderBy(s => s.LastName)
 			.ThenBy(s => s.FirstName);
 
@@ -121,9 +122,10 @@ namespace Timetable.Windows
 					tabControl.SelectedIndex = (int) MainWindowTabType.Management;
 					_windowLoaded = true;
 
-					RefreshCurrentTabView();
-					FillFilterComboBoxesForView(MainWindowTabType.Planning);
-					FillFilterComboBoxesForView(MainWindowTabType.Summary);
+					RefreshCurrentTabView(EntityType.Class);
+					RefreshMappingTabView(EntityType.Class);
+					RefreshPlanningTabView(EntityType.Class);
+					RefreshSummaryTabView(EntityType.Class);
 				});
 			});
 		}
@@ -182,7 +184,7 @@ namespace Timetable.Windows
 			{
 				Dispatcher.Invoke(() =>
 				{
-					RefreshManagementTabView();
+					RefreshManagementTabView(_currentEntityType);
 				});
 			});
 		}
@@ -525,9 +527,9 @@ namespace Timetable.Windows
 
 		#region Entities operations
 
-		private IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> GetLessonsPlaces(object objectId, EntityType entityType)
+		private IEnumerable<TimetableDataSet.LessonsPlacesRow> GetLessonsPlaces(object objectId, EntityType entityType)
 		{
-			IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> lessonsPlacesRows = null;
+			IEnumerable<TimetableDataSet.LessonsPlacesRow> lessonsPlacesRows = null;
 
 			switch (entityType)
 			{
@@ -548,9 +550,9 @@ namespace Timetable.Windows
 			return lessonsPlacesRows;
 		}
 
-		private IEnumerable<TimetableDataSetMySql.LessonsRow> GetRemainingLessons(object objectId, EntityType entityType)
+		private IEnumerable<TimetableDataSet.LessonsRow> GetRemainingLessons(object objectId, EntityType entityType)
 		{
-			IEnumerable<TimetableDataSetMySql.LessonsRow> lessonsRows = null;
+			IEnumerable<TimetableDataSet.LessonsRow> lessonsRows = null;
 
 			switch (entityType)
 			{
@@ -571,7 +573,7 @@ namespace Timetable.Windows
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSetMySql();
+			_timetableDataSet = new TimetableDataSet();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_classroomsTableAdapter = new ClassroomsTableAdapter();
 			_daysTableAdapter = new DaysTableAdapter();
@@ -808,11 +810,17 @@ namespace Timetable.Windows
 
 		private void RefreshManagementTabView(EntityType changedDataEntityType = EntityType.None)
 		{
+			if (changedDataEntityType == EntityType.None)
+				return;
+
 			FillScrollViewerGridForView(MainWindowTabType.Management, _currentEntityType);
 		}
 
 		private void RefreshMappingTabView(EntityType changedDataEntityType = EntityType.None)
 		{
+			if (changedDataEntityType == EntityType.None)
+				return;
+
 			FillScrollViewerGridForView(MainWindowTabType.Mapping, EntityType.Lesson);
 		}
 
@@ -1054,64 +1062,64 @@ namespace Timetable.Windows
 		{
 			AddDescriptionControlToGrid<ClassControl>(grid);
 
-			foreach (TimetableDataSetMySql.ClassesRow classRow in ClassesEnumerable)
-				AddEntityControlToGrid<ClassControl, TimetableDataSetMySql.ClassesRow>(grid, classRow);
+			foreach (TimetableDataSet.ClassesRow classRow in ClassesEnumerable)
+				AddEntityControlToGrid<ClassControl, TimetableDataSet.ClassesRow>(grid, classRow);
 		}
 
 		private void AddAllClassroomsToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<ClassroomControl>(grid);
 
-			foreach (TimetableDataSetMySql.ClassroomsRow classroomRow in ClassroomsEnumerable)
-				AddEntityControlToGrid<ClassroomControl, TimetableDataSetMySql.ClassroomsRow>(grid, classroomRow);
+			foreach (TimetableDataSet.ClassroomsRow classroomRow in ClassroomsEnumerable)
+				AddEntityControlToGrid<ClassroomControl, TimetableDataSet.ClassroomsRow>(grid, classroomRow);
 		}
 
 		private void AddAllDaysToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<DayControl>(grid);
 
-			foreach (TimetableDataSetMySql.DaysRow dayRow in DaysEnumerable)
-				AddEntityControlToGrid<DayControl, TimetableDataSetMySql.DaysRow>(grid, dayRow);
+			foreach (TimetableDataSet.DaysRow dayRow in DaysEnumerable)
+				AddEntityControlToGrid<DayControl, TimetableDataSet.DaysRow>(grid, dayRow);
 		}
 
 		private void AddAllHoursToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<HourControl>(grid);
 
-			foreach (TimetableDataSetMySql.HoursRow hourRow in HoursEnumerable)
-				AddEntityControlToGrid<HourControl, TimetableDataSetMySql.HoursRow>(grid, hourRow);
+			foreach (TimetableDataSet.HoursRow hourRow in HoursEnumerable)
+				AddEntityControlToGrid<HourControl, TimetableDataSet.HoursRow>(grid, hourRow);
 		}
 
 		private void AddAllLessonsToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<LessonControl>(grid);
 
-			foreach (TimetableDataSetMySql.LessonsRow lessonRow in LessonsEnumerable)
-				AddEntityControlToGrid<LessonControl, TimetableDataSetMySql.LessonsRow>(grid, lessonRow);
+			foreach (TimetableDataSet.LessonsRow lessonRow in LessonsEnumerable)
+				AddEntityControlToGrid<LessonControl, TimetableDataSet.LessonsRow>(grid, lessonRow);
 		}
 
 		private void AddAllStudentsToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<PersonControl>(grid);
 
-			foreach (TimetableDataSetMySql.StudentsRow studentRow in StudentsEnumerable)
-				AddEntityControlToGrid<PersonControl, TimetableDataSetMySql.StudentsRow>(grid, studentRow);
+			foreach (TimetableDataSet.StudentsRow studentRow in StudentsEnumerable)
+				AddEntityControlToGrid<PersonControl, TimetableDataSet.StudentsRow>(grid, studentRow);
 		}
 
 		private void AddAllSubjectsToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<SubjectControl>(grid);
 
-			foreach (TimetableDataSetMySql.SubjectsRow subjectRow in SubjectsEnumerable)
-				AddEntityControlToGrid<SubjectControl, TimetableDataSetMySql.SubjectsRow>(grid, subjectRow);
+			foreach (TimetableDataSet.SubjectsRow subjectRow in SubjectsEnumerable)
+				AddEntityControlToGrid<SubjectControl, TimetableDataSet.SubjectsRow>(grid, subjectRow);
 		}
 
 		private void AddAllTeachersToGrid(Grid grid)
 		{
 			AddDescriptionControlToGrid<PersonControl>(grid);
 
-			foreach (TimetableDataSetMySql.TeachersRow teacherRow in TeachersEnumerable)
-				AddEntityControlToGrid<PersonControl, TimetableDataSetMySql.TeachersRow>(grid, teacherRow);
+			foreach (TimetableDataSet.TeachersRow teacherRow in TeachersEnumerable)
+				AddEntityControlToGrid<PersonControl, TimetableDataSet.TeachersRow>(grid, teacherRow);
 		}
 
 		private void AddDescriptionControlToGrid<TControl>(Grid grid)
@@ -1215,7 +1223,7 @@ namespace Timetable.Windows
 
 		private void AddAllLessonsPlacesToGrid(Grid grid, object objectId, MainWindowTabType tabType, EntityType entityType)
 		{
-			IEnumerable<TimetableDataSetMySql.LessonsPlacesRow> allLessonsPlaces = GetLessonsPlaces(objectId, entityType);
+			IEnumerable<TimetableDataSet.LessonsPlacesRow> allLessonsPlaces = GetLessonsPlaces(objectId, entityType);
 
 			if (allLessonsPlaces == null)
 				return;
@@ -1232,7 +1240,7 @@ namespace Timetable.Windows
 
 		private void AddAllRemainingLessonsToGrid(Grid grid, object objectId, MainWindowTabType tabType, EntityType entityType)
 		{
-			IEnumerable<TimetableDataSetMySql.LessonsRow> remainingLessons = GetRemainingLessons(objectId, entityType);
+			IEnumerable<TimetableDataSet.LessonsRow> remainingLessons = GetRemainingLessons(objectId, entityType);
 
 			if (remainingLessons == null)
 				return;

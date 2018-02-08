@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using static Timetable.TimetableDataSetMySql;
+using Timetable.DAL.DataSet.MySql;
 
 namespace Timetable.Utilities
 {
@@ -26,7 +26,7 @@ namespace Timetable.Utilities
 		/// <param name="studentRow"></param>
 		/// <param name="showPesel"></param>
 		/// <returns></returns>
-		public static string ToFriendlyString(this StudentsRow studentRow, bool showPesel = false)
+		public static string ToFriendlyString(this TimetableDataSet.StudentsRow studentRow, bool showPesel = false)
 		{
 			return $"{studentRow.FirstName.First()}. {studentRow.LastName}" +
 			       $"{((showPesel) ? " (" + studentRow.Pesel + ")" : string.Empty)}";
@@ -38,7 +38,7 @@ namespace Timetable.Utilities
 		/// <param name="teacherRow"></param>
 		/// <param name="showPesel"></param>
 		/// <returns></returns>
-		public static string ToFriendlyString(this TeachersRow teacherRow, bool showPesel = false)
+		public static string ToFriendlyString(this TimetableDataSet.TeachersRow teacherRow, bool showPesel = false)
 		{
 			return $"{teacherRow.FirstName.First()}. {teacherRow.LastName}" +
 			       $"{((showPesel) ? " (" + teacherRow.Pesel + ")" : string.Empty)}";
@@ -50,7 +50,7 @@ namespace Timetable.Utilities
 		/// <param name="classRow"></param>
 		/// <param name="showCodeName"></param>
 		/// <returns></returns>
-		public static string ToFriendlyString(this ClassesRow classRow, bool showCodeName = true)
+		public static string ToFriendlyString(this TimetableDataSet.ClassesRow classRow, bool showCodeName = true)
 		{
 			return $"{((classRow.Year >= 0) ? classRow.Year.ToString() : string.Empty)}" +
 			       $"{((!string.IsNullOrEmpty(classRow.CodeName)) ? " " + classRow.CodeName : string.Empty)}";

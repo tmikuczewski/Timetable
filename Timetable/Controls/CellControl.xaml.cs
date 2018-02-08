@@ -5,8 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Timetable.Utilities;
 using Timetable.Windows;
-using PlanningWindow = Timetable.Windows.Planning.PlanningWindow;
-using SystemColors = System.Drawing.SystemColors;
+using Timetable.Windows.Planning;
 
 namespace Timetable.Controls
 {
@@ -103,9 +102,9 @@ namespace Timetable.Controls
 			_callingWindow = mainWindow;
 
 			if (diffColor)
-				Background = new SolidColorBrush(SystemColors.InactiveBorder.ToMediaColor());
+				Background = new SolidColorBrush(System.Drawing.SystemColors.InactiveBorder.ToMediaColor());
 			else
-				Background = new SolidColorBrush(SystemColors.Info.ToMediaColor());
+				Background = new SolidColorBrush(System.Drawing.SystemColors.Info.ToMediaColor());
 
 			FirstRow = _originalFirstRow = string.Empty;
 			SecondRow = _originalSecondRow = string.Empty;

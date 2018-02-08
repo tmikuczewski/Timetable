@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Timetable.DAL.Model;
+using Timetable.DAL.Model.MySql;
 using Timetable.Service.Interfaces;
 using Timetable.Service.ViewModels;
 

@@ -123,16 +123,6 @@
     <Compile Include="Controls\TermCellControl.xaml.cs">
       <DependentUpon>TermCellControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TimetableDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="TimetableDataSetMySql.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
@@ -310,28 +300,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="TimetableDataSet.xsc">
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="TimetableDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="TimetableDataSet.xss">
-      <DependentUpon>TimetableDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="TimetableDataSetMySql.xsc">
-      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
-    </None>
-    <None Include="TimetableDataSetMySql.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>TimetableDataSetMySql.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="TimetableDataSetMySql.xss">
-      <DependentUpon>TimetableDataSetMySql.xsd</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -395,12 +363,14 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DbSchema\20180206_InitialSchema_PostgreSQL.sql" />
-    <Content Include="DbSchema\20180206_InitialSchema_MySQL.sql" />
-    <Content Include="DbSchema\20180206_InitialSeed_PostgreSQL.sql" />
-    <Content Include="DbSchema\20180206_InitialSeed_MySQL.sql" />
+    <ProjectReference Include="..\Timetable.DAL\Timetable.DAL.csproj">
+      <Project>{e1345e25-918f-4240-9e12-3f0472a6bcbc}</Project>
+      <Name>Timetable.DAL</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DbSchema\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

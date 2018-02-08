@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Data.Odbc;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using Timetable.TimetableDataSetMySqlTableAdapters;
+using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 using Timetable.Windows;
 using Timetable.Windows.Management;
@@ -27,7 +27,7 @@ namespace Timetable.Controls
 
 		#region Fields
 
-		private static TimetableDataSetMySql _timetableDataSet;
+		private static TimetableDataSet _timetableDataSet;
 		private static ClassesTableAdapter _classesTableAdapter;
 		private static ClassroomsTableAdapter _classroomsTableAdapter;
 		private static DaysTableAdapter _daysTableAdapter;
@@ -214,7 +214,7 @@ namespace Timetable.Controls
 
 		private static void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSetMySql();
+			_timetableDataSet = new TimetableDataSet();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_classroomsTableAdapter = new ClassroomsTableAdapter();
 			_daysTableAdapter = new DaysTableAdapter();
@@ -370,11 +370,9 @@ namespace Timetable.Controls
 					}
 
 					classRow.Delete();
-
-					//SetOdbcDeleteClassCommand(classId);
-
-					_classesTableAdapter.Update(_timetableDataSet.Classes);
 				}
+
+				_classesTableAdapter.Update(_timetableDataSet.Classes);
 
 				_callingWindow.RefreshViews(EntityType.Class);
 			}
@@ -382,21 +380,6 @@ namespace Timetable.Controls
 			{
 				ShowErrorMessageBox(ex.ToString());
 			}
-		}
-
-		private void SetOdbcDeleteClassCommand(int id)
-		{
-			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
-
-			//OdbcCommand cmd = conn.CreateCommand();
-
-			//cmd.CommandText = "DELETE FROM classes " +
-			//				  "WHERE id = ?";
-
-			//cmd.Parameters.Add("id", OdbcType.Int).Value = id;
-
-			//_classesTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveStudents()
@@ -412,15 +395,10 @@ namespace Timetable.Controls
 				{
 					var studentRow = _timetableDataSet.Students.FindByPesel(pesel);
 
-					if (studentRow == null)
-						continue;
-
-					studentRow.Delete();
-
-					//SetOdbcDeleteStudentCommand(pesel);
-
-					_studentsTableAdapter.Update(_timetableDataSet.Students);
+					studentRow?.Delete();
 				}
+
+				_studentsTableAdapter.Update(_timetableDataSet.Students);
 
 				_callingWindow.RefreshViews(EntityType.Student);
 			}
@@ -428,21 +406,6 @@ namespace Timetable.Controls
 			{
 				ShowErrorMessageBox(ex.ToString());
 			}
-		}
-
-		private void SetOdbcDeleteStudentCommand(string pesel)
-		{
-			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
-
-			//OdbcCommand cmd = conn.CreateCommand();
-
-			//cmd.CommandText = "DELETE FROM students " +
-			//				  "WHERE pesel = ?";
-
-			//cmd.Parameters.Add("pesel", OdbcType.VarChar).Value = pesel;
-
-			//_studentsTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveTeachers()
@@ -503,9 +466,9 @@ namespace Timetable.Controls
 					}
 
 					teacherRow.Delete();
-
-					_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 				}
+
+				_teachersTableAdapter.Update(_timetableDataSet.Teachers);
 
 				_callingWindow.RefreshViews(EntityType.Teacher);
 			}
@@ -550,11 +513,9 @@ namespace Timetable.Controls
 					}
 
 					classroomRow.Delete();
-
-					//SetOdbcDeleteClassroomCommand(classroomId);
-
-					_classroomsTableAdapter.Update(_timetableDataSet.Classrooms);
 				}
+
+				_classroomsTableAdapter.Update(_timetableDataSet.Classrooms);
 
 				_callingWindow.RefreshViews(EntityType.Classroom);
 			}
@@ -562,21 +523,6 @@ namespace Timetable.Controls
 			{
 				ShowErrorMessageBox(ex.ToString());
 			}
-		}
-
-		private void SetOdbcDeleteClassroomCommand(int id)
-		{
-			//OdbcConnection conn = new OdbcConnection(System.Configuration.ConfigurationManager
-			//	.ConnectionStrings["Timetable.Properties.Settings.ConnectionString"].ConnectionString);
-
-			//OdbcCommand cmd = conn.CreateCommand();
-
-			//cmd.CommandText = "DELETE FROM classrooms " +
-			//				  "WHERE id = ?";
-
-			//cmd.Parameters.Add("id", OdbcType.Int).Value = id;
-
-			//_classroomsTableAdapter.Adapter.DeleteCommand = cmd;
 		}
 
 		private void RemoveSubjects()
@@ -614,9 +560,9 @@ namespace Timetable.Controls
 					}
 
 					subjectRow.Delete();
-
-					_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 				}
+
+				_subjectsTableAdapter.Update(_timetableDataSet.Subjects);
 
 				_callingWindow.RefreshViews(EntityType.Subject);
 			}
@@ -661,9 +607,9 @@ namespace Timetable.Controls
 					}
 
 					dayRow.Delete();
-
-					_daysTableAdapter.Update(_timetableDataSet.Days);
 				}
+
+				_daysTableAdapter.Update(_timetableDataSet.Days);
 
 				_callingWindow.RefreshViews(EntityType.Day);
 			}
@@ -708,9 +654,9 @@ namespace Timetable.Controls
 					}
 
 					hourRow.Delete();
-
-					_hoursTableAdapter.Update(_timetableDataSet.Hours);
 				}
+
+				_hoursTableAdapter.Update(_timetableDataSet.Hours);
 
 				_callingWindow.RefreshViews(EntityType.Hour);
 			}
@@ -761,9 +707,9 @@ namespace Timetable.Controls
 					}
 
 					lessonRow.Delete();
-
-					_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 				}
+
+				_lessonsTableAdapter.Update(_timetableDataSet.Lessons);
 
 				_callingWindow.RefreshViews(EntityType.Lesson);
 			}
@@ -817,7 +763,7 @@ namespace Timetable.Controls
 			}
 		}
 
-		private TimetableDataSetMySql.ClassesRow GetCurrentClass()
+		private TimetableDataSet.ClassesRow GetCurrentClass()
 		{
 			int? classId = _callingWindow.GetSummaryClassId();
 
@@ -834,7 +780,7 @@ namespace Timetable.Controls
 			return classRow;
 		}
 
-		private TimetableDataSetMySql.TeachersRow GetCurrentTeacher()
+		private TimetableDataSet.TeachersRow GetCurrentTeacher()
 		{
 			string teacherPesel = _callingWindow.GetSummaryTeacherPesel();
 
@@ -851,7 +797,7 @@ namespace Timetable.Controls
 			return teacherRow;
 		}
 
-		private TimetableDataSetMySql.ClassroomsRow GetCurrentClassroom()
+		private TimetableDataSet.ClassroomsRow GetCurrentClassroom()
 		{
 			int? classroomId = _callingWindow.GetSummaryClassroomId();
 
@@ -875,9 +821,9 @@ namespace Timetable.Controls
 			if (_exportEngineWorking)
 				return;
 
-			TimetableDataSetMySql.ClassesRow classRow = null;
-			TimetableDataSetMySql.TeachersRow teacherRow = null;
-			TimetableDataSetMySql.ClassroomsRow classroomRow = null;
+			TimetableDataSet.ClassesRow classRow = null;
+			TimetableDataSet.TeachersRow teacherRow = null;
+			TimetableDataSet.ClassroomsRow classroomRow = null;
 
 			var entityType = _callingWindow.GetSummaryEntityType();
 			var date = DateTime.Now.ToString("yyyyMMddTHHmmss");

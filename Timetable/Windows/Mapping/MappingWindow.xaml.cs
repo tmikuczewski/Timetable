@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Timetable.TimetableDataSetMySqlTableAdapters;
+using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Mapping
@@ -19,7 +20,7 @@ namespace Timetable.Windows.Mapping
 
 		#region Fields
 
-		private TimetableDataSetMySql _timetableDataSet;
+		private TimetableDataSet _timetableDataSet;
 		private ClassesTableAdapter _classesTableAdapter;
 		private TeachersTableAdapter _teachersTableAdapter;
 		private SubjectsTableAdapter _subjectsTableAdapter;
@@ -31,7 +32,7 @@ namespace Timetable.Windows.Mapping
 		private int _currentClassId;
 		private int _currentSubjectId;
 		private int _currentLessonId;
-		private TimetableDataSetMySql.LessonsRow _currentLessonRow;
+		private TimetableDataSet.LessonsRow _currentLessonRow;
 
 		#endregion
 
@@ -109,7 +110,7 @@ namespace Timetable.Windows.Mapping
 
 		private void InitDatabaseObjects()
 		{
-			_timetableDataSet = new TimetableDataSetMySql();
+			_timetableDataSet = new TimetableDataSet();
 			_classesTableAdapter = new ClassesTableAdapter();
 			_subjectsTableAdapter = new SubjectsTableAdapter();
 			_teachersTableAdapter = new TeachersTableAdapter();
@@ -164,7 +165,7 @@ namespace Timetable.Windows.Mapping
 			}
 		}
 
-		private TimetableDataSetMySql.LessonsRow PrepareLesson()
+		private TimetableDataSet.LessonsRow PrepareLesson()
 		{
 			if (!int.TryParse(_callingWindow.GetIdNumbersOfMarkedLessons().FirstOrDefault(), out _currentLessonId))
 			{
