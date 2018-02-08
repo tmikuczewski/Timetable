@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="49c76cc4-992f-48e4-b31a-7597a8801a6a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="c3331066-8794-4521-8a50-bb75f4a96e2e" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,14 +19,14 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8463/Services/HoursService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:7985/Services/HoursService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="HoursService.disco" MetadataType="Disco" ID="96e2b8fd-f602-4c3c-a96c-74df7b835411" SourceId="1" SourceUrl="http://localhost:8463/Services/HoursService.svc?disco" />
-    <MetadataFile FileName="HoursService.wsdl" MetadataType="Wsdl" ID="ec631153-c1c7-48ba-a094-713e0abf34a4" SourceId="1" SourceUrl="http://localhost:8463/Services/HoursService.svc?wsdl" />
-    <MetadataFile FileName="HoursService.xsd" MetadataType="Schema" ID="412ac641-5b47-4b24-ae01-5bd35005a146" SourceId="1" SourceUrl="http://localhost:8463/Services/HoursService.svc?xsd=xsd0" />
-    <MetadataFile FileName="HoursService1.xsd" MetadataType="Schema" ID="7352f252-eb2f-490e-9e43-e358b8d4f493" SourceId="1" SourceUrl="http://localhost:8463/Services/HoursService.svc?xsd=xsd2" />
-    <MetadataFile FileName="HoursService2.xsd" MetadataType="Schema" ID="aad6acb7-4922-4d59-9b58-e45c5a10e1f1" SourceId="1" SourceUrl="http://localhost:8463/Services/HoursService.svc?xsd=xsd1" />
+    <MetadataFile FileName="HoursService.xsd" MetadataType="Schema" ID="2bb54396-c5ff-45a8-b5ae-aabe404d2892" SourceId="1" SourceUrl="http://localhost:7985/Services/HoursService.svc?xsd=xsd1" />
+    <MetadataFile FileName="HoursService.wsdl" MetadataType="Wsdl" ID="c1c98f26-874d-40fb-8a01-1da70c44ce89" SourceId="1" SourceUrl="http://localhost:7985/Services/HoursService.svc?wsdl" />
+    <MetadataFile FileName="HoursService1.xsd" MetadataType="Schema" ID="356940ab-4496-4b52-a495-8f599f707fab" SourceId="1" SourceUrl="http://localhost:7985/Services/HoursService.svc?xsd=xsd0" />
+    <MetadataFile FileName="HoursService2.xsd" MetadataType="Schema" ID="1fec29be-0429-4e88-b7a6-d7550a53ad30" SourceId="1" SourceUrl="http://localhost:7985/Services/HoursService.svc?xsd=xsd2" />
+    <MetadataFile FileName="HoursService.disco" MetadataType="Disco" ID="1eec37b8-9337-45fd-b4a4-1a287df7a49e" SourceId="1" SourceUrl="http://localhost:7985/Services/HoursService.svc?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

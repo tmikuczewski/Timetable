@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="e91043ed-f451-4873-bf8f-c4e044786549" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="163d8321-bbcc-46ff-aa30-2f26e454fd33" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,14 +19,14 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8463/Services/DaysService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:7985/Services/DaysService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="DaysService.disco" MetadataType="Disco" ID="fde0a6fd-2c38-4e8e-b650-633d708fc8fe" SourceId="1" SourceUrl="http://localhost:8463/Services/DaysService.svc?disco" />
-    <MetadataFile FileName="DaysService.xsd" MetadataType="Schema" ID="345932cb-d593-4b89-8bc3-7dcc7612be42" SourceId="1" SourceUrl="http://localhost:8463/Services/DaysService.svc?xsd=xsd1" />
-    <MetadataFile FileName="DaysService1.xsd" MetadataType="Schema" ID="9e501ab5-6859-4d1e-a061-9a1ed55a2624" SourceId="1" SourceUrl="http://localhost:8463/Services/DaysService.svc?xsd=xsd2" />
-    <MetadataFile FileName="DaysService2.xsd" MetadataType="Schema" ID="bc9eb661-3d8d-4712-a787-d46bdefdb9a3" SourceId="1" SourceUrl="http://localhost:8463/Services/DaysService.svc?xsd=xsd0" />
-    <MetadataFile FileName="DaysService.wsdl" MetadataType="Wsdl" ID="600e9732-8ed6-4414-9be5-14ee694e41e5" SourceId="1" SourceUrl="http://localhost:8463/Services/DaysService.svc?wsdl" />
+    <MetadataFile FileName="DaysService.disco" MetadataType="Disco" ID="d0ceac00-cb3e-45c4-be83-3488740710a2" SourceId="1" SourceUrl="http://localhost:7985/Services/DaysService.svc?disco" />
+    <MetadataFile FileName="DaysService.xsd" MetadataType="Schema" ID="3bde49b8-9db7-4560-b517-0a52abef5fc2" SourceId="1" SourceUrl="http://localhost:7985/Services/DaysService.svc?xsd=xsd0" />
+    <MetadataFile FileName="DaysService.wsdl" MetadataType="Wsdl" ID="c493fde3-3924-459b-862a-d381c5faabff" SourceId="1" SourceUrl="http://localhost:7985/Services/DaysService.svc?wsdl" />
+    <MetadataFile FileName="DaysService1.xsd" MetadataType="Schema" ID="1aca6e52-8004-4f56-af34-857750637689" SourceId="1" SourceUrl="http://localhost:7985/Services/DaysService.svc?xsd=xsd2" />
+    <MetadataFile FileName="DaysService2.xsd" MetadataType="Schema" ID="2df37f89-1b3d-45b0-b149-494fb1a1bbf5" SourceId="1" SourceUrl="http://localhost:7985/Services/DaysService.svc?xsd=xsd1" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

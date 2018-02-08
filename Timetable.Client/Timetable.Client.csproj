@@ -62,38 +62,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clients\Days\DaysService.cs" />
-    <Compile Include="Clients\Hours\HoursService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\HoursServiceReference\Reference.cs">
+    <Compile Include="Service References\DaysServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Service References\DaysServiceReference\Reference.cs">
+    <Compile Include="Service References\HoursServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Clients\Days\output.config" />
-    <None Include="Clients\Hours\output.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Timetable.DAL.Model.days.datasource" />
     <None Include="Properties\DataSources\Timetable.DAL.Model.hours.datasource" />
-    <None Include="Service References\HoursServiceReference\HoursService.wsdl" />
-    <None Include="Service References\HoursServiceReference\HoursService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\HoursServiceReference\HoursService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\HoursServiceReference\HoursService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Properties\DataSources\Timetable.Service.ViewModels.DaysViewModel.datasource" />
+    <None Include="Properties\DataSources\Timetable.Service.ViewModels.HoursViewModel.datasource" />
     <None Include="Service References\DaysServiceReference\DaysService.wsdl" />
     <None Include="Service References\DaysServiceReference\DaysService.xsd">
       <SubType>Designer</SubType>
@@ -104,13 +94,33 @@
     <None Include="Service References\DaysServiceReference\DaysService2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\HoursServiceReference\HoursService.wsdl" />
+    <None Include="Service References\HoursServiceReference\HoursService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\HoursServiceReference\HoursService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\HoursServiceReference\HoursService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\HoursServiceReference\" />
+    <ProjectReference Include="..\Timetable.DAL\Timetable.DAL.csproj">
+      <Project>{e1345e25-918f-4240-9e12-3f0472a6bcbc}</Project>
+      <Name>Timetable.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Timetable.Service\Timetable.Service.csproj">
+      <Project>{97f6a79f-779e-499b-9a35-8874531796b9}</Project>
+      <Name>Timetable.Service</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <WCFMetadataStorage Include="Service References\DaysServiceReference\" />
+    <WCFMetadataStorage Include="Service References\HoursServiceReference\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\DaysServiceReference\DaysService.disco" />
@@ -141,12 +151,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Timetable.DAL\Timetable.DAL.csproj">
-      <Project>{e1345e25-918f-4240-9e12-3f0472a6bcbc}</Project>
-      <Name>Timetable.DAL</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

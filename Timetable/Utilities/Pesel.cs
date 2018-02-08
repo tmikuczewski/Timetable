@@ -43,7 +43,7 @@ namespace Timetable.Utilities
 		/// <summary>
 		///     Płeć osoby posiadającej dany numer PESEL.
 		/// </summary>
-		public Sex Sex { get; }
+		public SexType Sex { get; }
 
 		#endregion
 
@@ -163,11 +163,11 @@ namespace Timetable.Utilities
 		///     Metoda zwracająca płeć osoby posiadającej podany numer PESEL.
 		/// </summary>
 		/// <param name="pesel">Numer PESEL w postaci <c>System.String</c>, na podstawie którego ma zostać określona płeć.</param>
-		/// <returns>Wartość wyliczeniową typu <c>Enums.Sex</c> określającą płeć osoby o podanym numerze PESEL.</returns>
-		public static Sex GetSex(string pesel)
+		/// <returns>Wartość wyliczeniową typu <c>Enums.SexType</c> określającą płeć osoby o podanym numerze PESEL.</returns>
+		public static SexType GetSex(string pesel)
 		{
 			if (IsValid(pesel))
-				return (Sex) ((int.Parse(pesel.Trim().Substring(9, 1)) % 2 == 0) ? 0 : 1);
+				return (SexType) ((int.Parse(pesel.Trim().Substring(9, 1)) % 2 == 0) ? 0 : 1);
 
 			throw new InvalidPeselException();
 		}

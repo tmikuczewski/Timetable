@@ -146,7 +146,7 @@ namespace Timetable.Controls
 			{
 				Dispatcher.Invoke(() =>
 				{
-					ExportToFile(ExportFileType.XLS);
+					ExportToFile(ActionType.XLS);
 				});
 			});
 		}
@@ -159,7 +159,7 @@ namespace Timetable.Controls
 			{
 				Dispatcher.Invoke(() =>
 				{
-					ExportToFile(ExportFileType.PDF);
+					ExportToFile(ActionType.PDF);
 				});
 			});
 		}
@@ -870,7 +870,7 @@ namespace Timetable.Controls
 			return classroomRow;
 		}
 
-		private async void ExportToFile(ExportFileType fileType)
+		private async void ExportToFile(ActionType fileType)
 		{
 			if (_exportEngineWorking)
 				return;
@@ -905,10 +905,10 @@ namespace Timetable.Controls
 
 				switch (fileType)
 				{
-					case ExportFileType.XLS:
+					case ActionType.XLS:
 						saveFileDialog.Filter = "Excel Files|*.xls";
 						break;
-					case ExportFileType.PDF:
+					case ActionType.PDF:
 						saveFileDialog.Filter = "PDF Files|*.pdf";
 						break;
 				}

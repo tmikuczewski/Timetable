@@ -7,7 +7,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{30BD40A7-7F7A-4E90-A3E5-BFB2E5E32CCA}</ProjectGuid>
+    <ProjectGuid>{97F6A79F-779E-499B-9A35-8874531796B9}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -80,18 +80,22 @@
   <ItemGroup>
     <Content Include="Services\DaysService.svc" />
     <Content Include="Services\HoursService.svc" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Services\HoursService.svc.cs">
-      <DependentUpon>HoursService.svc</DependentUpon>
-    </Compile>
-    <Compile Include="Services\IDaysService.cs" />
     <Compile Include="Services\DaysService.svc.cs">
       <DependentUpon>DaysService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\HoursService.svc.cs">
+      <DependentUpon>HoursService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Interfaces\IDaysService.cs" />
+    <Compile Include="Interfaces\IHoursService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IHoursService.cs" />
+    <Compile Include="ViewModels\DaysViewModel.cs" />
+    <Compile Include="ViewModels\HoursViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -107,7 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Timetable.DAL\Timetable.DAL.csproj">
-      <Project>{e1345e25-918f-4240-9e12-3f0472a6bcbc}</Project>
+      <Project>{E1345E25-918F-4240-9E12-3F0472A6BCBC}</Project>
       <Name>Timetable.DAL</Name>
     </ProjectReference>
   </ItemGroup>
@@ -124,9 +128,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8463</DevelopmentServerPort>
+          <DevelopmentServerPort>17030</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:8463/</IISUrl>
+          <IISUrl>http://localhost:7985/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

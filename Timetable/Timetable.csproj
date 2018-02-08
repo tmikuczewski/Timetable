@@ -395,8 +395,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DbSchema\20180206_InitialSchema.sql" />
-    <Content Include="DbSchema\20180206_InitialSeed.sql" />
+    <Content Include="DbSchema\20180206_InitialSchema_PostgreSQL.sql" />
+    <Content Include="DbSchema\20180206_InitialSchema_MySQL.sql" />
+    <Content Include="DbSchema\20180206_InitialSeed_PostgreSQL.sql" />
+    <Content Include="DbSchema\20180206_InitialSeed_MySQL.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

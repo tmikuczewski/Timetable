@@ -155,25 +155,9 @@
 	}
 
 	/// <summary>
-	///     Typ pliku do jakiego eksportowany jest plan
-	/// </summary>
-	public enum ExportFileType
-	{
-		/// <summary>
-		///     XLS (Excel)
-		/// </summary>
-		XLS,
-
-		/// <summary>
-		///     PDF
-		/// </summary>
-		PDF
-	}
-
-	/// <summary>
 	///     Płeć.
 	/// </summary>
-	public enum Sex
+	public enum SexType
 	{
 		/// <summary>
 		///     Kobieta.

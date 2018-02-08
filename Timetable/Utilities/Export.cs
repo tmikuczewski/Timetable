@@ -93,7 +93,7 @@ namespace Timetable.Utilities
 		/// <param name="classRow">Obiekt klasy.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClass(TimetableDataSetMySql.ClassesRow classRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForClass(TimetableDataSetMySql.ClassesRow classRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -112,7 +112,7 @@ namespace Timetable.Utilities
 		/// <param name="teacherRow">Obiekt nauczyciela.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForTeacher(TimetableDataSetMySql.TeachersRow teacherRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForTeacher(TimetableDataSetMySql.TeachersRow teacherRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -131,7 +131,7 @@ namespace Timetable.Utilities
 		/// <param name="classroomRow">Obiekt sali.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClassroom(TimetableDataSetMySql.ClassroomsRow classroomRow, string filePath, ExportFileType fileType)
+		public void SaveTimeTableForClassroom(TimetableDataSetMySql.ClassroomsRow classroomRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -340,7 +340,7 @@ namespace Timetable.Utilities
 			return max;
 		}
 
-		private void Save(string path, ExportFileType fileType)
+		private void Save(string path, ActionType fileType)
 		{
 			_xlWorkSheet.Columns.AutoFit();
 
@@ -349,11 +349,11 @@ namespace Timetable.Utilities
 			for (var i = 1; i <= 1 + DaysList.Count; i++)
 				_xlWorkSheet.Columns[i].ColumnWidth = max;
 
-			if (fileType.Equals(ExportFileType.XLS))
+			if (fileType.Equals(ActionType.XLS))
 				_xlWorkBook.SaveAs(path, XlFileFormat.xlWorkbookNormal, _misValue, _misValue, _misValue, _misValue,
 					XlSaveAsAccessMode.xlExclusive, _misValue, _misValue, _misValue, _misValue, _misValue);
 
-			if (fileType.Equals(ExportFileType.PDF))
+			if (fileType.Equals(ActionType.PDF))
 			{
 				_xlWorkSheet.PageSetup.Orientation = XlPageOrientation.xlLandscape;
 				_xlWorkSheet.PageSetup.Zoom = false;

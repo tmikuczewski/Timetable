@@ -12,48 +12,48 @@ namespace Timetable.Client.DaysServiceReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DaysServiceReference.IDayService")]
-    public interface IDayService {
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DaysServiceReference.IDaysService")]
+    public interface IDaysService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDayService/GetAllDays", ReplyAction="http://tempuri.org/IDayService/GetAllDaysResponse")]
-        Timetable.DAL.Model.days[] GetAllDays();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDaysService/GetAllDays", ReplyAction="http://tempuri.org/IDaysService/GetAllDaysResponse")]
+        Timetable.Service.ViewModels.DaysViewModel[] GetAllDays();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDayService/GetAllDays", ReplyAction="http://tempuri.org/IDayService/GetAllDaysResponse")]
-        System.Threading.Tasks.Task<Timetable.DAL.Model.days[]> GetAllDaysAsync();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDaysService/GetAllDays", ReplyAction="http://tempuri.org/IDaysService/GetAllDaysResponse")]
+        System.Threading.Tasks.Task<Timetable.Service.ViewModels.DaysViewModel[]> GetAllDaysAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IDayServiceChannel : Timetable.Client.DaysServiceReference.IDayService, System.ServiceModel.IClientChannel {
+    public interface IDaysServiceChannel : Timetable.Client.DaysServiceReference.IDaysService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class DayServiceClient : System.ServiceModel.ClientBase<Timetable.Client.DaysServiceReference.IDayService>, Timetable.Client.DaysServiceReference.IDayService {
+    public partial class DaysServiceClient : System.ServiceModel.ClientBase<Timetable.Client.DaysServiceReference.IDaysService>, Timetable.Client.DaysServiceReference.IDaysService {
         
-        public DayServiceClient() {
+        public DaysServiceClient() {
         }
         
-        public DayServiceClient(string endpointConfigurationName) : 
+        public DaysServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public DayServiceClient(string endpointConfigurationName, string remoteAddress) : 
+        public DaysServiceClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public DayServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public DaysServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public DayServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public DaysServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
-        public Timetable.DAL.Model.days[] GetAllDays() {
+        public Timetable.Service.ViewModels.DaysViewModel[] GetAllDays() {
             return base.Channel.GetAllDays();
         }
         
-        public System.Threading.Tasks.Task<Timetable.DAL.Model.days[]> GetAllDaysAsync() {
+        public System.Threading.Tasks.Task<Timetable.Service.ViewModels.DaysViewModel[]> GetAllDaysAsync() {
             return base.Channel.GetAllDaysAsync();
         }
     }

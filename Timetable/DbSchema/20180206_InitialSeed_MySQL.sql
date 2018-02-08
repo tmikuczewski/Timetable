@@ -1,3 +1,5 @@
+USE `timetable`;
+
 INSERT INTO `days` (`number`, `name`) VALUES 
 	(1, 'Poniedziałek'), 
 	(2, 'Wtorek'), 

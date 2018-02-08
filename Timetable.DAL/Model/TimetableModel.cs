@@ -1,3 +1,5 @@
+using MySql.Data.Entity;
+
 namespace Timetable.DAL.Model
 {
 	using System;
@@ -5,6 +7,7 @@ namespace Timetable.DAL.Model
 	using System.ComponentModel.DataAnnotations.Schema;
 	using System.Linq;
 
+	[DbConfigurationType(typeof(MySqlEFConfiguration))]
 	public partial class TimetableModel : DbContext
 	{
 		public TimetableModel()

@@ -205,7 +205,7 @@ namespace Timetable.Windows
 			{
 				Dispatcher.Invoke(() =>
 				{
-					RefreshPlanningTabView(true);
+					RefreshPlanningTabView(_currentPlanningEntityType);
 				});
 			});
 		}
@@ -226,7 +226,10 @@ namespace Timetable.Windows
 			{
 				await Task.Factory.StartNew(() =>
 				{
-					Dispatcher.Invoke(RefreshPlanningEntityView);
+					Dispatcher.Invoke(() =>
+					{
+						RefreshPlanningTabView(EntityType.LessonsPlace);
+					});
 				});
 			}
 		}
@@ -249,7 +252,7 @@ namespace Timetable.Windows
 			{
 				Dispatcher.Invoke(() =>
 				{
-					RefreshSummaryTabView(true);
+					RefreshSummaryTabView(_currentSummaryEntityType);
 				});
 			});
 		}
@@ -270,7 +273,10 @@ namespace Timetable.Windows
 			{
 				await Task.Factory.StartNew(() =>
 				{
-					Dispatcher.Invoke(RefreshSummaryEntityView);
+					Dispatcher.Invoke(() =>
+					{
+						RefreshSummaryTabView(EntityType.LessonsPlace);
+					});
 				});
 			}
 		}
@@ -298,7 +304,7 @@ namespace Timetable.Windows
 				{
 					RefreshDatabaseObjects(changedDataEntityType);
 
-					RefreshCurrentTabView(true);
+					RefreshCurrentTabView(changedDataEntityType);
 
 					RefreshOtherTabViews(changedDataEntityType);
 				});
@@ -503,7 +509,7 @@ namespace Timetable.Windows
 			int? currentSummaryClassroomId = null;
 
 			if (_currentSummaryEntityType == EntityType.Classroom
-			    && stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex != -1)
+				&& stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex != -1)
 			{
 				currentSummaryClassroomId = ClassroomsEnumerable
 					.ElementAt(stackPanelOperations.comboBoxSummaryFilterEntity.SelectedIndex).Id;
@@ -735,7 +741,7 @@ namespace Timetable.Windows
 			stackPanelOperations.expanderSummary.Content = stackPanelSummary;
 		}
 
-		private void RefreshCurrentTabView(bool forceRefresh = false)
+		private void RefreshCurrentTabView(EntityType changedDataEntityType = EntityType.None)
 		{
 			stackPanelOperations.expanderOperation.IsExpanded = false;
 			stackPanelOperations.expanderPlanning.IsExpanded = false;
@@ -750,7 +756,7 @@ namespace Timetable.Windows
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
-					RefreshManagementTabView();
+					RefreshManagementTabView(changedDataEntityType);
 					break;
 				case MainWindowTabType.Mapping:
 					stackPanelOperations.gridManagementFilter.Visibility = Visibility.Collapsed;
@@ -759,7 +765,7 @@ namespace Timetable.Windows
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
-					RefreshMappingTabView();
+					RefreshMappingTabView(changedDataEntityType);
 					break;
 				case MainWindowTabType.Planning:
 					stackPanelOperations.gridManagementFilter.Visibility = Visibility.Collapsed;
@@ -768,7 +774,7 @@ namespace Timetable.Windows
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Visible;
 					stackPanelOperations.expanderSummary.Visibility = Visibility.Collapsed;
-					RefreshPlanningTabView(forceRefresh);
+					RefreshPlanningTabView(changedDataEntityType);
 					break;
 				case MainWindowTabType.Summary:
 					stackPanelOperations.gridManagementFilter.Visibility = Visibility.Collapsed;
@@ -777,69 +783,48 @@ namespace Timetable.Windows
 					stackPanelOperations.expanderOperation.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderPlanning.Visibility = Visibility.Collapsed;
 					stackPanelOperations.expanderSummary.Visibility = Visibility.Visible;
-					RefreshSummaryTabView(forceRefresh);
+					RefreshSummaryTabView(changedDataEntityType);
 					break;
 			}
 		}
 
 		private void RefreshOtherTabViews(EntityType changedDataEntityType)
 		{
-			switch (changedDataEntityType)
+			switch (_mainWindowTabType)
 			{
-				case EntityType.Day:
-				case EntityType.Class:
-				case EntityType.Classroom:
-				case EntityType.Hour:
-				case EntityType.Lesson:
-				case EntityType.Subject:
-				case EntityType.Teacher:
-					if (_mainWindowTabType != MainWindowTabType.Planning)
-					{
-						RefreshPlanningTabView(true);
-
-					}
-					if (_mainWindowTabType != MainWindowTabType.Summary)
-					{
-						RefreshSummaryTabView(true);
-
-					}
+				case MainWindowTabType.Management:
+				case MainWindowTabType.Mapping:
+					RefreshPlanningTabView(changedDataEntityType);
+					RefreshSummaryTabView(changedDataEntityType);
 					break;
-				case EntityType.LessonsPlace:
-					if (_mainWindowTabType != MainWindowTabType.Planning)
-					{
-						RefreshPlanningEntityView();
-
-					}
-					if (_mainWindowTabType != MainWindowTabType.Summary)
-					{
-						RefreshSummaryEntityView();
-
-					}
+				case MainWindowTabType.Planning:
+					RefreshSummaryTabView(changedDataEntityType);
+					break;
+				case MainWindowTabType.Summary:
+					RefreshPlanningTabView(changedDataEntityType);
 					break;
 			}
 		}
 
-		private void RefreshManagementTabView(bool forceRefresh = false)
+		private void RefreshManagementTabView(EntityType changedDataEntityType = EntityType.None)
 		{
 			FillScrollViewerGridForView(MainWindowTabType.Management, _currentEntityType);
 		}
 
-		private void RefreshMappingTabView(bool forceRefresh = false)
+		private void RefreshMappingTabView(EntityType changedDataEntityType = EntityType.None)
 		{
 			FillScrollViewerGridForView(MainWindowTabType.Mapping, EntityType.Lesson);
 		}
 
-		private void RefreshPlanningTabView(bool forceRefresh = false)
+		private void RefreshPlanningTabView(EntityType changedDataEntityType = EntityType.None)
 		{
-			if (forceRefresh)
-			{
-				if (_mainWindowTabType != MainWindowTabType.Planning)
-				{
-					FillFilterComboBoxesForView(MainWindowTabType.Planning);
-				}
+			if (changedDataEntityType == EntityType.None)
+				return;
 
-				RefreshPlanningEntityView();
-			}
+			if (_currentPlanningEntityType == changedDataEntityType)
+				FillFilterComboBoxesForView(MainWindowTabType.Planning);
+
+			RefreshPlanningEntityView();
 		}
 
 		private void RefreshPlanningEntityView()
@@ -847,17 +832,15 @@ namespace Timetable.Windows
 			FillTimetableGridForView(MainWindowTabType.Planning);
 		}
 
-		private void RefreshSummaryTabView(bool forceRefresh = false)
+		private void RefreshSummaryTabView(EntityType changedDataEntityType = EntityType.None)
 		{
-			if (forceRefresh)
-			{
-				if (_mainWindowTabType != MainWindowTabType.Summary)
-				{
-					FillFilterComboBoxesForView(MainWindowTabType.Summary);
-				}
+			if (changedDataEntityType == EntityType.None)
+				return;
 
-				RefreshSummaryEntityView();
-			}
+			if (_currentSummaryEntityType == changedDataEntityType)
+				FillFilterComboBoxesForView(MainWindowTabType.Summary);
+
+			RefreshSummaryEntityView();
 		}
 
 		private void RefreshSummaryEntityView()

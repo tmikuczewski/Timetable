@@ -1,48 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Timetable.Client.DaysServiceReference;
 using Timetable.Client.HoursServiceReference;
 
 namespace Timetable.Client
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			Console.WriteLine("##### Timetable #####");
 
 
-			DayServiceClient dayServiceClient = new DayServiceClient();
+			var daysServiceClient = new DaysServiceClient();
 
 			Console.WriteLine("\nDays in database:");
 
 			try
 			{
-				foreach (var day in dayServiceClient.GetAllDays())
-					Console.WriteLine(day.number + ") " + day.name);
+				foreach (var day in daysServiceClient.GetAllDays())
+					Console.WriteLine(day.Name);
 			}
 			catch (Exception)
 			{
+				// ignored
 			}
 
-			dayServiceClient.Close();
+			daysServiceClient.Close();
 
 
-			HourServiceClient hourServiceClient = new HourServiceClient();
+			var hourServiceClient = new HoursServiceClient();
 
 			Console.WriteLine("\nHours in database:");
 
 			try
 			{
 				foreach (var hour in hourServiceClient.GetAllHours())
-					Console.WriteLine(hour.number + ") " + hour.begin.ToString(@"hh\:mm") + " - " + hour.end.ToString(@"hh\:mm"));
-
+					Console.WriteLine(hour.Number + ") " + hour.Begin.ToString(@"hh\:mm") + " - " + hour.End.ToString(@"hh\:mm"));
 			}
 			catch (Exception)
 			{
+				// ignored
 			}
 
 			hourServiceClient.Close();
@@ -50,4 +47,5 @@ namespace Timetable.Client
 			Console.ReadKey();
 		}
 	}
+
 }

@@ -12,48 +12,48 @@ namespace Timetable.Client.HoursServiceReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="HoursServiceReference.IHourService")]
-    public interface IHourService {
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="HoursServiceReference.IHoursService")]
+    public interface IHoursService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHourService/GetAllHours", ReplyAction="http://tempuri.org/IHourService/GetAllHoursResponse")]
-        Timetable.DAL.Model.hours[] GetAllHours();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHoursService/GetAllHours", ReplyAction="http://tempuri.org/IHoursService/GetAllHoursResponse")]
+        Timetable.Service.ViewModels.HoursViewModel[] GetAllHours();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHourService/GetAllHours", ReplyAction="http://tempuri.org/IHourService/GetAllHoursResponse")]
-        System.Threading.Tasks.Task<Timetable.DAL.Model.hours[]> GetAllHoursAsync();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHoursService/GetAllHours", ReplyAction="http://tempuri.org/IHoursService/GetAllHoursResponse")]
+        System.Threading.Tasks.Task<Timetable.Service.ViewModels.HoursViewModel[]> GetAllHoursAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IHourServiceChannel : Timetable.Client.HoursServiceReference.IHourService, System.ServiceModel.IClientChannel {
+    public interface IHoursServiceChannel : Timetable.Client.HoursServiceReference.IHoursService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class HourServiceClient : System.ServiceModel.ClientBase<Timetable.Client.HoursServiceReference.IHourService>, Timetable.Client.HoursServiceReference.IHourService {
+    public partial class HoursServiceClient : System.ServiceModel.ClientBase<Timetable.Client.HoursServiceReference.IHoursService>, Timetable.Client.HoursServiceReference.IHoursService {
         
-        public HourServiceClient() {
+        public HoursServiceClient() {
         }
         
-        public HourServiceClient(string endpointConfigurationName) : 
+        public HoursServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public HourServiceClient(string endpointConfigurationName, string remoteAddress) : 
+        public HoursServiceClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public HourServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public HoursServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public HourServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public HoursServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
-        public Timetable.DAL.Model.hours[] GetAllHours() {
+        public Timetable.Service.ViewModels.HoursViewModel[] GetAllHours() {
             return base.Channel.GetAllHours();
         }
         
-        public System.Threading.Tasks.Task<Timetable.DAL.Model.hours[]> GetAllHoursAsync() {
+        public System.Threading.Tasks.Task<Timetable.Service.ViewModels.HoursViewModel[]> GetAllHoursAsync() {
             return base.Channel.GetAllHoursAsync();
         }
     }
