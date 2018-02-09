@@ -73,9 +73,9 @@ namespace Timetable.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Timetable.
         /// </summary>
-        public static string app_title {
+        public static string AppTitle {
             get {
-                return ResourceManager.GetString("app_title", resourceCulture);
+                return ResourceManager.GetString("AppTitle", resourceCulture);
             }
         }
         

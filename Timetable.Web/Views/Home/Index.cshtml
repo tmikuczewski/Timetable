@@ -1,9 +1,7 @@
-﻿@model Timetable.Web.ViewModels.HomeViewModel
-
+﻿@model Timetable.DAL.ViewModels.TimetableViewModel
 @{
 	ViewBag.Title = "Home Page";
 }
-
 <div class="jumbotron">
 	<h1>Timetable</h1>
 	<p class="lead">Platforma .NET, Paweł Moniewski, Gliwice 2018.</p>
@@ -14,11 +12,11 @@
 		<h2>Classes</h2>
 		<table class="table">
 			<tbody class="searchable">
-			@foreach (var item in Model.Classess)
+			@foreach (var item in Model.Classes)
 			{
 				<tr>
 					<td>
-						@Html.ActionLink(item.year + " " + item.code_name, "Class", "Timetable", new { id = item.id }, null)
+						@Html.ActionLink(item.Year + " " + item.CodeName, "Class", "Timetable", new { id = item.Id }, null)
 					</td>
 				</tr>
 			}
@@ -33,7 +31,7 @@
 			{
 				<tr>
 					<td>
-						@Html.ActionLink(item.first_name + " " + item.last_name, "Teacher", "Timetable", new { pesel = item.pesel }, null)
+						@Html.ActionLink(item.FirstName + " " + item.LastName, "Teacher", "Timetable", new { pesel = item.Pesel }, null)
 					</td>
 				</tr>
 			}
@@ -48,7 +46,7 @@
 			{
 				<tr>
 					<td>
-						@Html.ActionLink(item.name, "Classroom", "Timetable", new { id = item.id }, null)
+						@Html.ActionLink(item.Name, "Classroom", "Timetable", new { id = item.Id }, null)
 					</td>
 				</tr>
 			}

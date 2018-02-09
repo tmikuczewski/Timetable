@@ -94,8 +94,6 @@
     <Compile Include="Interfaces\IDaysService.cs" />
     <Compile Include="Interfaces\IHoursService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\DaysViewModel.cs" />
-    <Compile Include="ViewModels\HoursViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

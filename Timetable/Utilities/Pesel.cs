@@ -109,37 +109,15 @@ namespace Timetable.Utilities
 		#region Public methods
 
 		/// <summary>
-		///     Metoda zwracająca datę urodzenia osoby posiadającej podany numer PESEL.
+		///     Metoda sprawdzająca, czy dana wartość zawiera się w danym zakresie.
 		/// </summary>
-		/// <param name="pesel">Numer PESEL w postaci <c>System.String</c>, na podstawie którego ma zostać określona data urodzin.</param>
-		/// <returns>Obiekt typu <c>System.DateTime</c> z ustawioną datą urodzin osoby posiadającej podany numer PESEL.</returns>
-		public static DateTime GetBirthDate(string pesel)
+		/// <param name="value"></param>
+		/// <param name="leftBoundary"></param>
+		/// <param name="rightBoundary"></param>
+		/// <returns></returns>
+		public static bool IsBetweenAnd(int value, int leftBoundary, int rightBoundary)
 		{
-			if (IsValid(pesel))
-			{
-				int year = int.Parse(pesel.Trim().Substring(0, 2)),
-					month = int.Parse(pesel.Trim().Substring(2, 2)),
-					day = int.Parse(pesel.Trim().Substring(4, 2));
-
-				if (month.IsBetweenAnd(1, 12)) // ((month >= 1) && (month <= 12))
-					return new DateTime(1900 + year, month, day);
-
-				if (month.IsBetweenAnd(21, 32)) // ((month >= 21) && (month <= 32))
-					return new DateTime(2000 + year, month - 20, day);
-
-				if (month.IsBetweenAnd(41, 52)) // ((month >= 41) && (month <= 52))
-					return new DateTime(2100 + year, month - 40, day);
-
-				if (month.IsBetweenAnd(61, 72)) // ((month >= 61) && (month <= 72))
-					return new DateTime(2200 + year, month - 60, day);
-
-				if (month.IsBetweenAnd(81, 92)) // ((month >= 81) && (month <= 92))
-					return new DateTime(1800 + year, month - 80, day);
-
-				throw new InvalidPeselException();
-			}
-
-			throw new InvalidPeselException();
+			return value >= leftBoundary && value <= rightBoundary;
 		}
 
 		/// <summary>
@@ -152,11 +130,45 @@ namespace Timetable.Utilities
 			var tempPesel = pesel.Trim();
 
 			if (tempPesel.Length == PESEL_VALID_LENGTH
-				&& Regex.Match(pesel, PESEL_REGEX).Success
-				&& IsCheckDigitValid(tempPesel))
+			    && Regex.Match(pesel, PESEL_REGEX).Success
+			    && IsCheckDigitValid(tempPesel))
 				return true;
 
 			return false;
+		}
+
+		/// <summary>
+		///     Metoda zwracająca datę urodzenia osoby posiadającej podany numer PESEL.
+		/// </summary>
+		/// <param name="pesel">Numer PESEL w postaci <c>System.String</c>, na podstawie którego ma zostać określona data urodzin.</param>
+		/// <returns>Obiekt typu <c>System.DateTime</c> z ustawioną datą urodzin osoby posiadającej podany numer PESEL.</returns>
+		public static DateTime GetBirthDate(string pesel)
+		{
+			if (IsValid(pesel))
+			{
+				int year = int.Parse(pesel.Trim().Substring(0, 2)),
+					month = int.Parse(pesel.Trim().Substring(2, 2)),
+					day = int.Parse(pesel.Trim().Substring(4, 2));
+
+				if (IsBetweenAnd(month, 1, 12)) // ((month >= 1) && (month <= 12))
+					return new DateTime(1900 + year, month, day);
+
+				if (IsBetweenAnd(month, 21, 32)) // ((month >= 21) && (month <= 32))
+					return new DateTime(2000 + year, month - 20, day);
+
+				if (IsBetweenAnd(month, 41, 52)) // ((month >= 41) && (month <= 52))
+					return new DateTime(2100 + year, month - 40, day);
+
+				if (IsBetweenAnd(month, 61, 72)) // ((month >= 61) && (month <= 72))
+					return new DateTime(2200 + year, month - 60, day);
+
+				if (IsBetweenAnd(month, 81, 92)) // ((month >= 81) && (month <= 92))
+					return new DateTime(1800 + year, month - 80, day);
+
+				throw new InvalidPeselException();
+			}
+
+			throw new InvalidPeselException();
 		}
 
 		/// <summary>

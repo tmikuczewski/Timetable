@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Timetable.DAL.DataSet.MySql;
 using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.Utilities;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Management

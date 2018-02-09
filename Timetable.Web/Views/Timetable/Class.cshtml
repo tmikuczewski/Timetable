@@ -1,20 +1,19 @@
-﻿@using Timetable.Web.ViewModels
-@model TimetableViewModel
+﻿@model Timetable.DAL.ViewModels.TimetableViewModel
 @{
-	ViewBag.Title = "Klasa: " + Model.CurrentClass.year + " " + Model.CurrentClass.code_name;
+	ViewBag.Title = $"Klasa: {Model.CurrentClass.Year} {Model.CurrentClass.CodeName}";
 }
-<h2>@ViewBag.Title</h2>
+<h2 style="text-align: center;">@ViewBag.Title</h2>
 <br />
 
 <table class="table">
 	<tr>
 		<th>
-			&nbsp;
+			<p>&nbsp;</p>
 		</th>
 	@foreach (var day in Model.Days)
 	{
 		<th style="text-align: center; font-weight: bold;">
-			@day.name
+			<p>@day.Name</p>
 		</th>
 	}
 	</tr>
@@ -22,20 +21,20 @@
 {
 	<tr>
 		<td style="text-align: center; font-weight: bold;">
-			@hour.number
+			<p>@hour.Number</p>
 		</td>
 	@foreach (var day in Model.Days)
 	{
 		<td style="text-align: center;">
-			@{
-				CellViewModel cell = @Model.LessonsPlaces.FirstOrDefault(lp => lp.DayId == day.id && lp.HourId == hour.id && lp.ClassId == Model.CurrentClass.id);
-				string firstRow = (cell != null) ? cell.SubjectName : " ";
-				string secondRow = (cell != null) ? cell.TeacherFriendlyName : " ";
-				string thirdRow = (cell != null) ? "s. " + cell.ClassroomName : " ";
-				<p>@firstRow</p>
-				<p>@Html.ActionLink(secondRow, "Teacher", "Timetable", new { pesel = cell?.TeacherPesel }, null)</p>
-				<p>@Html.ActionLink(thirdRow, "Classroom", "Timetable", new { id = cell?.ClassroomId }, null)</p>
-			}
+		@{
+			var lessonsPlaceViewModel = @Model.CurrentLessonsPlaces.FirstOrDefault(lp => lp.DayId == day.Id && lp.HourId == hour.Id && lp.ClassId == Model.CurrentClass.Id);
+			var firstRow = (lessonsPlaceViewModel != null) ? lessonsPlaceViewModel.SubjectName : " ";
+			var secondRow = (lessonsPlaceViewModel != null) ? lessonsPlaceViewModel.TeacherFriendlyName : " ";
+			var thirdRow = (lessonsPlaceViewModel != null) ? "s. " + lessonsPlaceViewModel.ClassroomName : " ";
+			<p>@firstRow</p>
+			<p>@Html.ActionLink(secondRow, "Teacher", "Timetable", new { pesel = lessonsPlaceViewModel?.TeacherPesel }, null)</p>
+			<p>@Html.ActionLink(thirdRow, "Classroom", "Timetable", new { id = lessonsPlaceViewModel?.ClassroomId }, null)</p>
+		}
 		</td>
 	}
 	</tr>

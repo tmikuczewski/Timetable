@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Timetable.DAL.ViewModels;
+
 namespace Timetable.Client.HoursServiceReference {
     
     
@@ -16,10 +18,10 @@ namespace Timetable.Client.HoursServiceReference {
     public interface IHoursService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHoursService/GetAllHours", ReplyAction="http://tempuri.org/IHoursService/GetAllHoursResponse")]
-        Timetable.Service.ViewModels.HoursViewModel[] GetAllHours();
+        HourViewModel[] GetAllHours();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHoursService/GetAllHours", ReplyAction="http://tempuri.org/IHoursService/GetAllHoursResponse")]
-        System.Threading.Tasks.Task<Timetable.Service.ViewModels.HoursViewModel[]> GetAllHoursAsync();
+        System.Threading.Tasks.Task<HourViewModel[]> GetAllHoursAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -49,11 +51,11 @@ namespace Timetable.Client.HoursServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public Timetable.Service.ViewModels.HoursViewModel[] GetAllHours() {
+        public HourViewModel[] GetAllHours() {
             return base.Channel.GetAllHours();
         }
         
-        public System.Threading.Tasks.Task<Timetable.Service.ViewModels.HoursViewModel[]> GetAllHoursAsync() {
+        public System.Threading.Tasks.Task<HourViewModel[]> GetAllHoursAsync() {
             return base.Channel.GetAllHoursAsync();
         }
     }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Timetable.DAL.Model;
-using Timetable.Web.ViewModels;
+using Timetable.DAL.Models.MySql;
+using Timetable.DAL.ViewModels;
 
 namespace Timetable.Web.Controllers
 {
@@ -12,31 +11,34 @@ namespace Timetable.Web.Controllers
 	{
 		public ActionResult Index()
 		{
-
-			HomeViewModel home;
+			var timetableViewModel = new TimetableViewModel
+			{
+				Classes = new List<ClassViewModel>(),
+				Teachers = new List<TeacherViewModel>(),
+				Classrooms = new List<ClassroomViewModel>()
+			};
 
 			using (var db = new TimetableModel())
 			{
+				db.Classes
+					.OrderBy(c => c.Year)
+					.ThenBy(c => c.CodeName)
+					.ToList()
+					.ForEach(c => timetableViewModel.Classes.Add(new ClassViewModel(c)));
 
-				home = new HomeViewModel
-				{
-					Classess = db.classes
-						.OrderBy(c => c.year)
-						.ThenBy(c => c.code_name)
-						.ToList(),
+				db.Teachers
+					.OrderBy(t => t.LastName)
+					.ThenBy(t => t.FirstName)
+					.ToList()
+					.ForEach(t => timetableViewModel.Teachers.Add(new TeacherViewModel(t)));
 
-					Teachers = db.teachers
-						.OrderBy(t => t.last_name)
-						.ThenBy(t => t.first_name)
-						.ToList(),
-
-					Classrooms = db.classrooms
-						.OrderBy(cr => cr.name)
-						.ToList()
-				};
+				db.Classrooms
+					.OrderBy(cr => cr.Name)
+					.ToList()
+					.ForEach(cr => timetableViewModel.Classrooms.Add(new ClassroomViewModel(cr)));
 			}
 
-			return View(home);
+			return View(timetableViewModel);
 		}
 	}
 }

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
 using Timetable.DAL.DataSet.MySql;
 using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.Utilities;
 
 namespace Timetable.Utilities
 {
@@ -100,7 +101,7 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			SetHeader($"Klasa {classRow.ToFriendlyString()}");
+			SetHeader($"Klasa: {classRow.ToFriendlyString()}");
 
 			WriteTimetableForClass(classRow);
 
@@ -119,7 +120,7 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			SetHeader($"{teacherRow.LastName} {teacherRow.FirstName}");
+			SetHeader($"{teacherRow.FirstName} {teacherRow.LastName}");
 
 			WriteTimetableForTeacher(teacherRow);
 
@@ -138,7 +139,7 @@ namespace Timetable.Utilities
 
 			PrepareExcel();
 
-			SetHeader($"Sala {classroomRow.Name}");
+			SetHeader($"Sala: {classroomRow.Name}");
 
 			WriteTimetableForClassroom(classroomRow);
 

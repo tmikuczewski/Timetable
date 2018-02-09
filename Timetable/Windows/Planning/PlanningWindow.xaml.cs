@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Timetable.DAL.DataSet.MySql;
 using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.Utilities;
+using Timetable.DAL.ViewModels;
 using Timetable.Utilities;
 
 namespace Timetable.Windows.Planning
@@ -47,8 +49,8 @@ namespace Timetable.Windows.Planning
 		private TimetableDataSet.DaysRow _dayRow;
 		private TimetableDataSet.HoursRow _hourRow;
 
-		private IEnumerable<CellViewModel> _plannedLessons;
-		private IEnumerable<CellViewModel> _availableLessons;
+		private IEnumerable<LessonsPlaceViewModel> _plannedLessons;
+		private IEnumerable<LessonsPlaceViewModel> _availableLessons;
 		private IEnumerable<TimetableDataSet.LessonsPlacesRow> _unavailableLessonsPlaces;
 		private IEnumerable<TimetableDataSet.ClassroomsRow> _availableClassrooms;
 
@@ -169,7 +171,7 @@ namespace Timetable.Windows.Planning
 							  join t in _timetableDataSet.Teachers on l.TeacherPesel equals t.Pesel
 							  orderby l.Id
 							  from s in grp.DefaultIfEmpty()
-							  select new CellViewModel
+							  select new LessonsPlaceViewModel
 							  {
 								  Id = l.Id,
 								  TeacherPesel = l.TeacherPesel,

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
-using Timetable.Service.ViewModels;
+using Timetable.DAL.ViewModels;
 
 namespace Timetable.Service.Interfaces
 {
@@ -12,6 +12,6 @@ namespace Timetable.Service.Interfaces
 		/// </summary>
 		/// <returns></returns>
 		[OperationContract]
-		IList<HoursViewModel> GetAllHours();
+		IList<HourViewModel> GetAllHours();
 	}
 }

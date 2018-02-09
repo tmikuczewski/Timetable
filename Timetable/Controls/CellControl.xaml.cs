@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Timetable.DAL.ViewModels;
 using Timetable.Utilities;
 using Timetable.Windows;
 using Timetable.Windows.Planning;
@@ -33,7 +34,7 @@ namespace Timetable.Controls
 			_originalSecondRow,
 			_originalThirdRow;
 
-		private readonly CellViewModel _cellViewModel;
+		private readonly LessonsPlaceViewModel _lessonsPlaceViewModel;
 		private readonly ActionType _actionType;
 		private readonly EntityType _entityType;
 		private readonly MainWindow _callingWindow;
@@ -80,10 +81,10 @@ namespace Timetable.Controls
 		}
 
 		/// <summary>
-		///     Zwraca obiekt typu <c>CellViewModel</c> zaznaczonej lekcji.
+		///     Zwraca obiekt typu <c>LessonsPlaceViewModel</c> zaznaczonej lekcji.
 		/// </summary>
 		/// <returns></returns>
-		public CellViewModel CellViewModel => _cellViewModel;
+		public LessonsPlaceViewModel LessonsPlaceViewModel => _lessonsPlaceViewModel;
 
 		#endregion
 
@@ -130,24 +131,24 @@ namespace Timetable.Controls
 		/// <summary>
 		///     Konstruktor tworzący obiekt typu <c>CellControl</c> na bazie przesłanych za pomocą parametru danych.
 		/// </summary>
-		/// <param name="cellViewModel">Obiekt przechowujący informacje o zaplanowanej lekcji.</param>
+		/// <param name="lessonsPlaceViewModel">Obiekt przechowujący informacje o zaplanowanej lekcji.</param>
 		/// <param name="actionType">Rodzaj wybranej akcji.</param>
 		/// <param name="entityType">Rodzaj wybranej encji.</param>
 		/// <param name="timetableType">Rodzaj wybranego podglądu.</param>
 		/// <param name="mainWindow">Uchwyt do wywołującego okna.</param>
 		/// <param name="diffColor">Parametr sterujący zmianą koloru kontrolki.</param>
-		public CellControl(CellViewModel cellViewModel, ActionType actionType, EntityType entityType,
+		public CellControl(LessonsPlaceViewModel lessonsPlaceViewModel, ActionType actionType, EntityType entityType,
 			TimetableType timetableType, MainWindow mainWindow, bool diffColor = false)
 					: this(mainWindow, diffColor)
 		{
-			_cellViewModel = cellViewModel;
+			_lessonsPlaceViewModel = lessonsPlaceViewModel;
 
 			_entityType = entityType;
 
-			string className = (_cellViewModel.ClassFriendlyName != null) ? $"kl. {_cellViewModel.ClassFriendlyName}" : string.Empty;
-			string classroom = (_cellViewModel.ClassroomName != null) ? $"s. {_cellViewModel.ClassroomName}" : string.Empty;
-			string teacher = _cellViewModel.TeacherFriendlyName ?? string.Empty;
-			string subject = _cellViewModel.SubjectName ?? string.Empty;
+			string className = (_lessonsPlaceViewModel.ClassFriendlyName != null) ? $"kl. {_lessonsPlaceViewModel.ClassFriendlyName}" : string.Empty;
+			string classroom = (_lessonsPlaceViewModel.ClassroomName != null) ? $"s. {_lessonsPlaceViewModel.ClassroomName}" : string.Empty;
+			string teacher = _lessonsPlaceViewModel.TeacherFriendlyName ?? string.Empty;
+			string subject = _lessonsPlaceViewModel.SubjectName ?? string.Empty;
 
 			switch (timetableType)
 			{
@@ -230,7 +231,7 @@ namespace Timetable.Controls
 				|| _actionType == ActionType.Change)
 			{
 				var planningWindow = new PlanningWindow(_callingWindow, _actionType, _entityType,
-					_cellViewModel.ClassId, _cellViewModel.TeacherPesel, _cellViewModel.DayId, _cellViewModel.HourId);
+					_lessonsPlaceViewModel.ClassId, _lessonsPlaceViewModel.TeacherPesel, _lessonsPlaceViewModel.DayId, _lessonsPlaceViewModel.HourId);
 				planningWindow.Owner = _callingWindow;
 				planningWindow.Show();
 			}

@@ -123,11 +123,9 @@
     <Compile Include="Controls\TermCellControl.xaml.cs">
       <DependentUpon>TermCellControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\CellViewModel.cs" />
     <Compile Include="Utilities\Enums.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Export.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\PercentageConverter.cs" />
     <Compile Include="Utilities\Pesel.cs" />
     <Compile Include="Utilities\Utilities.cs" />
@@ -368,9 +366,7 @@
       <Name>Timetable.DAL</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DbSchema\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

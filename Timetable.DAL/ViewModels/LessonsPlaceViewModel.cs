@@ -1,160 +1,101 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.Serialization;
 using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.Models.MySql;
+using Timetable.DAL.Utilities;
 
-namespace Timetable.Utilities
+namespace Timetable.DAL.ViewModels
 {
-	/// <summary>
-	///     Klasa przechowująca informacje o zaplanowanej lekcji.
-	/// </summary>
-	public class CellViewModel
+	[DataContract]
+	public class LessonsPlaceViewModel
 	{
-		#region Constants and Statics
-
-		#endregion
-
-
 		#region Fields
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? Id { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? ClassId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string ClassCodeName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string ClassFriendlyName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? ClassYear { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? ClassroomId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string ClassroomName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int DayId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int DayNumber { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string DayName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int HourId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int HourNumber { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public TimeSpan HourBegin { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public TimeSpan HourEnd { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? LessonId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string TeacherFirstName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string TeacherFriendlyName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string TeacherLastName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string TeacherPesel { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public int? SubjectId { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string SubjectName { get; set; }
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string SubjectClass => $"{SubjectName}\n-- {ClassFriendlyName}";
 
-		/// <summary>
-		///     
-		/// </summary>
+		[DataMember]
 		public string SubjectTeacher => $"{SubjectName}\n-- {ClassFriendlyName}";
-
-		#endregion
-
-
-		#region Properties
 
 		#endregion
 
 
 		#region Constructors
 
-		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c>.
-		/// </summary>
-		public CellViewModel()
+		public LessonsPlaceViewModel()
 		{
 		}
 
-		/// <summary>
-		///     Konstruktor tworzący obiekt typu <c>CellViewModel</c> na bazie przesłanych za pomocą parametru danych.
-		/// </summary>
-		/// <param name="lessonsPlaceRow"></param>
-		public CellViewModel(TimetableDataSet.LessonsPlacesRow lessonsPlaceRow)
+		public LessonsPlaceViewModel(TimetableDataSet.LessonsPlacesRow lessonsPlaceRow)
 		{
 			if (lessonsPlaceRow == null)
+			{
 				return;
+			}
 
 			if (lessonsPlaceRow.DaysRow != null)
 			{
@@ -193,25 +134,49 @@ namespace Timetable.Utilities
 			}
 		}
 
-		#endregion
+		public LessonsPlaceViewModel(LessonsPlacesRow lessonsPlaceRow)
+		{
+			if (lessonsPlaceRow == null)
+			{
+				return;
+			}
 
+			if (lessonsPlaceRow.Day != null)
+			{
+				DayId = lessonsPlaceRow.Day.Id;
+				DayNumber = lessonsPlaceRow.Day.Number;
+				DayName = lessonsPlaceRow.Day.Name;
+			}
 
-		#region Events
+			if (lessonsPlaceRow.Hour != null)
+			{
+				HourId = lessonsPlaceRow.Hour.Id;
+				HourNumber = lessonsPlaceRow.Hour.Number;
+				HourBegin = lessonsPlaceRow.Hour.Begin;
+				HourEnd = lessonsPlaceRow.Hour.End;
+			}
 
-		#endregion
+			if (lessonsPlaceRow.Classroom != null)
+			{
+				ClassroomId = lessonsPlaceRow.Classroom.Id;
+				ClassroomName = lessonsPlaceRow.Classroom.Name;
+			}
 
-
-		#region Overridden methods
-
-		#endregion
-
-
-		#region Public methods
-
-		#endregion
-
-
-		#region Private methods
+			if (lessonsPlaceRow.Lesson != null)
+			{
+				ClassId = lessonsPlaceRow.Lesson.ClassId;
+				ClassCodeName = lessonsPlaceRow.Lesson.Class?.CodeName;
+				ClassFriendlyName = lessonsPlaceRow.Lesson.Class?.ToFriendlyString();
+				ClassYear = lessonsPlaceRow.Lesson.Class?.Year;
+				LessonId = lessonsPlaceRow.LessonId;
+				TeacherFirstName = lessonsPlaceRow.Lesson.Teacher?.FirstName;
+				TeacherFriendlyName = lessonsPlaceRow.Lesson.Teacher?.ToFriendlyString();
+				TeacherLastName = lessonsPlaceRow.Lesson.Teacher?.LastName;
+				TeacherPesel = lessonsPlaceRow.Lesson.TeacherPesel;
+				SubjectId = lessonsPlaceRow.Lesson.SubjectId;
+				SubjectName = lessonsPlaceRow.Lesson.Subject?.Name;
+			}
+		}
 
 		#endregion
 	}

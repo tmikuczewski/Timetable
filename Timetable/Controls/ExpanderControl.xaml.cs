@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using Timetable.DAL.DataSet.MySql;
 using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.Utilities;
 using Timetable.Utilities;
 using Timetable.Windows;
 using Timetable.Windows.Management;

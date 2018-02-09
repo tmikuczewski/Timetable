@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Timetable.DAL.ViewModels;
+
 namespace Timetable.Client.DaysServiceReference {
     
     
@@ -16,10 +18,10 @@ namespace Timetable.Client.DaysServiceReference {
     public interface IDaysService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDaysService/GetAllDays", ReplyAction="http://tempuri.org/IDaysService/GetAllDaysResponse")]
-        Timetable.Service.ViewModels.DaysViewModel[] GetAllDays();
+        DayViewModel[] GetAllDays();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDaysService/GetAllDays", ReplyAction="http://tempuri.org/IDaysService/GetAllDaysResponse")]
-        System.Threading.Tasks.Task<Timetable.Service.ViewModels.DaysViewModel[]> GetAllDaysAsync();
+        System.Threading.Tasks.Task<DayViewModel[]> GetAllDaysAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -49,11 +51,11 @@ namespace Timetable.Client.DaysServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public Timetable.Service.ViewModels.DaysViewModel[] GetAllDays() {
+        public DayViewModel[] GetAllDays() {
             return base.Channel.GetAllDays();
         }
         
-        public System.Threading.Tasks.Task<Timetable.Service.ViewModels.DaysViewModel[]> GetAllDaysAsync() {
+        public System.Threading.Tasks.Task<DayViewModel[]> GetAllDaysAsync() {
             return base.Channel.GetAllDaysAsync();
         }
     }

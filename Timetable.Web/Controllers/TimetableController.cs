@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Timetable.DAL.Model;
-using Timetable.Web.ViewModels;
+using Timetable.DAL.Models.MySql;
+using Timetable.DAL.ViewModels;
 
 namespace Timetable.Web.Controllers
 {
@@ -12,101 +11,96 @@ namespace Timetable.Web.Controllers
 	{
 		public ActionResult Class(int id)
 		{
-			TimetableViewModel timetable;
+			TimetableViewModel timetableViewModel;
 
 			using (var db = new TimetableModel())
 			{
-				var currentClass = db.classes
-					.FirstOrDefault(c => c.id == id);
+				var currentClass = db.Classes
+					.FirstOrDefault(c => c.Id == id);
 
 				if (currentClass == null)
 					return HttpNotFound();
 
-				var lessonsPlaces = db.lessons_places
-					.Where(lp => lp.lessons._class == id)
-					.ToList();
+				timetableViewModel = GetPrefilledTimetableViewModel(db);
+				timetableViewModel.CurrentClass = new ClassViewModel(currentClass);
 
-				var cells = new List<CellViewModel>();
-
-				foreach (var lp in lessonsPlaces)
-					cells.Add(new CellViewModel(lp));
-
-				timetable = new TimetableViewModel
-				{
-					LessonsPlaces = cells,
-					Days = db.days.OrderBy(d => d.number).ToList(),
-					Hours = db.hours.OrderBy(h => h.number).ToList(),
-					CurrentClass = currentClass
-				};
+				db.LessonsPlaces
+					.Where(lp => lp.Lesson.ClassId == id)
+					.ToList()
+					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
 			}
 
-			return View(timetable);
+			return View(timetableViewModel);
 		}
 
 		public ActionResult Teacher(string pesel)
 		{
-			TimetableViewModel timetable;
+			TimetableViewModel timetableViewModel;
 
 			using (var db = new TimetableModel())
 			{
-				var currentTeacher = db.teachers
-					.FirstOrDefault(t => t.pesel == pesel);
+				var currentTeacher = db.Teachers
+					.FirstOrDefault(t => t.Pesel == pesel);
 
 				if (currentTeacher == null)
 					return HttpNotFound();
 
-				var lessonsPlaces = db.lessons_places
-					.Where(lp => lp.lessons.teacher == pesel)
-					.ToList();
+				timetableViewModel = GetPrefilledTimetableViewModel(db);
+				timetableViewModel.CurrentTeacher = new TeacherViewModel(currentTeacher);
 
-				var cells = new List<CellViewModel>();
-
-				foreach (var lp in lessonsPlaces)
-					cells.Add(new CellViewModel(lp));
-
-				timetable = new TimetableViewModel
-				{
-					LessonsPlaces = cells,
-					Days = db.days.OrderBy(d => d.number).ToList(),
-					Hours = db.hours.OrderBy(h => h.number).ToList(),
-					CurrentTeacher = currentTeacher
-				};
+				db.LessonsPlaces
+					.Where(lp => lp.Lesson.TeacherPesel == pesel)
+					.ToList()
+					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
 			}
 
-			return View(timetable);
+			return View(timetableViewModel);
 		}
 
 		public ActionResult Classroom(int id)
 		{
-			TimetableViewModel timetable;
+			TimetableViewModel timetableViewModel;
 
 			using (var db = new TimetableModel())
 			{
-				var currentClassroom = db.classrooms
-					.FirstOrDefault(cr => cr.id == id);
+				var currentClassroom = db.Classrooms
+					.FirstOrDefault(cr => cr.Id == id);
 
 				if (currentClassroom == null)
 					return HttpNotFound();
 
-				var lessonsPlaces = db.lessons_places
-					.Where(lp => lp.classroom == id)
-					.ToList();
+				timetableViewModel = GetPrefilledTimetableViewModel(db);
+				timetableViewModel.CurrentClassroom = new ClassroomViewModel(currentClassroom);
 
-				var cells = new List<CellViewModel>();
-
-				foreach (var lp in lessonsPlaces)
-					cells.Add(new CellViewModel(lp));
-
-				timetable = new TimetableViewModel
-				{
-					LessonsPlaces = cells,
-					Days = db.days.OrderBy(d => d.number).ToList(),
-					Hours = db.hours.OrderBy(h => h.number).ToList(),
-					CurrentClassroom = currentClassroom
-				};
+				db.LessonsPlaces
+					.Where(lp => lp.ClassroomId == id)
+					.ToList()
+					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
 			}
 
-			return View(timetable);
+			return View(timetableViewModel);
+		}
+
+		private TimetableViewModel GetPrefilledTimetableViewModel(TimetableModel db)
+		{
+			var timetableViewModel = new TimetableViewModel
+			{
+				Days = new List<DayViewModel>(),
+				Hours = new List<HourViewModel>(),
+				CurrentLessonsPlaces = new List<LessonsPlaceViewModel>()
+			};
+
+			db.Days
+				.OrderBy(d => d.Number)
+				.ToList()
+				.ForEach(d => timetableViewModel.Days.Add(new DayViewModel(d)));
+
+			db.Hours
+				.OrderBy(h => h.Number)
+				.ToList()
+				.ForEach(h => timetableViewModel.Hours.Add(new HourViewModel(h)));
+
+			return timetableViewModel;
 		}
 	}
 }

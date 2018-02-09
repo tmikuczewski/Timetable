@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using Timetable.Controls;
 using Timetable.DAL.DataSet.MySql;
 using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.Utilities;
+using Timetable.DAL.ViewModels;
 using Timetable.Utilities;
 
 namespace Timetable.Windows
@@ -448,10 +450,10 @@ namespace Timetable.Windows
 		}
 
 		/// <summary>
-		///     Metoda zwracająca listę obiektów typu <c>CellViewModel</c> zaznaczonych lekcji.
+		///     Metoda zwracająca listę obiektów typu <c>LessonsPlaceViewModel</c> zaznaczonych lekcji.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<CellViewModel> GetCollectionOfMarkedLessonsPlaces()
+		public IEnumerable<LessonsPlaceViewModel> GetCollectionOfMarkedLessonsPlaces()
 		{
 			if (_currentEntityType != EntityType.LessonsPlace)
 				yield break;
@@ -461,7 +463,7 @@ namespace Timetable.Windows
 				if (cellControl is CellControl)
 				{
 					if (((CellControl) cellControl).IsChecked())
-						yield return ((CellControl) cellControl).CellViewModel;
+						yield return ((CellControl) cellControl).LessonsPlaceViewModel;
 				}
 			}
 		}
@@ -1197,7 +1199,7 @@ namespace Timetable.Windows
 			{
 				foreach (var hour in HoursEnumerable)
 				{
-					var cell = new CellViewModel
+					var cell = new LessonsPlaceViewModel
 					{
 						DayId = day.Id,
 						HourId = hour.Id
@@ -1232,7 +1234,7 @@ namespace Timetable.Windows
 
 			foreach (var lessonsPlace in allLessonsPlaces)
 			{
-				var cell = new CellViewModel(lessonsPlace);
+				var cell = new LessonsPlaceViewModel(lessonsPlace);
 
 				AddLessonsPlaceToGrid(grid, cell, actionType, entityType);
 			}
@@ -1247,7 +1249,7 @@ namespace Timetable.Windows
 
 			foreach (var lesson in remainingLessons)
 			{
-				var cell = new CellViewModel
+				var cell = new LessonsPlaceViewModel
 				{
 					SubjectName = lesson.SubjectsRow.Name,
 					ClassFriendlyName = lesson.ClassesRow.ToFriendlyString(),
@@ -1258,12 +1260,12 @@ namespace Timetable.Windows
 			}
 		}
 
-		private void AddLessonsPlaceToGrid(Grid grid, CellViewModel cell, ActionType actionType, EntityType entityType)
+		private void AddLessonsPlaceToGrid(Grid grid, LessonsPlaceViewModel lessonsPlaceViewModel, ActionType actionType, EntityType entityType)
 		{
 			CellControl cellControl = null;
 
-			var dayIndex = DaysEnumerable.ToList().IndexOf(DaysEnumerable.FirstOrDefault(d => d.Id == cell.DayId));
-			var hourIndex = HoursEnumerable.ToList().IndexOf(HoursEnumerable.FirstOrDefault(h => h.Id == cell.HourId));
+			var dayIndex = DaysEnumerable.ToList().IndexOf(DaysEnumerable.FirstOrDefault(d => d.Id == lessonsPlaceViewModel.DayId));
+			var hourIndex = HoursEnumerable.ToList().IndexOf(HoursEnumerable.FirstOrDefault(h => h.Id == lessonsPlaceViewModel.HourId));
 
 			switch (entityType)
 			{
@@ -1271,15 +1273,15 @@ namespace Timetable.Windows
 					cellControl = new CellControl(this, hourIndex % 2 == 0);
 					break;
 				case EntityType.Class:
-					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Class,
+					cellControl = new CellControl(lessonsPlaceViewModel, actionType, entityType, TimetableType.Class,
 						this, (hourIndex % 2 == 0));
 					break;
 				case EntityType.Teacher:
-					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Teacher,
+					cellControl = new CellControl(lessonsPlaceViewModel, actionType, entityType, TimetableType.Teacher,
 						this, (hourIndex % 2 == 0));
 					break;
 				case EntityType.Classroom:
-					cellControl = new CellControl(cell, actionType, entityType, TimetableType.Classroom,
+					cellControl = new CellControl(lessonsPlaceViewModel, actionType, entityType, TimetableType.Classroom,
 						this, (hourIndex % 2 == 0));
 					break;
 			}
@@ -1295,9 +1297,9 @@ namespace Timetable.Windows
 			grid.Children.Add(cellControl);
 		}
 
-		private void AppendRemainingLessonToGrid(Grid grid, CellViewModel cell)
+		private void AppendRemainingLessonToGrid(Grid grid, LessonsPlaceViewModel lessonsPlaceViewModel)
 		{
-			var cellControl = new CellControl(cell, ActionType.None, EntityType.Lesson, TimetableType.Lesson,
+			var cellControl = new CellControl(lessonsPlaceViewModel, ActionType.None, EntityType.Lesson, TimetableType.Lesson,
 				this, (grid.RowDefinitions.Count % 2 == 0));
 			cellControl.Margin = CellControl.SEPARATOR_MARGIN;
 

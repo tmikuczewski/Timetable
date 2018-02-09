@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Timetable.DAL.Model.MySql;
+using Timetable.DAL.Models.MySql;
+using Timetable.DAL.ViewModels;
 using Timetable.Service.Interfaces;
-using Timetable.Service.ViewModels;
 
 namespace Timetable.Service.Services
 {
 	public class DaysService : IDaysService
 	{
-		public IList<DaysViewModel> GetAllDays()
+		public IList<DayViewModel> GetAllDays()
 		{
 			using (var db = new TimetableModel())
 			{
-				var days = new List<DaysViewModel>();
+				var days = new List<DayViewModel>();
 
-				foreach (var day in db.days.OrderBy(d => d.number))
-					days.Add(new DaysViewModel(day));
+				foreach (var day in db.Days.OrderBy(d => d.Number))
+					days.Add(new DayViewModel(day));
 
 				return days;
 			}

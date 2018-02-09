@@ -2,29 +2,32 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Timetable.DAL.Model.MySql
+namespace Timetable.DAL.Models.MySql
 {
 	[Table("timetable.classrooms")]
-	public partial class classrooms
+	public partial class ClassroomsRow
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-		public classrooms()
+		public ClassroomsRow()
 		{
-			lessons_places = new HashSet<lessons_places>();
+			LessonsPlaces = new HashSet<LessonsPlacesRow>();
 		}
 
-		public int id { get; set; }
+		[Column("id")]
+		public int Id { get; set; }
 
+		[Column("name")]
 		[Required]
 		[StringLength(255)]
-		public string name { get; set; }
+		public string Name { get; set; }
 
+		[Column("administrator")]
 		[StringLength(11)]
-		public string administrator { get; set; }
+		public string AdministratorPesel { get; set; }
 
-		public virtual teachers teachers { get; set; }
+		public virtual TeachersRow Administrator { get; set; }
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-		public virtual ICollection<lessons_places> lessons_places { get; set; }
+		public virtual ICollection<LessonsPlacesRow> LessonsPlaces { get; set; }
 	}
 }

@@ -69,22 +69,33 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Model\MySql\classes.cs" />
-    <Compile Include="Model\MySql\classrooms.cs" />
-    <Compile Include="Model\MySql\days.cs" />
-    <Compile Include="Model\MySql\hours.cs" />
-    <Compile Include="Model\MySql\lessons.cs" />
-    <Compile Include="Model\MySql\lessons_places.cs" />
-    <Compile Include="Model\MySql\students.cs" />
-    <Compile Include="Model\MySql\subjects.cs" />
-    <Compile Include="Model\MySql\teachers.cs" />
-    <Compile Include="Model\MySql\TimetableModel.cs" />
+    <Compile Include="Models\MySql\ClassesRow.cs" />
+    <Compile Include="Models\MySql\ClassroomsRow.cs" />
+    <Compile Include="Models\MySql\DaysRow.cs" />
+    <Compile Include="Models\MySql\HoursRow.cs" />
+    <Compile Include="Models\MySql\LessonsRow.cs" />
+    <Compile Include="Models\MySql\LessonsPlacesRow.cs" />
+    <Compile Include="Models\MySql\StudentsRow.cs" />
+    <Compile Include="Models\MySql\SubjectsRow.cs" />
+    <Compile Include="Models\MySql\TeachersRow.cs" />
+    <Compile Include="Models\MySql\TimetableModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ClassroomViewModel.cs" />
+    <Compile Include="ViewModels\ClassViewModel.cs" />
+    <Compile Include="ViewModels\DayViewModel.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="ViewModels\HourViewModel.cs" />
+    <Compile Include="ViewModels\LessonsPlaceViewModel.cs" />
+    <Compile Include="ViewModels\LessonViewModel.cs" />
+    <Compile Include="ViewModels\StudentViewModel.cs" />
+    <Compile Include="ViewModels\SubjectViewModel.cs" />
+    <Compile Include="ViewModels\TeacherViewModel.cs" />
+    <Compile Include="ViewModels\TimetableViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -117,7 +128,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\PostgreSql\" />
+    <Folder Include="Models\PostgreSql\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DbSchema\MySql\20180206_InitialSchema.sql" />
