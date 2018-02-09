@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSets.MySql;
 using Timetable.DAL.Models.MySql;
 using Timetable.DAL.Utilities;
 

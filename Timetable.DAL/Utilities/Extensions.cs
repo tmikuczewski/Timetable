@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSets.MySql;
 using Timetable.DAL.Models.MySql;
 
 namespace Timetable.DAL.Utilities

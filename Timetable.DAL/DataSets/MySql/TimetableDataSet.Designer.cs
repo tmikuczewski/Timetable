@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Timetable.DAL.DataSet.MySql {
+namespace Timetable.DAL.DataSets.MySql {
     
     
     /// <summary>
@@ -4407,7 +4407,7 @@ namespace Timetable.DAL.DataSet.MySql {
         }
     }
 }
-namespace Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters {
+namespace Timetable.DAL.DataSets.MySql.TimetableDataSetTableAdapters {
     
     
     /// <summary>

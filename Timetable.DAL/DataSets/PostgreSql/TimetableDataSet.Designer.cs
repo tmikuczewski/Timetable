@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Timetable.DAL.DataSet.PostgreSql {
+namespace Timetable.DAL.DataSets.PostgreSql {
     
     
     /// <summary>
@@ -4407,7 +4407,7 @@ namespace Timetable.DAL.DataSet.PostgreSql {
         }
     }
 }
-namespace Timetable.DAL.DataSet.PostgreSql.TimetableDataSetTableAdapters {
+namespace Timetable.DAL.DataSets.PostgreSql.TimetableDataSetTableAdapters {
     
     
     /// <summary>

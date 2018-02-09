@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Timetable.DAL.DataSet.MySql;
+using Timetable.DAL.DataSets.MySql;
 
 namespace Timetable.Controls
 {

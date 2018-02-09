@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
-using Timetable.DAL.DataSet.MySql;
-using Timetable.DAL.DataSet.MySql.TimetableDataSetTableAdapters;
+using Timetable.DAL.DataSets.MySql;
+using Timetable.DAL.DataSets.MySql.TimetableDataSetTableAdapters;
 using Timetable.DAL.Utilities;
 
 namespace Timetable.Utilities

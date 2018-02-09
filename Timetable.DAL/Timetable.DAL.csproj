@@ -59,12 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSet\MySql\TimetableDataSet.Designer.cs">
+    <Compile Include="DataSets\MySql\TimetableDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="DataSet\PostgreSql\TimetableDataSet.Designer.cs">
+    <Compile Include="DataSets\PostgreSql\TimetableDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
@@ -104,26 +104,26 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="DataSet\MySql\TimetableDataSet.xsc">
+    <None Include="DataSets\MySql\TimetableDataSet.xsc">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
-    <None Include="DataSet\MySql\TimetableDataSet.xsd">
+    <None Include="DataSets\MySql\TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
     </None>
-    <None Include="DataSet\MySql\TimetableDataSet.xss">
+    <None Include="DataSets\MySql\TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
-    <None Include="DataSet\PostgreSql\TimetableDataSet.xsc">
+    <None Include="DataSets\PostgreSql\TimetableDataSet.xsc">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
-    <None Include="DataSet\PostgreSql\TimetableDataSet.xsd">
+    <None Include="DataSets\PostgreSql\TimetableDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>TimetableDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="DataSet\PostgreSql\TimetableDataSet.xss">
+    <None Include="DataSets\PostgreSql\TimetableDataSet.xss">
       <DependentUpon>TimetableDataSet.xsd</DependentUpon>
     </None>
   </ItemGroup>
@@ -131,10 +131,10 @@
     <Folder Include="Models\PostgreSql\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DbSchema\MySql\20180206_InitialSchema.sql" />
-    <Content Include="DbSchema\MySql\20180206_InitialSeed.sql" />
-    <Content Include="DbSchema\PostgreSql\20180206_InitialSchema.sql" />
-    <Content Include="DbSchema\PostgreSql\20180206_InitialSeed.sql" />
+    <Content Include="DbSchemas\MySql\20180206_InitialSchema.sql" />
+    <Content Include="DbSchemas\MySql\20180206_InitialSeed.sql" />
+    <Content Include="DbSchemas\PostgreSql\20180206_InitialSchema.sql" />
+    <Content Include="DbSchemas\PostgreSql\20180206_InitialSeed.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
