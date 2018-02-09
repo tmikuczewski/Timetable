@@ -248,7 +248,7 @@ namespace Timetable.Windows.Planning
 		{
 			_dayRow = _timetableDataSet.Days.FindById(_dayId);
 			_hourRow = _timetableDataSet.Hours.FindById(_hourId);
-			textBoxDetails.Text = $"{_dayRow.Name}, {_hourRow.Begin} - {_hourRow.End}\n";
+			textBoxDetails.Text = $"{_dayRow.Name}, {_hourRow.Begin:hh\\:mm} - {_hourRow.End:hh\\:mm}\n";
 
 			switch (_entityType)
 			{
