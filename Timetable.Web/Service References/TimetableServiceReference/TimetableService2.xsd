@@ -81,6 +81,7 @@
       <xs:element minOccurs="0" name="SubjectClass" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SubjectId" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="SubjectName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SubjectTeacher" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="TeacherFirstName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="TeacherFriendlyName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="TeacherLastName" nillable="true" type="xs:string" />
