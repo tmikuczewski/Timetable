@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:7985/Services/TimetableService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="TimetableViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Classes" nillable="true" type="tns:ArrayOfClassViewModel" />
+      <xs:element minOccurs="0" name="Classrooms" nillable="true" type="tns:ArrayOfClassroomViewModel" />
+      <xs:element minOccurs="0" name="CurrentClass" nillable="true" type="tns:ClassViewModel" />
+      <xs:element minOccurs="0" name="CurrentClassroom" nillable="true" type="tns:ClassroomViewModel" />
+      <xs:element minOccurs="0" name="CurrentLessonsPlaces" nillable="true" type="tns:ArrayOfLessonsPlaceViewModel" />
+      <xs:element minOccurs="0" name="CurrentTeacher" nillable="true" type="tns:TeacherViewModel" />
+      <xs:element minOccurs="0" name="Days" nillable="true" type="tns:ArrayOfDayViewModel" />
+      <xs:element minOccurs="0" name="Hours" nillable="true" type="tns:ArrayOfHourViewModel" />
+      <xs:element minOccurs="0" name="Lessons" nillable="true" type="tns:ArrayOfLessonViewModel" />
+      <xs:element minOccurs="0" name="LessonsPlaces" nillable="true" type="tns:ArrayOfLessonsPlaceViewModel" />
+      <xs:element minOccurs="0" name="Students" nillable="true" type="tns:ArrayOfStudentViewModel" />
+      <xs:element minOccurs="0" name="Subjects" nillable="true" type="tns:ArrayOfSubjectViewModel" />
+      <xs:element minOccurs="0" name="Teachers" nillable="true" type="tns:ArrayOfTeacherViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TimetableViewModel" nillable="true" type="tns:TimetableViewModel" />
+  <xs:complexType name="ArrayOfClassViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ClassViewModel" nillable="true" type="tns:ClassViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfClassViewModel" nillable="true" type="tns:ArrayOfClassViewModel" />
+  <xs:complexType name="ClassViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="TutorFirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TutorFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TutorLastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TutorPesel" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Year" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ClassViewModel" nillable="true" type="tns:ClassViewModel" />
+  <xs:complexType name="ArrayOfClassroomViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ClassroomViewModel" nillable="true" type="tns:ClassroomViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfClassroomViewModel" nillable="true" type="tns:ArrayOfClassroomViewModel" />
+  <xs:complexType name="ClassroomViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AdministratorFirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AdministratorFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AdministratorLastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AdministratorPesel" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ClassroomViewModel" nillable="true" type="tns:ClassroomViewModel" />
+  <xs:complexType name="ArrayOfLessonsPlaceViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LessonsPlaceViewModel" nillable="true" type="tns:LessonsPlaceViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLessonsPlaceViewModel" nillable="true" type="tns:ArrayOfLessonsPlaceViewModel" />
+  <xs:complexType name="LessonsPlaceViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ClassCodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ClassYear" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ClassroomId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ClassroomName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DayId" type="xs:int" />
+      <xs:element minOccurs="0" name="DayName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DayNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="HourBegin" type="ser:duration" />
+      <xs:element minOccurs="0" name="HourEnd" type="ser:duration" />
+      <xs:element minOccurs="0" name="HourId" type="xs:int" />
+      <xs:element minOccurs="0" name="HourNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="LessonId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SubjectClass" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SubjectId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SubjectName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherFirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherLastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherPesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LessonsPlaceViewModel" nillable="true" type="tns:LessonsPlaceViewModel" />
+  <xs:complexType name="TeacherViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TeacherViewModel" nillable="true" type="tns:TeacherViewModel" />
+  <xs:complexType name="ArrayOfDayViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DayViewModel" nillable="true" type="tns:DayViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDayViewModel" nillable="true" type="tns:ArrayOfDayViewModel" />
+  <xs:complexType name="DayViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Number" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DayViewModel" nillable="true" type="tns:DayViewModel" />
+  <xs:complexType name="ArrayOfHourViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="HourViewModel" nillable="true" type="tns:HourViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfHourViewModel" nillable="true" type="tns:ArrayOfHourViewModel" />
+  <xs:complexType name="HourViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Begin" type="ser:duration" />
+      <xs:element minOccurs="0" name="End" type="ser:duration" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Number" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HourViewModel" nillable="true" type="tns:HourViewModel" />
+  <xs:complexType name="ArrayOfLessonViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LessonViewModel" nillable="true" type="tns:LessonViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLessonViewModel" nillable="true" type="tns:ArrayOfLessonViewModel" />
+  <xs:complexType name="LessonViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ClassCodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ClassYear" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SubjectId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SubjectName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherFirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherLastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TeacherPesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LessonViewModel" nillable="true" type="tns:LessonViewModel" />
+  <xs:complexType name="ArrayOfStudentViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StudentViewModel" nillable="true" type="tns:StudentViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStudentViewModel" nillable="true" type="tns:ArrayOfStudentViewModel" />
+  <xs:complexType name="StudentViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ClassCodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassFriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClassId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ClassYear" type="xs:int" />
+      <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FriendlyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LastName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pesel" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StudentViewModel" nillable="true" type="tns:StudentViewModel" />
+  <xs:complexType name="ArrayOfSubjectViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SubjectViewModel" nillable="true" type="tns:SubjectViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSubjectViewModel" nillable="true" type="tns:ArrayOfSubjectViewModel" />
+  <xs:complexType name="SubjectViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SubjectViewModel" nillable="true" type="tns:SubjectViewModel" />
+  <xs:complexType name="ArrayOfTeacherViewModel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TeacherViewModel" nillable="true" type="tns:TeacherViewModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTeacherViewModel" nillable="true" type="tns:ArrayOfTeacherViewModel" />
+</xs:schema>

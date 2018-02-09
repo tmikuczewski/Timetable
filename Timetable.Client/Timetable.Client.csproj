@@ -65,6 +65,8 @@
     </None>
     <None Include="Properties\DataSources\Timetable.DAL.Model.days.datasource" />
     <None Include="Properties\DataSources\Timetable.DAL.Model.hours.datasource" />
+    <None Include="Properties\DataSources\Timetable.DAL.ViewModels.DayViewModel.datasource" />
+    <None Include="Properties\DataSources\Timetable.DAL.ViewModels.HourViewModel.datasource" />
     <None Include="Properties\DataSources\Timetable.Service.ViewModels.DaysViewModel.datasource" />
     <None Include="Properties\DataSources\Timetable.Service.ViewModels.HoursViewModel.datasource" />
     <None Include="Service References\DaysServiceReference\DaysService.wsdl" />

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Timetable.Service.ViewModels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Timetable.Service.ViewModels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:7985/Services/HoursService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:complexType name="ArrayOfHoursViewModel">
+  <xs:complexType name="ArrayOfHourViewModel">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="HoursViewModel" nillable="true" type="tns:HoursViewModel" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="HourViewModel" nillable="true" type="tns:HourViewModel" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ArrayOfHoursViewModel" nillable="true" type="tns:ArrayOfHoursViewModel" />
-  <xs:complexType name="HoursViewModel">
+  <xs:element name="ArrayOfHourViewModel" nillable="true" type="tns:ArrayOfHourViewModel" />
+  <xs:complexType name="HourViewModel">
     <xs:sequence>
       <xs:element minOccurs="0" name="Begin" type="ser:duration" />
       <xs:element minOccurs="0" name="End" type="ser:duration" />
@@ -15,5 +15,5 @@
       <xs:element minOccurs="0" name="Number" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="HoursViewModel" nillable="true" type="tns:HoursViewModel" />
+  <xs:element name="HourViewModel" nillable="true" type="tns:HourViewModel" />
 </xs:schema>

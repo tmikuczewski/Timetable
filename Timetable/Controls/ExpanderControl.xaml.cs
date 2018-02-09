@@ -874,13 +874,13 @@ namespace Timetable.Controls
 					switch (entityType)
 					{
 						case EntityType.Class:
-							_exportEngine.SaveTimeTableForClass(classRow, saveFileDialog.FileName, fileType);
+							_exportEngine.SaveTimetableForClass(classRow, saveFileDialog.FileName, fileType);
 							break;
 						case EntityType.Teacher:
-							_exportEngine.SaveTimeTableForTeacher(teacherRow, saveFileDialog.FileName, fileType);
+							_exportEngine.SaveTimetableForTeacher(teacherRow, saveFileDialog.FileName, fileType);
 							break;
 						case EntityType.Classroom:
-							_exportEngine.SaveTimeTableForClassroom(classroomRow, saveFileDialog.FileName, fileType);
+							_exportEngine.SaveTimetableForClassroom(classroomRow, saveFileDialog.FileName, fileType);
 							break;
 					}
 				});

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:7985/Services/DaysService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Timetable.Service.ViewModels" />
+  <xs:import schemaLocation="http://localhost:7985/Services/DaysService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" />
   <xs:element name="GetAllDays">
     <xs:complexType>
       <xs:sequence />
@@ -9,7 +9,7 @@
   <xs:element name="GetAllDaysResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Timetable.Service.ViewModels" minOccurs="0" name="GetAllDaysResult" nillable="true" type="q1:ArrayOfDaysViewModel" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Timetable.DAL.ViewModels" minOccurs="0" name="GetAllDaysResult" nillable="true" type="q1:ArrayOfDayViewModel" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

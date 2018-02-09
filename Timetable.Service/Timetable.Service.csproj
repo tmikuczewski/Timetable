@@ -80,11 +80,13 @@
   <ItemGroup>
     <Content Include="Services\DaysService.svc" />
     <Content Include="Services\HoursService.svc" />
+    <Content Include="Services\TimetableService.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\ITimetableService.cs" />
     <Compile Include="Services\DaysService.svc.cs">
       <DependentUpon>DaysService.svc</DependentUpon>
     </Compile>
@@ -94,6 +96,9 @@
     <Compile Include="Interfaces\IDaysService.cs" />
     <Compile Include="Interfaces\IHoursService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\TimetableService.svc.cs">
+      <DependentUpon>TimetableService.svc</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

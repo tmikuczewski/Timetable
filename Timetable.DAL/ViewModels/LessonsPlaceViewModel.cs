@@ -75,11 +75,18 @@ namespace Timetable.DAL.ViewModels
 		public string SubjectName { get; set; }
 
 		[DataMember]
-		public string SubjectClass => $"{SubjectName}\n-- {ClassFriendlyName}";
+		public string SubjectClass
+		{
+			get { return $"{SubjectName}\n-- {TeacherFriendlyName}"; }
+			private set { }
+		}
 
 		[DataMember]
-		public string SubjectTeacher => $"{SubjectName}\n-- {ClassFriendlyName}";
-
+		public string SubjectTeacher
+		{
+			get { return $"{SubjectName}\n-- {ClassFriendlyName}"; }
+			private set { }
+		}
 		#endregion
 
 

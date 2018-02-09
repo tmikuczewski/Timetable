@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
-using Timetable.DAL.Models.MySql;
 using Timetable.DAL.ViewModels;
+using Timetable.Web.TimetableServiceReference;
 
 namespace Timetable.Web.Controllers
 {
@@ -11,23 +9,23 @@ namespace Timetable.Web.Controllers
 	{
 		public ActionResult Class(int id)
 		{
-			TimetableViewModel timetableViewModel;
+			TimetableViewModel timetableViewModel = null;
 
-			using (var db = new TimetableModel())
+			try
 			{
-				var currentClass = db.Classes
-					.FirstOrDefault(c => c.Id == id);
+				var timetableServiceClient = new TimetableServiceClient();
+				timetableViewModel = timetableServiceClient.GetTimetableForClass(id);
+				timetableServiceClient.Close();
 
-				if (currentClass == null)
-					return HttpNotFound();
+			}
+			catch (Exception e)
+			{
+				// ignored
+			}
 
-				timetableViewModel = GetPrefilledTimetableViewModel(db);
-				timetableViewModel.CurrentClass = new ClassViewModel(currentClass);
-
-				db.LessonsPlaces
-					.Where(lp => lp.Lesson.ClassId == id)
-					.ToList()
-					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
+			if (timetableViewModel?.CurrentClass == null)
+			{
+				return HttpNotFound();
 			}
 
 			return View(timetableViewModel);
@@ -35,23 +33,22 @@ namespace Timetable.Web.Controllers
 
 		public ActionResult Teacher(string pesel)
 		{
-			TimetableViewModel timetableViewModel;
+			TimetableViewModel timetableViewModel = null;
 
-			using (var db = new TimetableModel())
+			try
 			{
-				var currentTeacher = db.Teachers
-					.FirstOrDefault(t => t.Pesel == pesel);
+				var timetableServiceClient = new TimetableServiceClient();
+				timetableViewModel = timetableServiceClient.GetTimetableForTeacher(pesel);
+				timetableServiceClient.Close();
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
 
-				if (currentTeacher == null)
-					return HttpNotFound();
-
-				timetableViewModel = GetPrefilledTimetableViewModel(db);
-				timetableViewModel.CurrentTeacher = new TeacherViewModel(currentTeacher);
-
-				db.LessonsPlaces
-					.Where(lp => lp.Lesson.TeacherPesel == pesel)
-					.ToList()
-					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
+			if (timetableViewModel?.CurrentTeacher == null)
+			{
+				return HttpNotFound();
 			}
 
 			return View(timetableViewModel);
@@ -59,48 +56,25 @@ namespace Timetable.Web.Controllers
 
 		public ActionResult Classroom(int id)
 		{
-			TimetableViewModel timetableViewModel;
+			TimetableViewModel timetableViewModel = null;
 
-			using (var db = new TimetableModel())
+			try
 			{
-				var currentClassroom = db.Classrooms
-					.FirstOrDefault(cr => cr.Id == id);
+				var timetableServiceClient = new TimetableServiceClient();
+				timetableViewModel = timetableServiceClient.GetTimetableForClassroom(id);
+				timetableServiceClient.Close();
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
 
-				if (currentClassroom == null)
-					return HttpNotFound();
-
-				timetableViewModel = GetPrefilledTimetableViewModel(db);
-				timetableViewModel.CurrentClassroom = new ClassroomViewModel(currentClassroom);
-
-				db.LessonsPlaces
-					.Where(lp => lp.ClassroomId == id)
-					.ToList()
-					.ForEach(lp => timetableViewModel.CurrentLessonsPlaces.Add(new LessonsPlaceViewModel(lp)));
+			if (timetableViewModel?.CurrentClassroom == null)
+			{
+				return HttpNotFound();
 			}
 
 			return View(timetableViewModel);
-		}
-
-		private TimetableViewModel GetPrefilledTimetableViewModel(TimetableModel db)
-		{
-			var timetableViewModel = new TimetableViewModel
-			{
-				Days = new List<DayViewModel>(),
-				Hours = new List<HourViewModel>(),
-				CurrentLessonsPlaces = new List<LessonsPlaceViewModel>()
-			};
-
-			db.Days
-				.OrderBy(d => d.Number)
-				.ToList()
-				.ForEach(d => timetableViewModel.Days.Add(new DayViewModel(d)));
-
-			db.Hours
-				.OrderBy(h => h.Number)
-				.ToList()
-				.ForEach(h => timetableViewModel.Hours.Add(new HourViewModel(h)));
-
-			return timetableViewModel;
 		}
 	}
 }

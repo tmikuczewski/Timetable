@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
-using Timetable.DAL.Models.MySql;
 using Timetable.DAL.ViewModels;
+using Timetable.Web.TimetableServiceReference;
 
 namespace Timetable.Web.Controllers
 {
@@ -18,24 +17,15 @@ namespace Timetable.Web.Controllers
 				Classrooms = new List<ClassroomViewModel>()
 			};
 
-			using (var db = new TimetableModel())
+			try
 			{
-				db.Classes
-					.OrderBy(c => c.Year)
-					.ThenBy(c => c.CodeName)
-					.ToList()
-					.ForEach(c => timetableViewModel.Classes.Add(new ClassViewModel(c)));
-
-				db.Teachers
-					.OrderBy(t => t.LastName)
-					.ThenBy(t => t.FirstName)
-					.ToList()
-					.ForEach(t => timetableViewModel.Teachers.Add(new TeacherViewModel(t)));
-
-				db.Classrooms
-					.OrderBy(cr => cr.Name)
-					.ToList()
-					.ForEach(cr => timetableViewModel.Classrooms.Add(new ClassroomViewModel(cr)));
+				var timetableServiceClient = new TimetableServiceClient();
+				timetableViewModel = timetableServiceClient.GetTimetableEntities();
+				timetableServiceClient.Close();
+			}
+			catch (Exception)
+			{
+				// ignored
 			}
 
 			return View(timetableViewModel);

@@ -10,15 +10,17 @@ namespace Timetable.Service.Services
 	{
 		public IList<HourViewModel> GetAllHours()
 		{
+			var hours = new List<HourViewModel>();
+
 			using (var db = new TimetableModel())
 			{
-				var hours = new List<HourViewModel>();
-
-				foreach (var hour in db.Hours.OrderBy(d => d.Number))
-					hours.Add(new HourViewModel(hour));
-
-				return hours;
+				db.Hours
+					.OrderBy(h => h.Number)
+					.ToList()
+					.ForEach(h => hours.Add(new HourViewModel(h)));
 			}
+
+			return hours;
 		}
 	}
 }

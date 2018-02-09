@@ -95,7 +95,7 @@ namespace Timetable.Utilities
 		/// <param name="classRow">Obiekt klasy.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ActionType fileType)
+		public void SaveTimetableForClass(TimetableDataSet.ClassesRow classRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -114,7 +114,7 @@ namespace Timetable.Utilities
 		/// <param name="teacherRow">Obiekt nauczyciela.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ActionType fileType)
+		public void SaveTimetableForTeacher(TimetableDataSet.TeachersRow teacherRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 
@@ -133,7 +133,7 @@ namespace Timetable.Utilities
 		/// <param name="classroomRow">Obiekt sali.</param>
 		/// <param name="filePath">Ścieżka do zapisu pliku.</param>
 		/// <param name="fileType">Typ zapisywanego pliku.</param>
-		public void SaveTimeTableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ActionType fileType)
+		public void SaveTimetableForClassroom(TimetableDataSet.ClassroomsRow classroomRow, string filePath, ActionType fileType)
 		{
 			RefreshDatabaseObjects();
 

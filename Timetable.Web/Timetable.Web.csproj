@@ -88,6 +88,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -212,6 +214,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Service References\TimetableServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -228,6 +235,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Properties\DataSources\Timetable.DAL.ViewModels.TimetableViewModel.datasource" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -240,6 +248,13 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <None Include="Service References\TimetableServiceReference\TimetableService.disco" />
+    <None Include="Service References\TimetableServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\TimetableServiceReference\configuration.svcinfo" />
+    <None Include="Service References\TimetableServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -255,6 +270,16 @@
     <Content Include="Views\Timetable\Class.cshtml" />
     <Content Include="Views\Timetable\Teacher.cshtml" />
     <Content Include="Views\Timetable\Classroom.cshtml" />
+    <None Include="Service References\TimetableServiceReference\TimetableService.wsdl" />
+    <None Include="Service References\TimetableServiceReference\TimetableService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TimetableServiceReference\TimetableService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TimetableServiceReference\TimetableService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -271,12 +296,22 @@
       <Project>{e1345e25-918f-4240-9e12-3f0472a6bcbc}</Project>
       <Name>Timetable.DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Timetable.Service\Timetable.Service.csproj">
+      <Project>{97f6a79f-779e-499b-9a35-8874531796b9}</Project>
+      <Name>Timetable.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\TimetableServiceReference\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

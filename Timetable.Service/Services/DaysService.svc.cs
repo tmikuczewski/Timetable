@@ -10,15 +10,17 @@ namespace Timetable.Service.Services
 	{
 		public IList<DayViewModel> GetAllDays()
 		{
+			var days = new List<DayViewModel>();
+
 			using (var db = new TimetableModel())
 			{
-				var days = new List<DayViewModel>();
-
-				foreach (var day in db.Days.OrderBy(d => d.Number))
-					days.Add(new DayViewModel(day));
-
-				return days;
+				db.Days
+					.OrderBy(d => d.Number)
+					.ToList()
+					.ForEach(d => days.Add(new DayViewModel(d)));
 			}
+
+			return days;
 		}
 	}
 }
