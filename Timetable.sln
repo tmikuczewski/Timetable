@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timetable.DAL", "Timetable.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timetable.Web", "Timetable.Web\Timetable.Web.csproj", "{482899E3-DB6C-41F9-A42D-C6A980E01783}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timetable.Client", "Timetable.Client\Timetable.Client.csproj", "{7D64E82A-B2E1-4163-B2E7-CCDEB6316229}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timetable.Service", "Timetable.Service\Timetable.Service.csproj", "{97F6A79F-779E-499B-9A35-8874531796B9}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{482899E3-DB6C-41F9-A42D-C6A980E01783}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{482899E3-DB6C-41F9-A42D-C6A980E01783}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{482899E3-DB6C-41F9-A42D-C6A980E01783}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D64E82A-B2E1-4163-B2E7-CCDEB6316229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D64E82A-B2E1-4163-B2E7-CCDEB6316229}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D64E82A-B2E1-4163-B2E7-CCDEB6316229}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D64E82A-B2E1-4163-B2E7-CCDEB6316229}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97F6A79F-779E-499B-9A35-8874531796B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97F6A79F-779E-499B-9A35-8874531796B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97F6A79F-779E-499B-9A35-8874531796B9}.Release|Any CPU.ActiveCfg = Release|Any CPU

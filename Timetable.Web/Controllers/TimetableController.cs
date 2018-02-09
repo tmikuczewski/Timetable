@@ -18,7 +18,7 @@ namespace Timetable.Web.Controllers
 				timetableServiceClient.Close();
 
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				// ignored
 			}

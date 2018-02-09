@@ -1,1 +1,1 @@
-# Timetable - WPF application
+# Timetable - WPF, WCF & ASP.NET MVC application
